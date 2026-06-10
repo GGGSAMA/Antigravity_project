@@ -76,14 +76,23 @@ func _process(delta):
 	if tooltip_panel.visible:
 		tooltip_panel.global_position = get_viewport().get_mouse_position() + Vector2(15, 15)
 
-func _unhandled_input(event: InputEvent) -> void:
-	if event is InputEventKey and event.pressed and event.keycode == KEY_TAB:
+func _input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed:
 		var dashboard = get_node_or_null("DashboardUI")
-		if dashboard:
+		var is_open = dashboard != null and dashboard.visible
+		
+		# 按 ESC 关闭 UI
+		if event.keycode == KEY_ESCAPE and is_open:
 			toggle_panel(dashboard)
-		else:
-			toggle_panel(inventory_panel) # Fallback
-		get_viewport().set_input_as_handled()
+			get_viewport().set_input_as_handled()
+			
+		# 按 TAB 切换 UI
+		elif event.keycode == KEY_TAB:
+			if dashboard:
+				toggle_panel(dashboard)
+			else:
+				toggle_panel(inventory_panel) # Fallback
+			get_viewport().set_input_as_handled()
 
 func toggle_panel(panel: Control):
 	if panel:

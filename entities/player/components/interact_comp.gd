@@ -21,6 +21,52 @@ class_name InteractionComponent
 @export var interaction_ray: RayCast3D
 @export var combat_comp: Node
 
+func _ready() -> void:
+	if not player:
+		player = get_parent() as CharacterBody3D
+		print("[DEBUG] 动态获取 player: ", player)
+	
+	if not interaction_ray:
+		interaction_ray = get_parent().get_node_or_null("Head/Camera3D/InteractionRay")
+		print("[DEBUG] 动态获取 interaction_ray: ", interaction_ray)
+
+	if not combat_comp:
+		combat_comp = get_parent().get_node_or_null("CombatComponent")
+
+	if player and interaction_ray:
+		interaction_ray.add_exception(player)
+
+func handle_interact_only() -> void:
+	print("\n--- [DEBUG F键交互链路开始] ---")
+	if not player: 
+		print("[DEBUG] 失败：player 变量为空！")
+		return
+	if not interaction_ray:
+		print("[DEBUG] 失败：interaction_ray 变量为空！")
+		return
+		
+	print("[DEBUG] 射线目标点: ", interaction_ray.target_position)
+	print("[DEBUG] 射线是否启用: ", interaction_ray.enabled)
+	
+	# 强制更新射线，确保物理状态最新
+	interaction_ray.force_raycast_update()
+	
+	if interaction_ray.is_colliding():
+		var collider = interaction_ray.get_collider()
+		print("[DEBUG] 射线击中对象: ", collider.name, " 类型: ", collider.get_class())
+		if collider.has_method("pick_up"):
+			print("[DEBUG] 触发 pick_up()...")
+			collider.pick_up(player)
+		elif collider.has_method("interact"):
+			print("[DEBUG] 目标包含 interact()，正在调用...")
+			collider.interact(player)
+		else:
+			print("[DEBUG] 目标没有任何可交互的方法！")
+	else:
+		print("[DEBUG] 射线未能击中任何物体！")
+		
+	print("--- [DEBUG F键交互链路结束] ---\n")
+
 func handle_interact_or_combat() -> void:
 	if not player: return
 	
@@ -42,12 +88,19 @@ func _physics_process(delta: float) -> void:
 	var stats = player.get("stats")
 	if stats:
 		var divine_sense = float(stats.get("divine_sense")) if stats.get("divine_sense") != null else 10.0
-		interaction_ray.target_position.z = -2.5 - (divine_sense / 5.0)
+		# 强制把交互射线加长到 10 米，排除距离不够的问题
+		interaction_ray.target_position = Vector3(0, 0, -10.0)
 
 func _unhandled_input(event: InputEvent) -> void:
 	# 神识全息扫描 (V 键)
 	if event is InputEventKey and event.pressed and event.keycode == KEY_V:
 		execute_divine_scan()
+		get_viewport().set_input_as_handled()
+		
+	# 实体交互 (F 键)
+	if event is InputEventKey and event.pressed and event.keycode == KEY_F:
+		print("[DEBUG] _unhandled_input 捕获到 F 键按下事件！")
+		handle_interact_only()
 		get_viewport().set_input_as_handled()
 
 func execute_divine_scan() -> void:

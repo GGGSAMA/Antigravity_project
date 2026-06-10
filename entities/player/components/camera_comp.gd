@@ -55,9 +55,10 @@ func _physics_process(delta: float) -> void:
 	mouse_turn_velocity = lerp(mouse_turn_velocity, 0.0, delta * 3.0)
 	
 	var input_dir := Input.get_vector("move_left", "move_right", "move_up", "move_down")
-	var target_tilt = -input_dir.x * (0.15 if is_flying else 0.05)
+	var target_tilt = 0.0
 	
 	if is_flying:
+		target_tilt = -input_dir.x * 0.15
 		target_tilt -= mouse_turn_velocity * flight_tilt_sensitivity
 		target_tilt = clamp(target_tilt, -flight_tilt_max, flight_tilt_max)
 	
