@@ -1,0 +1,1585 @@
+extends CanvasLayer
+class_name PlayerUIController
+
+
+
+# --- 节点引用 ---
+@onready var spring_arm: SpringArm3D = $Head/SpringArm3D if has_node("Head/SpringArm3D") else null
+@onready var player_model: Node3D = $PlayerModel if has_node("PlayerModel") else null
+
+@onready var crosshair: Label = $HUD/Crosshair if has_node("HUD/Crosshair") else null
+@onready var notification_label: Label = $HUD/NotificationLabel # 拾取通知UI
+@onready var inventory_panel: ColorRect = $HUD/InventoryPanel # 背包UI面板
+@onready var bag_grid: GridContainer = $HUD/InventoryPanel/BagGrid # 4x5 储物箱网格
+@onready var equipment_grid: GridContainer = $HUD/InventoryPanel/EquipmentGrid # 装备网格
+
+# --- V0.0003100 数值底盘、快捷栏与 UI 引用 ---
+@onready var stats = owner.get("stats")
+@onready var health_bar: ProgressBar = $HUD/HealthBar
+@onready var mana_bar: ProgressBar = $HUD/ManaBar
+@onready var hp_val_label: Label = $HUD/HealthBar/ValueLabel
+@onready var mp_val_label: Label = $HUD/ManaBar/ValueLabel
+@onready var carried_visual: Label = $HUD/CarriedItemVisual
+var carried_item = null
+
+@onready var hotbar_panel: ColorRect = $HUD/HotbarPanel
+@onready var hotbar_grid: HBoxContainer = $HUD/HotbarPanel/HotbarGrid
+@onready var active_item_label: Label = $HUD/ActiveItemLabel
+
+# --- V0.0004 新增：物品数据库与通用背包组件引用 ---
+@onready var inventory_comp = owner.get("inventory_comp")
+@onready var hotbar_comp = owner.get("hotbar_comp")
+
+# Dialogue UI reference and timer
+var dialogue_panel: Panel = null
+var dialogue_timer: SceneTreeTimer = null
+
+# --- V0.0005.1: 装备背包组件、多态交互与 Q/E 魔法轮盘系统 ---
+var equipment_comp: InventoryComponent = null
+var hovered_equip_index: int = -1
+
+# 魔法释放与轮盘解耦子节点引用
+var spells: SpellComponent = null
+
+# 魔法轮盘 Panel 引用
+var left_spell_panel: ColorRect = null
+var right_spell_panel: ColorRect = null
+
+# --- V0.0005.2 新增：自定义热键重映射及 RPG UI 面板 ---
+var key_inventory: int = KEY_TAB
+var key_character: int = KEY_C
+var key_spellbook: int = KEY_K
+
+# 热键录入状态机标志 (当正在重设某个动作的热键时，捕获下一次敲击键)
+var is_rebinding_action: String = "" # "inventory", "character", "spellbook"
+
+var character_panel: Panel = null
+var spellbook_panel: Panel = null
+var keybinds_panel: Panel = null
+
+# --- V0.0007: 御风飞行与修仙属性点变量 ---
+
+
+var attribute_points: int = 1000
+var held_button_type: String = ""
+var held_attribute: String = ""
+var held_time: float = 0.0
+var tick_time: float = 0.0
+var current_speed_gear: int = 0
+var current_speed_gear_float: float = 0.0
+var alt_press_time: float = 0.0
+var brake_start_velocity: Vector3 = Vector3.ZERO
+
+
+# --- V0.0005: FPS Viewmodel 双手动效与 3D 持物系统变量 ---
+var viewmodel = null # V0.0005 解耦的第一人称双手控制器节点引用
+
+# 当前选中的快捷栏索引 (0 到 8)
+var active_hotbar_index: int = 0
+
+# 当前鼠标悬停的槽位索引 (-1 代表未悬停)
+var hovered_bag_index: int = -1
+var hovered_hotbar_index: int = -1
+
+# --- UI 样式 StyleBox 资源配置 ---
+var style_normal = StyleBoxFlat.new()
+var style_hover = StyleBoxFlat.new()
+var style_active = StyleBoxFlat.new()
+var style_equip = StyleBoxFlat.new()
+
+# --- 移动与视角配置 ---
+@export var SPEED: float = 3.0                 # 移速调小（防止晕 3D）
+@export var JUMP_VELOCITY: float = 4.0
+@export var MOUSE_SENSITIVITY: float = 0.0012  # 视角灵敏度
+
+# --- 重力获取 ---
+var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
+
+func _ready() -> void:
+	await owner.ready
+	# 游戏开始时，捕获鼠标
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	
+	# 1. 动态实例化并挂载装备背包组件
+	equipment_comp = InventoryComponent.new()
+	equipment_comp.size = 4
+	equipment_comp.name = "Equipment"
+	add_child(equipment_comp)
+	
+	# 2. 动态挂载技能解耦组件
+	spells = SpellComponent.new()
+	spells.name = "Spells"
+	add_child(spells)
+	
+	# 初始化样式系统
+	_init_styles()
+	
+	# 初始化背包与快捷栏数据
+	_init_inventory_data()
+	
+	# 动态渲染构建 UI 槽位节点
+	_build_ui_slots()
+	
+	# 构建法术轮盘 HUD
+	_build_spell_hud()
+	
+	# 构建高阶 RPG 面板及重映射热键设置视窗
+	_build_rpg_panels()
+	
+	# 刷新所有界面显示
+	update_inventory_ui()
+	update_hotbar_ui()
+	update_equipment_ui()
+	_update_spell_wheels_ui()
+	
+	# 属性组件观察者模式连接
+	stats.health_changed.connect(_on_health_changed)
+	stats.mana_changed.connect(_on_mana_changed)
+	
+	# 手动同步一次初始值到 ProgressBars 进度条
+	_on_health_changed(stats.current_health, stats.max_health)
+	_on_mana_changed(stats.current_mana, stats.max_mana)
+	
+	# V0.0005: 动态实例化并挂载解耦的第一人称 3D 双腕控制器 (Viewmodel)
+
+# ==============================================================================
+# 【初始化与槽位渲染构建】
+# ==============================================================================
+func _init_styles() -> void:
+	# 1. 默认常规槽位样式
+	style_normal.bg_color = Color(0.04, 0.04, 0.06, 0.65)
+	style_normal.set_corner_radius_all(4)
+	style_normal.border_width_left = 1
+	style_normal.border_width_top = 1
+	style_normal.border_width_right = 1
+	style_normal.border_width_bottom = 1
+	style_normal.border_color = Color(1, 1, 1, 0.08)
+	
+	# 2. 鼠标悬停高光样式
+	style_hover.bg_color = Color(0.12, 0.12, 0.16, 0.8)
+	style_hover.set_corner_radius_all(4)
+	style_hover.border_width_left = 2
+	style_hover.border_width_top = 2
+	style_hover.border_width_right = 2
+	style_hover.border_width_bottom = 2
+	style_hover.border_color = Color(1, 1, 1, 0.45) # 亮白高光
+	
+	# 3. 快捷栏激活选中槽位样式
+	style_active.bg_color = Color(0.14, 0.14, 0.22, 0.85)
+	style_active.set_corner_radius_all(4)
+	style_active.border_width_left = 2
+	style_active.border_width_top = 2
+	style_active.border_width_right = 2
+	style_active.border_width_bottom = 2
+	style_active.border_color = Color(0.9, 0.7, 0.1, 0.95) # 亮金色发光边框
+	
+	# 4. 装备格槽位样式
+	style_equip.bg_color = Color(0.06, 0.06, 0.08, 0.75)
+	style_equip.set_corner_radius_all(4)
+	style_equip.border_width_left = 1
+	style_equip.border_width_top = 1
+	style_equip.border_width_right = 1
+	style_equip.border_width_bottom = 1
+	style_equip.border_color = Color(0.9, 0.7, 0.1, 0.15)
+
+func _init_inventory_data() -> void:
+	# 1. 20 格背包组件填充预置测试数据
+	inventory_comp.set_slot(0, "小还丹", 2)
+	inventory_comp.set_slot(1, "聚灵散", 3)
+	inventory_comp.set_slot(2, "五毒散", 1)
+	
+	# V0.0005.1: 新增测试像素武器至背包，方便玩家测试拖拽装备！
+	inventory_comp.set_slot(3, "青钢剑", 1)
+	inventory_comp.set_slot(4, "玄铁法剑", 1)
+
+func _build_ui_slots() -> void:
+	# 1. 动态生成 20 个背包网格槽位
+	for i in range(20):
+		var slot_btn = Button.new()
+		slot_btn.name = "BagSlot_" + str(i)
+		slot_btn.custom_minimum_size = Vector2(80, 44)
+		slot_btn.focus_mode = Control.FOCUS_NONE
+		
+		# 样式覆盖
+		slot_btn.add_theme_stylebox_override("normal", style_normal)
+		slot_btn.add_theme_stylebox_override("hover", style_hover)
+		slot_btn.add_theme_stylebox_override("pressed", style_active)
+		
+		# 叠放图标与文本 Label 节点
+		var icon_lbl = Label.new()
+		icon_lbl.name = "Icon"
+		icon_lbl.anchors_preset = 8
+		icon_lbl.anchor_left = 0.5
+		icon_lbl.anchor_top = 0.5
+		icon_lbl.anchor_right = 0.5
+		icon_lbl.anchor_bottom = 0.5
+		icon_lbl.offset_left = -20
+		icon_lbl.offset_top = -15
+		icon_lbl.offset_right = 20
+		icon_lbl.offset_bottom = 15
+		icon_lbl.grow_horizontal = 2
+		icon_lbl.grow_vertical = 2
+		icon_lbl.horizontal_alignment = 1
+		icon_lbl.vertical_alignment = 1
+		icon_lbl.add_theme_font_size_override("font_size", 20)
+		slot_btn.add_child(icon_lbl)
+		
+		var qty_lbl = Label.new()
+		qty_lbl.name = "Qty"
+		qty_lbl.anchor_left = 1.0
+		qty_lbl.anchor_top = 1.0
+		qty_lbl.anchor_right = 1.0
+		qty_lbl.anchor_bottom = 1.0
+		qty_lbl.offset_left = -35
+		qty_lbl.offset_top = -18
+		qty_lbl.offset_right = -5
+		qty_lbl.offset_bottom = -2
+		qty_lbl.grow_horizontal = 0
+		qty_lbl.grow_vertical = 0
+		qty_lbl.horizontal_alignment = 2
+		qty_lbl.vertical_alignment = 2
+		qty_lbl.add_theme_color_override("font_color", Color(0.9, 0.95, 1.0, 1.0))
+		qty_lbl.add_theme_font_size_override("font_size", 11)
+		slot_btn.add_child(qty_lbl)
+		
+		# 悬停事件信号绑定
+		slot_btn.mouse_entered.connect(func(): hovered_bag_index = i)
+		slot_btn.mouse_exited.connect(func(): if hovered_bag_index == i: hovered_bag_index = -1)
+		
+		# 左键点击使用/抓起
+		slot_btn.pressed.connect(func(): _on_bag_slot_clicked(i))
+		
+		bag_grid.add_child(slot_btn)
+		
+	# 2. 动态生成 4 个人物装备位
+	var equip_names = ["⚔️ 武器", "🥋 法衣", "🛡️ 盾牌", "📿 法宝"]
+	for i in range(4):
+		var slot_btn = Button.new()
+		slot_btn.name = "EquipSlot_" + str(i)
+		slot_btn.custom_minimum_size = Vector2(130, 44)
+		slot_btn.focus_mode = Control.FOCUS_NONE
+		slot_btn.add_theme_stylebox_override("normal", style_equip)
+		slot_btn.add_theme_stylebox_override("hover", style_hover)
+		
+		var lbl = Label.new()
+		lbl.anchors_preset = 15
+		lbl.anchor_right = 1.0
+		lbl.anchor_bottom = 1.0
+		lbl.grow_horizontal = 2
+		lbl.grow_vertical = 2
+		lbl.horizontal_alignment = 1
+		lbl.vertical_alignment = 1
+		lbl.add_theme_color_override("font_color", Color(1, 1, 1, 0.35))
+		lbl.add_theme_font_size_override("font_size", 12)
+		lbl.text = equip_names[i]
+		slot_btn.add_child(lbl)
+		
+		# 鼠标进入/退出追踪
+		slot_btn.mouse_entered.connect(func(): hovered_equip_index = i)
+		slot_btn.mouse_exited.connect(func(): if hovered_equip_index == i: hovered_equip_index = -1)
+		
+		# 点击装备
+		slot_btn.pressed.connect(func(): _on_equip_slot_clicked(i))
+		
+		equipment_grid.add_child(slot_btn)
+		
+	# 3. 动态生成 9 个快捷栏槽位
+	for i in range(9):
+		var slot_btn = Button.new()
+		slot_btn.name = "HotbarSlot_" + str(i)
+		slot_btn.custom_minimum_size = Vector2(44, 50)
+		slot_btn.focus_mode = Control.FOCUS_NONE
+		slot_btn.add_theme_stylebox_override("normal", style_normal)
+		slot_btn.add_theme_stylebox_override("hover", style_hover)
+		
+		var icon_lbl = Label.new()
+		icon_lbl.name = "Icon"
+		icon_lbl.anchors_preset = 15
+		icon_lbl.anchor_right = 1.0
+		icon_lbl.anchor_bottom = 1.0
+		icon_lbl.grow_horizontal = 2
+		icon_lbl.grow_vertical = 2
+		icon_lbl.horizontal_alignment = 1
+		icon_lbl.vertical_alignment = 1
+		icon_lbl.add_theme_font_size_override("font_size", 20)
+		slot_btn.add_child(icon_lbl)
+		
+		var qty_lbl = Label.new()
+		qty_lbl.name = "Qty"
+		qty_lbl.anchor_left = 1.0
+		qty_lbl.anchor_top = 1.0
+		qty_lbl.anchor_right = 1.0
+		qty_lbl.anchor_bottom = 1.0
+		qty_lbl.offset_left = -30
+		qty_lbl.offset_top = -18
+		qty_lbl.offset_right = -3
+		qty_lbl.offset_bottom = -2
+		qty_lbl.grow_horizontal = 0
+		qty_lbl.grow_vertical = 0
+		qty_lbl.horizontal_alignment = 2
+		qty_lbl.vertical_alignment = 2
+		qty_lbl.add_theme_color_override("font_color", Color(0.9, 0.95, 1.0, 1.0))
+		qty_lbl.add_theme_font_size_override("font_size", 10)
+		slot_btn.add_child(qty_lbl)
+		
+		# 快捷栏点击
+		slot_btn.pressed.connect(func(): _on_hotbar_slot_clicked(i))
+		
+		hotbar_grid.add_child(slot_btn)
+
+# ==============================================================================
+# 【V0.0005.1 新增：玻璃态吟唱魔法轮盘 HUD 构建与刷新】
+# ==============================================================================
+func _build_spell_hud() -> void:
+	var hud_node = $HUD
+	if hud_node == null:
+		return
+		
+	# 创建左手法术面板 (Q键控制)
+	left_spell_panel = ColorRect.new()
+	left_spell_panel.name = "LeftSpellPanel"
+	left_spell_panel.custom_minimum_size = Vector2(180, 54)
+	left_spell_panel.anchors_preset = 2 # Bottom-Left
+	left_spell_panel.anchor_top = 1.0
+	left_spell_panel.anchor_bottom = 1.0
+	left_spell_panel.offset_left = 50
+	left_spell_panel.offset_top = -135
+	left_spell_panel.offset_right = 230
+	left_spell_panel.offset_bottom = -81
+	left_spell_panel.color = Color(0.04, 0.04, 0.06, 0.8)
+	hud_node.add_child(left_spell_panel)
+	
+	var style_box = StyleBoxFlat.new()
+	style_box.bg_color = Color(0, 0, 0, 0)
+	style_box.border_width_left = 1
+	style_box.border_width_top = 1
+	style_box.border_width_right = 1
+	style_box.border_width_bottom = 1
+	style_box.border_color = Color(1, 1, 1, 0.12)
+	style_box.set_corner_radius_all(6)
+	
+	var left_border = Panel.new()
+	left_border.anchors_preset = 15
+	left_border.anchor_right = 1.0
+	left_border.anchor_bottom = 1.0
+	left_border.grow_horizontal = 2
+	left_border.grow_vertical = 2
+	left_border.add_theme_stylebox_override("panel", style_box)
+	left_spell_panel.add_child(left_border)
+	
+	var left_lbl = Label.new()
+	left_lbl.name = "Content"
+	left_lbl.anchors_preset = 15
+	left_lbl.anchor_right = 1.0
+	left_lbl.anchor_bottom = 1.0
+	left_lbl.grow_horizontal = 2
+	left_lbl.grow_vertical = 2
+	left_lbl.horizontal_alignment = 1
+	left_lbl.vertical_alignment = 1
+	left_lbl.add_theme_font_size_override("font_size", 11)
+	left_spell_panel.add_child(left_lbl)
+	
+	# 创建右手法术面板 (E键控制)
+	right_spell_panel = ColorRect.new()
+	right_spell_panel.name = "RightSpellPanel"
+	right_spell_panel.custom_minimum_size = Vector2(180, 54)
+	right_spell_panel.anchors_preset = 3 # Bottom-Right
+	right_spell_panel.anchor_left = 1.0
+	right_spell_panel.anchor_top = 1.0
+	right_spell_panel.anchor_right = 1.0
+	right_spell_panel.anchor_bottom = 1.0
+	right_spell_panel.offset_left = -230
+	right_spell_panel.offset_top = -135
+	right_spell_panel.offset_right = -50
+	right_spell_panel.offset_bottom = -81
+	right_spell_panel.color = Color(0.04, 0.04, 0.06, 0.8)
+	hud_node.add_child(right_spell_panel)
+	
+	var right_border = Panel.new()
+	right_border.anchors_preset = 15
+	right_border.anchor_right = 1.0
+	right_border.anchor_bottom = 1.0
+	right_border.grow_horizontal = 2
+	right_border.grow_vertical = 2
+	right_border.add_theme_stylebox_override("panel", style_box)
+	right_spell_panel.add_child(right_border)
+	
+	var right_lbl = Label.new()
+	right_lbl.name = "Content"
+	right_lbl.anchors_preset = 15
+	right_lbl.anchor_right = 1.0
+	right_lbl.anchor_bottom = 1.0
+	right_lbl.grow_horizontal = 2
+	right_lbl.grow_vertical = 2
+	right_lbl.horizontal_alignment = 1
+	right_lbl.vertical_alignment = 1
+	right_lbl.add_theme_font_size_override("font_size", 11)
+	right_spell_panel.add_child(right_lbl)
+
+func _update_spell_wheels_ui() -> void:
+	if left_spell_panel == null or right_spell_panel == null or spells == null:
+		return
+		
+	var left_spell = spells.get_active_spell(true)
+	var right_spell = spells.get_active_spell(false)
+	
+	# 左手面板更新与发光背色微调
+	var left_lbl = left_spell_panel.get_node("Content") as Label
+	left_lbl.text = "👈 左手吟唱 [" + OS.get_keycode_string(key_spellbook) + "秘籍/" + OS.get_keycode_string(key_inventory) + "按Q]\n" + left_spell["icon"] + " 【" + left_spell["name"] + "】 (" + str(left_spell["mana_cost"]) + " MP)"
+	# 更新快捷说明以直接匹配物理左击
+	left_lbl.text = "👈 左手吟唱 [Q切换/左击释放]\n" + left_spell["icon"] + " 【" + left_spell["name"] + "】 (" + str(left_spell["mana_cost"]) + " MP)"
+	var left_color = left_spell["color"]
+	left_spell_panel.color = Color(left_color.r * 0.15, left_color.g * 0.15, left_color.b * 0.15, 0.85)
+	
+	# 右手面板更新与发光背色微调
+	var right_lbl = right_spell_panel.get_node("Content") as Label
+	right_lbl.text = "👉 右手吟唱 [E切换/右击释放]\n" + right_spell["icon"] + " 【" + right_spell["name"] + "】 (" + str(right_spell["mana_cost"]) + " MP)"
+	var right_color = right_spell["color"]
+	right_spell_panel.color = Color(right_color.r * 0.15, right_color.g * 0.15, right_color.b * 0.15, 0.85)
+
+func _trigger_spell_hud_tween(is_left: bool) -> void:
+	var panel = left_spell_panel if is_left else right_spell_panel
+	if panel == null:
+		return
+		
+	# 面板居中回弹Tween，极其Q弹 premium！
+	panel.pivot_offset = panel.size / 2.0
+	panel.scale = Vector2(1.15, 1.15)
+	
+	var tween = create_tween()
+	tween.tween_property(panel, "scale", Vector2(1.0, 1.0), 0.28).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+
+# ==============================================================================
+# 【V0.0005.2 新增：程序化构建 RPG 属性、法术及按键重映射面板】
+# ==============================================================================
+func _build_rpg_panels() -> void:
+	var hud_node = $HUD
+	if hud_node == null:
+		return
+		
+	# 共享底盘通用样式
+	var base_style = StyleBoxFlat.new()
+	base_style.set_corner_radius_all(6)
+	base_style.border_width_left = 1
+	base_style.border_width_top = 1
+	base_style.border_width_right = 1
+	base_style.border_width_bottom = 1
+	
+	# 1. 👤 人物属性面板 (C键 - 国风修仙重构)
+	character_panel = Panel.new()
+	character_panel.name = "CharacterPanel"
+	character_panel.custom_minimum_size = Vector2(300, 420)
+	character_panel.anchors_preset = 4 # Center-Left
+	character_panel.anchor_top = 0.5
+	character_panel.anchor_bottom = 0.5
+	character_panel.offset_left = 50
+	character_panel.offset_top = -210
+	character_panel.offset_right = 350
+	character_panel.offset_bottom = 210
+	character_panel.visible = false
+	
+	var char_style = base_style.duplicate() as StyleBoxFlat
+	char_style.bg_color = Color(0.04, 0.05, 0.08, 0.94) # 深海亮边玻璃态
+	char_style.border_color = Color(0.95, 0.75, 0.15, 0.28) # 暗金色
+	character_panel.add_theme_stylebox_override("panel", char_style)
+	hud_node.add_child(character_panel)
+	
+	var char_title = Label.new()
+	char_title.text = "👤 人物气海灵体属性"
+	char_title.anchors_preset = 5
+	char_title.anchor_left = 0.5
+	char_title.anchor_right = 0.5
+	char_title.offset_left = -110
+	char_title.offset_top = 12
+	char_title.offset_right = 110
+	char_title.offset_bottom = 32
+	char_title.horizontal_alignment = 1
+	char_title.add_theme_font_size_override("font_size", 13)
+	char_title.add_theme_color_override("font_color", Color(0.95, 0.75, 0.15))
+	character_panel.add_child(char_title)
+
+	var main_vbox = VBoxContainer.new()
+	main_vbox.name = "MainVBox"
+	main_vbox.position = Vector2(15, 42)
+	main_vbox.size = Vector2(270, 366)
+	main_vbox.add_theme_constant_override("separation", 8)
+	character_panel.add_child(main_vbox)
+
+	var root_title = Label.new()
+	root_title.text = "☯️ 五行先天灵根"
+	root_title.add_theme_font_size_override("font_size", 11)
+	root_title.add_theme_color_override("font_color", Color(0.9, 0.7, 0.1))
+	main_vbox.add_child(root_title)
+
+	var root_grid = GridContainer.new()
+	root_grid.name = "RootGrid"
+	root_grid.columns = 5
+	root_grid.add_theme_constant_override("h_separation", 10)
+	main_vbox.add_child(root_grid)
+	
+	var roots = ["金", "木", "水", "火", "土"]
+	for r in roots:
+		var root_lbl = Label.new()
+		root_lbl.name = "Root_" + r
+		root_lbl.add_theme_font_size_override("font_size", 10)
+		root_grid.add_child(root_lbl)
+
+	var sep1 = HSeparator.new()
+	main_vbox.add_child(sep1)
+
+	var base_title_hb = HBoxContainer.new()
+	main_vbox.add_child(base_title_hb)
+	
+	var base_title = Label.new()
+	base_title.text = "🌱 修仙凡身根基"
+	base_title.add_theme_font_size_override("font_size", 11)
+	base_title.add_theme_color_override("font_color", Color(0.9, 0.7, 0.1))
+	base_title_hb.add_child(base_title)
+	
+	var pts_lbl = Label.new()
+	pts_lbl.name = "PointsLabel"
+	pts_lbl.add_theme_font_size_override("font_size", 10)
+	pts_lbl.add_theme_color_override("font_color", Color(0.1, 0.8, 0.3))
+	base_title_hb.add_child(pts_lbl)
+
+	var attr_grid = GridContainer.new()
+	attr_grid.name = "AttrGrid"
+	attr_grid.columns = 3
+	attr_grid.add_theme_constant_override("h_separation", 24)
+	attr_grid.add_theme_constant_override("v_separation", 3)
+	main_vbox.add_child(attr_grid)
+
+	var attrs = {
+		"comprehension": "悟性",
+		"aptitude": "资质",
+		"constitution": "体力",
+		"strength": "力量",
+		"speed": "速度",
+		"divine_sense": "神识"
+	}
+	
+	for attr_key in attrs:
+		var name_lbl = Label.new()
+		name_lbl.text = attrs[attr_key] + ":"
+		name_lbl.custom_minimum_size = Vector2(50, 0)
+		name_lbl.add_theme_font_size_override("font_size", 10)
+		attr_grid.add_child(name_lbl)
+		
+		var val_lbl = Label.new()
+		val_lbl.name = "Val_" + attr_key
+		val_lbl.custom_minimum_size = Vector2(35, 0)
+		val_lbl.add_theme_font_size_override("font_size", 10)
+		attr_grid.add_child(val_lbl)
+		
+		var hb = HBoxContainer.new()
+		hb.name = "HB_" + attr_key
+		hb.add_theme_constant_override("separation", 4)
+		attr_grid.add_child(hb)
+		
+		# 1. 减号按钮
+		var btn_minus = Button.new()
+		btn_minus.name = "Btn_minus_" + attr_key
+		btn_minus.text = " - "
+		btn_minus.add_theme_font_size_override("font_size", 8)
+		btn_minus.custom_minimum_size = Vector2(20, 16)
+		var btn_minus_style = StyleBoxFlat.new()
+		btn_minus_style.bg_color = Color(0.32, 0.18, 0.18, 0.8)
+		btn_minus_style.set_corner_radius_all(3)
+		btn_minus.add_theme_stylebox_override("normal", btn_minus_style)
+		hb.add_child(btn_minus)
+		
+		var final_key = attr_key
+		btn_minus.button_down.connect(func():
+			held_button_type = "minus"
+			held_attribute = final_key
+			held_time = 0.0
+			tick_time = 0.0
+			_deallocate_attribute_point(final_key)
+		)
+		btn_minus.button_up.connect(func():
+			if held_attribute == final_key and held_button_type == "minus":
+				held_attribute = ""
+		)
+		
+		# 2. 加号按钮
+		var btn_plus = Button.new()
+		btn_plus.name = "Btn_" + attr_key
+		btn_plus.text = " + "
+		btn_plus.add_theme_font_size_override("font_size", 8)
+		btn_plus.custom_minimum_size = Vector2(20, 16)
+		var btn_plus_style = StyleBoxFlat.new()
+		btn_plus_style.bg_color = Color(0.18, 0.32, 0.18, 0.8)
+		btn_plus_style.set_corner_radius_all(3)
+		btn_plus.add_theme_stylebox_override("normal", btn_plus_style)
+		hb.add_child(btn_plus)
+		
+		btn_plus.button_down.connect(func():
+			held_button_type = "plus"
+			held_attribute = final_key
+			held_time = 0.0
+			tick_time = 0.0
+			_allocate_attribute_point(final_key)
+		)
+		btn_plus.button_up.connect(func():
+			if held_attribute == final_key and held_button_type == "plus":
+				held_attribute = ""
+		)
+
+	var sep2 = HSeparator.new()
+	main_vbox.add_child(sep2)
+
+	var deriv_lbl = Label.new()
+	deriv_lbl.name = "Derivations"
+	deriv_lbl.add_theme_font_size_override("font_size", 10)
+	deriv_lbl.add_theme_color_override("font_color", Color(0.8, 0.85, 0.9))
+	main_vbox.add_child(deriv_lbl)
+
+	var reset_btn = Button.new()
+	reset_btn.name = "ResetButton"
+	reset_btn.text = "🔄 重置属性 (调试洗点)"
+	reset_btn.add_theme_font_size_override("font_size", 10)
+	var reset_style = StyleBoxFlat.new()
+	reset_style.bg_color = Color(0.4, 0.12, 0.12, 0.8)
+	reset_style.set_corner_radius_all(4)
+	reset_btn.add_theme_stylebox_override("normal", reset_style)
+	main_vbox.add_child(reset_btn)
+	reset_btn.pressed.connect(_reset_attributes)
+	
+	# 2. 📜 法术秘籍面板 (K键)
+	spellbook_panel = Panel.new()
+	spellbook_panel.name = "SpellbookPanel"
+	spellbook_panel.custom_minimum_size = Vector2(460, 350)
+	spellbook_panel.anchors_preset = 6 # Center-Right
+	spellbook_panel.anchor_left = 1.0
+	spellbook_panel.anchor_top = 0.5
+	spellbook_panel.anchor_right = 1.0
+	spellbook_panel.anchor_bottom = 0.5
+	spellbook_panel.offset_left = -510
+	spellbook_panel.offset_top = -175
+	spellbook_panel.offset_right = -50
+	spellbook_panel.offset_bottom = 175
+	spellbook_panel.visible = false
+	
+	var spell_style = base_style.duplicate() as StyleBoxFlat
+	spell_style.bg_color = Color(0.06, 0.04, 0.09, 0.94) # 玄冥暗紫亮边
+	spell_style.border_color = Color(0.65, 0.15, 0.9, 0.28) # 幽紫色
+	spellbook_panel.add_theme_stylebox_override("panel", spell_style)
+	hud_node.add_child(spellbook_panel)
+	
+	var spell_title = Label.new()
+	spell_title.text = "📜 元素魔法奥义秘籍"
+	spell_title.anchors_preset = 5
+	spell_title.anchor_left = 0.5
+	spell_title.anchor_right = 0.5
+	spell_title.offset_left = -120
+	spell_title.offset_top = 15
+	spell_title.offset_right = 120
+	spell_title.offset_bottom = 35
+	spell_title.horizontal_alignment = 1
+	spell_title.add_theme_font_size_override("font_size", 13)
+	spell_title.add_theme_color_override("font_color", Color(0.75, 0.35, 1.0))
+	spellbook_panel.add_child(spell_title)
+	
+	var left_spell_vbox = VBoxContainer.new()
+	left_spell_vbox.name = "LeftSpellVBox"
+	left_spell_vbox.custom_minimum_size = Vector2(195, 270)
+	left_spell_vbox.offset_left = 25
+	left_spell_vbox.offset_top = 50
+	left_spell_vbox.offset_right = 220
+	left_spell_vbox.offset_bottom = 320
+	left_spell_vbox.add_theme_constant_override("separation", 10)
+	spellbook_panel.add_child(left_spell_vbox)
+	
+	var right_spell_vbox = VBoxContainer.new()
+	right_spell_vbox.name = "RightSpellVBox"
+	right_spell_vbox.custom_minimum_size = Vector2(195, 270)
+	right_spell_vbox.offset_left = 240
+	right_spell_vbox.offset_top = 50
+	right_spell_vbox.offset_right = 435
+	right_spell_vbox.offset_bottom = 320
+	right_spell_vbox.add_theme_constant_override("separation", 10)
+	spellbook_panel.add_child(right_spell_vbox)
+	
+	# 3. ⚙️ 热键 Remap 配置面板
+	keybinds_panel = Panel.new()
+	keybinds_panel.name = "KeybindsPanel"
+	keybinds_panel.custom_minimum_size = Vector2(320, 240)
+	keybinds_panel.anchors_preset = 8 # Centered
+	keybinds_panel.anchor_left = 0.5
+	keybinds_panel.anchor_top = 0.5
+	keybinds_panel.anchor_right = 0.5
+	keybinds_panel.anchor_bottom = 0.5
+	keybinds_panel.offset_left = -160
+	keybinds_panel.offset_top = -120
+	keybinds_panel.offset_right = 160
+	keybinds_panel.offset_bottom = 120
+	keybinds_panel.visible = false
+	
+	var keys_style = base_style.duplicate() as StyleBoxFlat
+	keys_style.bg_color = Color(0.06, 0.06, 0.08, 0.97) # 深黑高对比度
+	keys_style.border_color = Color(0.9, 0.7, 0.1, 0.4)
+	keybinds_panel.add_theme_stylebox_override("panel", keys_style)
+	hud_node.add_child(keybinds_panel)
+	
+	var keys_title = Label.new()
+	keys_title.text = "⚙️ 热键重映射与重置配置"
+	keys_title.anchors_preset = 5
+	keys_title.anchor_left = 0.5
+	keys_title.anchor_right = 0.5
+	keys_title.offset_left = -110
+	keys_title.offset_top = 15
+	keys_title.offset_right = 110
+	keys_title.offset_bottom = 35
+	keys_title.horizontal_alignment = 1
+	keys_title.add_theme_font_size_override("font_size", 12)
+	keys_title.add_theme_color_override("font_color", Color(0.9, 0.7, 0.1))
+	keybinds_panel.add_child(keys_title)
+	
+	var key_grid = GridContainer.new()
+	key_grid.name = "KeyGrid"
+	key_grid.columns = 2
+	key_grid.offset_left = 30
+	key_grid.offset_top = 50
+	key_grid.offset_right = 290
+	key_grid.offset_bottom = 180
+	key_grid.add_theme_constant_override("h_separation", 15)
+	key_grid.add_theme_constant_override("v_separation", 10)
+	keybinds_panel.add_child(key_grid)
+	
+	# 重映射三个动作项的 UI Grid
+	var action_names = ["🎒 乾坤背包", "👤 人物属性", "📜 法术面板"]
+	var action_keys = ["inventory", "character", "spellbook"]
+	for i in range(3):
+		var lbl = Label.new()
+		lbl.text = action_names[i]
+		lbl.custom_minimum_size = Vector2(100, 32)
+		lbl.vertical_alignment = 1
+		lbl.add_theme_font_size_override("font_size", 11)
+		key_grid.add_child(lbl)
+		
+		var btn = Button.new()
+		btn.name = "Btn_" + action_keys[i]
+		btn.custom_minimum_size = Vector2(130, 32)
+		btn.focus_mode = Control.FOCUS_NONE
+		btn.add_theme_stylebox_override("normal", style_normal)
+		btn.add_theme_stylebox_override("hover", style_hover)
+		btn.add_theme_font_size_override("font_size", 11)
+		
+		var act = action_keys[i]
+		btn.pressed.connect(func(): _start_key_rebind(act))
+		key_grid.add_child(btn)
+		
+	# 底部重设提示
+	var keys_tip = Label.new()
+	keys_tip.text = "点击上面按钮条目，按下键盘任意按键进行重映射\n按 F1 键 / Esc 键可随时退出当前设置面板"
+	keys_tip.anchors_preset = 7
+	keys_tip.anchor_left = 0.5
+	keys_tip.anchor_top = 1.0
+	keys_tip.anchor_right = 0.5
+	keys_tip.anchor_bottom = 1.0
+	keys_tip.offset_left = -140
+	keys_tip.offset_top = -52
+	keys_tip.offset_right = 140
+	keys_tip.offset_bottom = -10
+	keys_tip.horizontal_alignment = 1
+	keys_tip.add_theme_font_size_override("font_size", 9)
+	keys_tip.add_theme_color_override("font_color", Color(1, 1, 1, 0.45))
+	keybinds_panel.add_child(keys_tip)
+	
+	# 4. 在背包 InventoryPanel 右上角动态加装一个 ⚙️ 按钮，点击唤起设置
+	var gear_btn = Button.new()
+	gear_btn.name = "GearSettingsBtn"
+	gear_btn.text = "⚙️ 热键重置"
+	gear_btn.focus_mode = Control.FOCUS_NONE
+	gear_btn.custom_minimum_size = Vector2(90, 26)
+	gear_btn.offset_left = 390
+	gear_btn.offset_top = 10
+	gear_btn.add_theme_stylebox_override("normal", style_equip)
+	gear_btn.add_theme_stylebox_override("hover", style_hover)
+	gear_btn.add_theme_font_size_override("font_size", 10)
+	gear_btn.pressed.connect(func(): toggle_keybinds_panel())
+	inventory_panel.add_child(gear_btn)
+
+# --- 辅助方法：进入重映射录入状态 ---
+func _start_key_rebind(action: String) -> void:
+	is_rebinding_action = action
+	_update_keybind_buttons_ui()
+	
+	# 更新目标按钮文字为提示状态
+	var grid = keybinds_panel.get_node("KeyGrid") as GridContainer
+	var btn = grid.get_node("Btn_" + action) as Button
+	btn.text = "[ 请输入按键... ]"
+	btn.add_theme_color_override("font_color", Color(0.9, 0.7, 0.1))
+
+# --- 辅助方法：刷新重映射面板按键显示 ---
+func _update_keybind_buttons_ui() -> void:
+	if keybinds_panel == null:
+		return
+	var grid = keybinds_panel.get_node("KeyGrid") as GridContainer
+	
+	var btn_inv = grid.get_node("Btn_inventory") as Button
+	btn_inv.text = OS.get_keycode_string(key_inventory)
+	btn_inv.remove_theme_color_override("font_color")
+	
+	var btn_char = grid.get_node("Btn_character") as Button
+	btn_char.text = OS.get_keycode_string(key_character)
+	btn_char.remove_theme_color_override("font_color")
+	
+	var btn_spell = grid.get_node("Btn_spellbook") as Button
+	btn_spell.text = OS.get_keycode_string(key_spellbook)
+	btn_spell.remove_theme_color_override("font_color")
+
+# --- 辅助方法：刷新人物属性内容 ---
+func _update_character_data_ui() -> void:
+	if character_panel == null or stats == null:
+		return
+		
+	var main_vbox = character_panel.get_node("MainVBox") as VBoxContainer
+	if main_vbox == null:
+		return
+		
+	# 1. 刷新五行先天灵根显示
+	var root_grid = main_vbox.get_node("RootGrid") as GridContainer
+	if root_grid:
+		root_grid.get_node("Root_金").text = "金: " + str(stats.root_gold)
+		root_grid.get_node("Root_木").text = "木: " + str(stats.root_wood)
+		root_grid.get_node("Root_水").text = "水: " + str(stats.root_water)
+		root_grid.get_node("Root_火").text = "火: " + str(stats.root_fire)
+		root_grid.get_node("Root_土").text = "土: " + str(stats.root_earth)
+
+	# 2. 刷新未分配点数显示
+	var pts_hb = main_vbox.get_child(2) as HBoxContainer # base_title_hb
+	if pts_hb:
+		var pts_lbl = pts_hb.get_node("PointsLabel") as Label
+		pts_lbl.text = " (未分配感悟点: " + str(attribute_points) + ")"
+
+	# 3. 刷新六围凡身根基显示
+	var attr_grid = main_vbox.get_node("AttrGrid") as GridContainer
+	if attr_grid:
+		attr_grid.get_node("Val_comprehension").text = str(stats.comprehension)
+		attr_grid.get_node("Val_aptitude").text = str(stats.aptitude)
+		attr_grid.get_node("Val_constitution").text = str(stats.constitution)
+		attr_grid.get_node("Val_strength").text = str(stats.strength)
+		attr_grid.get_node("Val_speed").text = str(stats.speed)
+		attr_grid.get_node("Val_divine_sense").text = str(stats.divine_sense)
+		
+		# 控制加点按钮的可用性：无点数时置灰隐藏或禁用，保证体验
+		# 控制加点与减点按钮的可用性
+		var attrs_keys = ["comprehension", "aptitude", "constitution", "strength", "speed", "divine_sense"]
+		for k in attrs_keys:
+			var hb = attr_grid.get_node("HB_" + k)
+			if hb:
+				var btn_plus = hb.get_node("Btn_" + k) as Button
+				if btn_plus:
+					btn_plus.disabled = (attribute_points <= 0)
+				var btn_minus = hb.get_node("Btn_minus_" + k) as Button
+				if btn_minus and stats:
+					btn_minus.disabled = (stats.get(k) <= 10)
+
+	# 4. 刷新衍生修仙数据面板
+	var deriv_lbl = main_vbox.get_node("Derivations") as Label
+	if deriv_lbl:
+		var has_weapon = equipment_comp.slots[0] != null
+		var ground_spd = 5.0 * stats.get_speed_multiplier()
+		var fly_spd = 16.0 * stats.get_speed_multiplier()
+		var range_val = stats.get_interaction_range()
+		var phys_dmg = 20 + (stats.strength - 10) * 2 # 力量影响剑击伤害
+		
+		deriv_lbl.text = (
+			"🩸 气血上限: " + str(stats.max_health) + " HP (" + str(stats.current_health) + "当前)\n" +
+			"🌀 法力上限: " + str(stats.max_mana) + " MP (" + str(stats.current_mana) + "当前)\n" +
+			"⚡ 陆地跑速 / 御风飞速: " + ("%.1f" % ground_spd) + " / " + ("%.1f" % fly_spd) + " m/s\n" +
+			"👁️ 神识探测距离 (隔空拾取): " + ("%.2f" % range_val) + " 米\n" +
+			"⚔️ 物理砍击威力 (力量加成): " + str(phys_dmg) + " 伤害\n" +
+			"🛡️ 已持神兵: " + ("【" + equipment_comp.slots[0].id + "】" if has_weapon else "【 空手 】")
+		)
+
+# --- 辅助方法：刷新法术秘籍内容 ---
+func _update_spellbook_data_ui() -> void:
+	if spellbook_panel == null or spells == null:
+		return
+		
+	var left_vbox = spellbook_panel.get_node("LeftSpellVBox") as VBoxContainer
+	var right_vbox = spellbook_panel.get_node("RightSpellVBox") as VBoxContainer
+	if left_vbox == null or right_vbox == null:
+		return
+		
+	# 清空已有 Label 
+	for child in left_vbox.get_children():
+		child.queue_free()
+	for child in right_vbox.get_children():
+		child.queue_free()
+		
+	# 构建左右分栏列表标题
+	var left_title = Label.new()
+	left_title.text = "👈 左手法术印相 (Q切换)"
+	left_title.add_theme_font_size_override("font_size", 11)
+	left_title.add_theme_color_override("font_color", Color(0.9, 0.7, 0.1))
+	left_vbox.add_child(left_title)
+	
+	var right_title = Label.new()
+	right_title.text = "👉 右手神通诀窍 (E切换)"
+	right_title.add_theme_font_size_override("font_size", 11)
+	right_title.add_theme_color_override("font_color", Color(0.9, 0.7, 0.1))
+	right_vbox.add_child(right_title)
+	
+	# 遍历输出列表
+	for spell in spells.left_spells:
+		var lbl = Label.new()
+		lbl.text = "  " + spell["icon"] + " " + spell["name"] + "  (" + str(spell["mana_cost"]) + " MP)"
+		lbl.add_theme_font_size_override("font_size", 10)
+		lbl.add_theme_color_override("font_color", Color(0.9, 0.92, 0.95))
+		left_vbox.add_child(lbl)
+		
+	for spell in spells.right_spells:
+		var lbl = Label.new()
+		lbl.text = "  " + spell["icon"] + " " + spell["name"] + "  (" + str(spell["mana_cost"]) + " MP)"
+		lbl.add_theme_font_size_override("font_size", 10)
+		lbl.add_theme_color_override("font_color", Color(0.9, 0.92, 0.95))
+		right_vbox.add_child(lbl)
+
+# --- 辅助方法：一键同步鼠标与控制捕获状态机 ---
+func _update_mouse_and_controls_state() -> void:
+	var any_visible = (
+		inventory_panel.visible or 
+		(character_panel != null and character_panel.visible) or 
+		(spellbook_panel != null and spellbook_panel.visible) or 
+		(keybinds_panel != null and keybinds_panel.visible)
+	)
+	
+	if any_visible:
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	else:
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+
+# ==============================================================================
+# 【RPG UI 多视窗开关切换逻辑】
+# ==============================================================================
+func toggle_character_panel() -> void:
+	if character_panel == null:
+		return
+	character_panel.visible = !character_panel.visible
+	if character_panel.visible:
+		if keybinds_panel: keybinds_panel.visible = false
+		_update_character_data_ui()
+		show_notification("开启人物属性面板")
+	else:
+		show_notification("关闭人物属性面板")
+		held_attribute = ""
+	_update_mouse_and_controls_state()
+
+func toggle_spellbook_panel() -> void:
+	if spellbook_panel == null:
+		return
+	spellbook_panel.visible = !spellbook_panel.visible
+	if spellbook_panel.visible:
+		if keybinds_panel: keybinds_panel.visible = false
+		_update_spellbook_data_ui()
+		show_notification("开启法术秘籍面板")
+	else:
+		show_notification("关闭法术秘籍面板")
+	_update_mouse_and_controls_state()
+
+func toggle_keybinds_panel() -> void:
+	if keybinds_panel == null:
+		return
+	keybinds_panel.visible = !keybinds_panel.visible
+	if keybinds_panel.visible:
+		_update_keybind_buttons_ui()
+		is_rebinding_action = ""
+		show_notification("开启热键重设配置")
+	else:
+		is_rebinding_action = ""
+		show_notification("收起设置面板")
+	_update_mouse_and_controls_state()
+
+# ==============================================================================
+# 【输入驱动与选中移动】
+# ==============================================================================
+func handle_unhandled_input(event: InputEvent) -> void:
+	if is_rebinding_action != "" and event is InputEventKey and event.pressed:
+		var new_keycode = event.keycode
+		if is_rebinding_action == "inventory":
+			key_inventory = new_keycode
+		elif is_rebinding_action == "character":
+			key_character = new_keycode
+		elif is_rebinding_action == "spellbook":
+			key_spellbook = new_keycode
+			
+		is_rebinding_action = ""
+		_update_keybind_buttons_ui()
+		_update_spell_wheels_ui()
+		get_viewport().set_input_as_handled()
+		return
+
+	var is_any_panel_open = inventory_panel.visible or (character_panel and character_panel.visible) or (spellbook_panel and spellbook_panel.visible) or (keybinds_panel and keybinds_panel.visible)
+
+	if not is_any_panel_open:
+		if event is InputEventMouseButton and event.pressed:
+			var target_hotbar_idx = -1
+			if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+				target_hotbar_idx = (active_hotbar_index - 1 + 9) % 9
+			elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+				target_hotbar_idx = (active_hotbar_index + 1) % 9
+			
+			if target_hotbar_idx != -1:
+				active_hotbar_index = target_hotbar_idx
+				update_hotbar_ui()
+				get_viewport().set_input_as_handled()
+				return
+		elif event is InputEventKey and event.pressed and event.keycode >= KEY_1 and event.keycode <= KEY_9:
+			active_hotbar_index = event.keycode - KEY_1
+			update_hotbar_ui()
+			get_viewport().set_input_as_handled()
+			return
+
+func _validate_equip_slot_type(slot_idx: int, item_id: String) -> bool:
+	var item_meta = ItemDatabase.get_item(item_id)
+	var type = item_meta.get("type", "potion")
+	
+	if slot_idx == 0: # 武器位
+		if type != "weapon":
+			show_notification("该位置只能装配 ⚔️武器 类物品！")
+			return false
+	elif slot_idx == 1: # 法衣
+		if type != "armor":
+			show_notification("该位置只能装配 🥋法衣 类物品！")
+			return false
+	elif slot_idx == 2: # 盾牌
+		if type != "shield":
+			show_notification("该位置只能装配 🛡️盾牌 类物品！")
+			return false
+	elif slot_idx == 3: # 法宝
+		if type != "charm":
+			show_notification("该位置只能装配 📿法宝 类物品！")
+			return false
+	return true
+
+# ==============================================================================
+# 【UI 更新刷新器】
+# ==============================================================================
+func update_inventory_ui() -> void:
+	# 刷新渲染 20 个背包格子
+	for i in range(20):
+		var slot_btn = bag_grid.get_child(i) as Button
+		var icon_lbl = slot_btn.get_node("Icon") as Label
+		var qty_lbl = slot_btn.get_node("Qty") as Label
+		
+		var data = inventory_comp.slots[i]
+		if data != null:
+			var item_meta = ItemDatabase.get_item(data.id)
+			icon_lbl.text = item_meta["icon"]
+			qty_lbl.text = "x" + str(data.qty)
+			
+			# 自适应炫酷背光
+			var style_item = style_normal.duplicate() as StyleBoxFlat
+			style_item.bg_color = item_meta["color"]
+			slot_btn.add_theme_stylebox_override("normal", style_item)
+		else:
+			icon_lbl.text = ""
+			qty_lbl.text = ""
+			slot_btn.add_theme_stylebox_override("normal", style_normal)
+
+func update_hotbar_ui() -> void:
+	# 刷新渲染 9 个快捷栏格子
+	for i in range(9):
+		var slot_btn = hotbar_grid.get_child(i) as Button
+		var icon_lbl = slot_btn.get_node("Icon") as Label
+		var qty_lbl = slot_btn.get_node("Qty") as Label
+		
+		var data = hotbar_comp.slots[i]
+		
+		# 样式判定：如果是当前激活的索引格子，挂载金品高亮框
+		if i == active_hotbar_index:
+			slot_btn.add_theme_stylebox_override("normal", style_active)
+		else:
+			if data != null:
+				var item_meta = ItemDatabase.get_item(data.id)
+				var style_item = style_normal.duplicate() as StyleBoxFlat
+				style_item.bg_color = item_meta["color"]
+				slot_btn.add_theme_stylebox_override("normal", style_item)
+			else:
+				slot_btn.add_theme_stylebox_override("normal", style_normal)
+				
+		if data != null:
+			icon_lbl.text = ItemDatabase.get_item(data.id)["icon"]
+			qty_lbl.text = str(data.qty)
+		else:
+			icon_lbl.text = ""
+			qty_lbl.text = ""
+			
+	# 更新手持标题
+	var active_data = hotbar_comp.slots[active_hotbar_index]
+	if active_data != null:
+		active_item_label.text = "手持准备：【" + active_data.id + "】"
+	else:
+		active_item_label.text = "手持准备：【 空手 】"
+		
+	# 同步双手 3D 持握渲染
+
+# V0.0005.1 新增：装备格 UI 渲染
+func update_equipment_ui() -> void:
+	if equipment_comp == null:
+		return
+		
+	var equip_names = ["⚔️ 武器", "🥋 法衣", "🛡️ 盾牌", "📿 法宝"]
+	for i in range(4):
+		var slot_btn = equipment_grid.get_child(i) as Button
+		var lbl = slot_btn.get_child(0) as Label
+		
+		var data = equipment_comp.slots[i]
+		if data != null:
+			var item_meta = ItemDatabase.get_item(data.id)
+			lbl.text = item_meta["icon"] + " " + data.id
+			lbl.add_theme_color_override("font_color", Color(1, 1, 1, 1.0))
+			
+			var style_item = style_equip.duplicate() as StyleBoxFlat
+			style_item.bg_color = item_meta["color"]
+			slot_btn.add_theme_stylebox_override("normal", style_item)
+		else:
+			lbl.text = equip_names[i]
+			lbl.add_theme_color_override("font_color", Color(1, 1, 1, 0.35))
+			slot_btn.add_theme_stylebox_override("normal", style_equip)
+			
+	# 同步双手 3D 持握渲染
+
+# 内部辅助同步：将装备和快捷栏状态路由至 Viewmodel 模块
+
+func add_item(item_id: String, amount: int = 1) -> void:
+	# 1. 尝试路由叠放进快捷栏
+	var remaining = hotbar_comp.add_item(item_id, amount)
+	# 2. 剩余的尝试路由进背包
+	if remaining > 0:
+		remaining = inventory_comp.add_item(item_id, remaining)
+		
+	if remaining > 0:
+		show_notification("乾坤袋与快捷栏已满，装不下啦！")
+		print("【背包系统】物品拾取失败，容器已满！")
+	else:
+		print("【背包系统】玩家智能收纳物品：", item_id, " x", amount)
+		update_inventory_ui()
+		update_hotbar_ui()
+		update_equipment_ui()
+
+# ==============================================================================
+# 【快捷使用核心消耗绑定逻辑 (常规/特殊战术使用)】
+# ==============================================================================
+
+# 在 Tab 包裹内点击背包格子时：拿起、放下或交换物品 (Minecraft 风格)
+func _on_bag_slot_clicked(idx: int) -> void:
+	var data = inventory_comp.slots[idx]
+	
+	# 状态 A：鼠标是空的
+	if carried_item == null:
+		if data != null:
+			carried_item = data
+			inventory_comp.clear_slot(idx)
+			print("【物品起吊】从背包拿起：", carried_item.id, " x", carried_item.qty)
+	# 状态 B：鼠标上正提着物品
+	else:
+		if data == null:
+			inventory_comp.set_slot(idx, carried_item.id, carried_item.qty)
+			carried_item = null
+			print("【物品安放】放入背包空槽位")
+		else:
+			if data.id == carried_item.id:
+				inventory_comp.set_slot(idx, data.id, data.qty + carried_item.qty)
+				carried_item = null
+				print("【物品合并】背包同类叠放合并")
+			else:
+				var temp = data
+				inventory_comp.set_slot(idx, carried_item.id, carried_item.qty)
+				carried_item = temp
+				print("【物品对调】背包格子与鼠标手持交换")
+				
+	update_inventory_ui()
+	update_hotbar_ui()
+	update_equipment_ui()
+
+# 在 Tab 包裹内点击快捷栏格子时：拿起、放下或交换物品 (Minecraft 风格)
+func _on_hotbar_slot_clicked(idx: int) -> void:
+	var data = hotbar_comp.slots[idx]
+	
+	# 状态 A：鼠标是空的
+	if carried_item == null:
+		if data != null:
+			carried_item = data
+			hotbar_comp.clear_slot(idx)
+			print("【物品起吊】从快捷栏拿起：", carried_item.id, " x", carried_item.qty)
+	# 状态 B：鼠标上正提着物品
+	else:
+		if data == null:
+			hotbar_comp.set_slot(idx, carried_item.id, carried_item.qty)
+			carried_item = null
+			print("【物品安放】放入快捷栏空槽位")
+		else:
+			if data.id == carried_item.id:
+				hotbar_comp.set_slot(idx, data.id, data.qty + carried_item.qty)
+				carried_item = null
+				print("【物品合并】快捷栏同类叠放合并")
+			else:
+				var temp = data
+				hotbar_comp.set_slot(idx, carried_item.id, carried_item.qty)
+				carried_item = temp
+				print("【物品对调】快捷栏与鼠标手持交换")
+				
+	update_inventory_ui()
+	update_hotbar_ui()
+	update_equipment_ui()
+
+# 在 Tab 包裹内点击装备栏格子时
+func _on_equip_slot_clicked(idx: int) -> void:
+	var data = equipment_comp.slots[idx]
+	
+	# 状态 A：鼠标是空的
+	if carried_item == null:
+		if data != null:
+			carried_item = data
+			equipment_comp.clear_slot(idx)
+			print("【装备起吊】从装备栏拿起：", carried_item.id)
+	# 状态 B：鼠标上正提着物品
+	else:
+		# 类型合法性校验防呆
+		if _validate_equip_slot_type(idx, carried_item.id):
+			if data == null:
+				equipment_comp.set_slot(idx, carried_item.id, carried_item.qty)
+				carried_item = null
+				print("【装备安放】放入装备槽位")
+			else:
+				var temp = data
+				equipment_comp.set_slot(idx, carried_item.id, carried_item.qty)
+				carried_item = temp
+				print("【装备对调】装备槽与鼠标物品交换")
+				
+	update_inventory_ui()
+	update_hotbar_ui()
+	update_equipment_ui()
+
+# 背包关闭状态，左键空气消耗手持物品
+func use_active_hotbar_item() -> void:
+	if viewmodel:
+		viewmodel.trigger_right_swing()
+	
+	var data = hotbar_comp.slots[active_hotbar_index]
+	if data == null:
+		show_notification("手无寸铁！按 Tab 物品上点击抓起安放到快捷栏")
+		return
+		
+	var success = _execute_item_consume(data.id)
+	if success:
+		var rem = data.qty - 1
+		hotbar_comp.set_slot(active_hotbar_index, data.id, rem)
+		show_notification("消耗了【" + data.id + "】 (剩余 " + str(rem) + " 个)")
+		update_inventory_ui()
+		update_hotbar_ui()
+		update_equipment_ui()
+
+# 背包关闭状态，右键空气特殊消耗手持物品 (双倍品尝/附魔)
+func special_use_active_hotbar_item() -> void:
+	if viewmodel:
+		viewmodel.trigger_right_swing()
+	
+	var data = hotbar_comp.slots[active_hotbar_index]
+	if data == null:
+		show_notification("右击失败：手中没有任何物品进行战术品尝/施放")
+		return
+		
+	var success = _execute_item_special_consume(data.id)
+	if success:
+		var rem = data.qty - 1
+		hotbar_comp.set_slot(active_hotbar_index, data.id, rem)
+		show_notification("特殊品尝【" + data.id + "】 (双倍药效触发！)")
+		update_inventory_ui()
+		update_hotbar_ui()
+		update_equipment_ui()
+
+# 纯数据驱动的常规消耗效果应用接口
+func _execute_item_consume(item_id: String) -> bool:
+	var effects = ItemDatabase.get_effects(item_id)
+	if effects.is_empty():
+		return true
+		
+	if effects.has("heal") and effects["heal"] > 0:
+		if stats.current_health >= stats.max_health:
+			show_notification("生命值已满，无需使用！")
+			return false
+	if HTML5_or_mana_full_check(effects):
+		return false
+		
+	for type in effects:
+		var val = effects[type]
+		if type == "heal":
+			stats.heal(val)
+		elif type == "restore_mana":
+			stats.restore_mana(val)
+	return true
+
+# 数据驱动的特殊战术效果应用接口
+func _execute_item_special_consume(item_id: String) -> bool:
+	var effects = ItemDatabase.get_special_effects(item_id)
+	if effects.is_empty():
+		return true
+		
+	if Pala_heal_mana_check(effects):
+		return false
+		
+	for type in effects:
+		var val = effects[type]
+		if type == "heal":
+			stats.heal(val)
+		elif type == "restore_mana":
+			stats.restore_mana(val)
+		elif type == "poison_weapon":
+			print("【战术淬毒】剧毒淬在武器上，下一次攻击触发毒蚀效果！")
+			show_notification("淬毒成功！ (获得下一次高阶剧毒反蚀)")
+	return true
+
+# 灵力全满辅助校验函数
+func HTML5_or_mana_full_check(effects: Dictionary) -> bool:
+	if effects.has("restore_mana") and HTML5_or_mana_full_check_sub(effects):
+		show_notification("灵力值已满，无需使用！")
+		return true
+	return false
+
+func Pala_heal_mana_check(effects: Dictionary) -> bool:
+	if effects.has("heal") and effects["heal"] > 0:
+		if stats.current_health >= stats.max_health:
+			show_notification("生命值已满，无需使用！")
+			return true
+	if effects.has("restore_mana") and HTML5_or_mana_full_check_sub(effects):
+		show_notification("灵力值已满，无需使用！")
+		return true
+	return false
+
+func HTML5_or_mana_full_check_sub(effects: Dictionary) -> bool:
+	return effects["restore_mana"] > 0 and stats.current_mana >= stats.max_mana
+
+# 背包的开启与关闭状态管理
+func toggle_inventory() -> void:
+	inventory_panel.visible = !inventory_panel.visible
+	
+	if inventory_panel.visible:
+		# 关闭其他面板以防重叠
+		if character_panel: character_panel.visible = false
+		if spellbook_panel: spellbook_panel.visible = false
+		if keybinds_panel: keybinds_panel.visible = false
+		
+		hovered_bag_index = -1
+		hovered_hotbar_index = -1
+		hovered_equip_index = -1
+		update_inventory_ui()
+		update_hotbar_ui()
+		update_equipment_ui()
+		show_notification("开启物品包裹 (鼠标点击悬浮拿起，悬停按1-9可对调)")
+	else:
+		if carried_item != null:
+			add_item(carried_item.id, carried_item.qty)
+			carried_item = null
+		if carried_visual:
+			carried_visual.visible = false
+			
+		show_notification("收起物品包裹")
+		
+	_update_mouse_and_controls_state()
+
+func _on_health_changed(current: int, max_val: int) -> void:
+	if health_bar:
+		health_bar.max_value = max_val
+		health_bar.value = current
+	if hp_val_label:
+		if current < max_val:
+			hp_val_label.text = str(current) + "/" + str(max_val)
+			hp_val_label.visible = true
+		else:
+			hp_val_label.visible = false
+	
+	# 实时同步刷新人物面板数据（如果开启的话）
+	_update_character_data_ui()
+
+func _on_mana_changed(current: int, max_val: int) -> void:
+	if mana_bar:
+		mana_bar.max_value = max_val
+		mana_bar.value = current
+	if mp_val_label:
+		if current < max_val:
+			mp_val_label.text = str(current) + "/" + str(max_val)
+			mp_val_label.visible = true
+		else:
+			mp_val_label.visible = false
+			
+	# 实时同步刷新人物面板数据
+	_update_character_data_ui()
+
+func show_notification(text: String) -> void:
+	if notification_label:
+		notification_label.text = text
+		notification_label.modulate.a = 1.0
+		
+		var tween = create_tween()
+		tween.tween_property(notification_label, "modulate:a", 0.0, 2.0).set_delay(1.0)
+
+func show_dialogue(speaker: String, text: String) -> void:
+	# 若对话框未被创建，则程序化构建一个优雅的 HUD 对话组件
+	if not $HUD.has_node("DialoguePanel"):
+		dialogue_panel = Panel.new()
+		dialogue_panel.name = "DialoguePanel"
+		$HUD.add_child(dialogue_panel)
+		
+		# 极简配置：底中锚定，避让底部的快捷栏 (快捷栏高 60, offset -75 ~ -15)
+		dialogue_panel.set_anchors_preset(7) # 7 代表 PRESET_BOTTOM_CENTER，避开引擎版本枚举定义差异
+		dialogue_panel.grow_horizontal = 2 # 2 代表 GROW_DIRECTION_BOTH
+		dialogue_panel.grow_vertical = 0 # 0 代表 GROW_DIRECTION_BEGIN
+		
+		# 定制 3D 国风对话框尺寸：640 x 120
+		dialogue_panel.custom_minimum_size = Vector2(640, 120)
+		dialogue_panel.size = Vector2(640, 120)
+		
+		# 强制手动重置位置，确保完美水平居中且垂直方向位于快捷栏上方
+		var vp_size = get_viewport().get_visible_rect().size
+		dialogue_panel.position = Vector2((vp_size.x - 640) / 2.0, vp_size.y - 230)
+		
+		# 采用 StyleBoxFlat 程序化重绘：暗色半透背景、金色细边框与柔和圆角阴影
+		var style = StyleBoxFlat.new()
+		style.bg_color = Color(0.06, 0.06, 0.08, 0.9)
+		style.border_width_left = 1
+		style.border_width_top = 1
+		style.border_width_right = 1
+		style.border_width_bottom = 1
+		style.border_color = Color(0.9, 0.72, 0.15, 0.65) # 亮丽微发光金色
+		style.corner_radius_top_left = 8
+		style.corner_radius_top_right = 8
+		style.corner_radius_bottom_left = 8
+		style.corner_radius_bottom_right = 8
+		style.shadow_color = Color(0, 0, 0, 0.45)
+		style.shadow_size = 8
+		dialogue_panel.add_theme_stylebox_override("panel", style)
+		
+		# A. 创建说话人姓名 Label
+		var speaker_label = Label.new()
+		speaker_label.name = "SpeakerLabel"
+		speaker_label.text = speaker
+		speaker_label.add_theme_color_override("font_color", Color(0.95, 0.75, 0.15)) # 东方古风金
+		speaker_label.add_theme_font_size_override("font_size", 16)
+		speaker_label.position = Vector2(24, 14)
+		dialogue_panel.add_child(speaker_label)
+		
+		# B. 创建对白内容 Label，开启智能自动换行
+		var text_label = Label.new()
+		text_label.name = "TextLabel"
+		text_label.text = text
+		text_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		text_label.add_theme_color_override("font_color", Color(0.92, 0.92, 0.94))
+		text_label.add_theme_font_size_override("font_size", 14)
+		text_label.position = Vector2(24, 44)
+		text_label.size = Vector2(592, 62)
+		dialogue_panel.add_child(text_label)
+	else:
+		dialogue_panel = $HUD/DialoguePanel
+		var vp_size = get_viewport().get_visible_rect().size
+		dialogue_panel.position = Vector2((vp_size.x - 640) / 2.0, vp_size.y - 230)
+		
+		var speaker_label = dialogue_panel.get_node("SpeakerLabel") as Label
+		var text_label = dialogue_panel.get_node("TextLabel") as Label
+		speaker_label.text = speaker
+		text_label.text = text
+		
+	# 激活动态缓入动效 (Fade In)
+	dialogue_panel.visible = true
+	dialogue_panel.modulate.a = 0.0
+	var fade_in = create_tween()
+	fade_in.tween_property(dialogue_panel, "modulate:a", 1.0, 0.22)
+	
+	# 定时淡出释放机制，采用自增唯一作用域防止高频交互闭包干扰
+	var current_panel = dialogue_panel
+	dialogue_timer = get_tree().create_timer(4.5)
+	
+	# 对闭包内部进行自比对引用校验
+	var timer_ref = dialogue_timer
+	dialogue_timer.timeout.connect(func():
+		# 只有当当前的定时器依然是全局最晚的那个时，才执行淡出，防止多次点击导致闪烁
+		if dialogue_timer == timer_ref and is_instance_valid(current_panel) and current_panel.visible:
+			var fade_out = create_tween()
+			fade_out.tween_property(current_panel, "modulate:a", 0.0, 0.45)
+			fade_out.chain().tween_callback(func(): current_panel.visible = false)
+	)
+
+# --- V0.0007: 修仙加点与神识范围、属性重置辅助方法 ---
+func _allocate_attribute_point(attr_key: String, silent: bool = false) -> void:
+	if attribute_points <= 0:
+		if not silent:
+			show_notification("感悟已至瓶颈，无可分配点数！")
+		return
+		
+	if stats and attr_key in stats:
+		stats.set(attr_key, stats.get(attr_key) + 1)
+		attribute_points -= 1
+		
+		# 动态重算属性值
+		stats.recalculate()
+		
+		# 同步广播最新气血上限
+		stats.health_changed.emit(stats.current_health, stats.max_health)
+		stats.mana_changed.emit(stats.current_mana, stats.max_mana)
+		
+		# 立刻同步探测范围
+			
+		# 刷新面板UI
+		_update_character_data_ui()
+		if not silent:
+			show_notification("感悟突破！【" + _get_attribute_name_chinese(attr_key) + "】提升了 1 点")
+
+func _deallocate_attribute_point(attr_key: String, silent: bool = false) -> void:
+	if stats and attr_key in stats:
+		var current_val = stats.get(attr_key)
+		if current_val <= 10:
+			if not silent:
+				show_notification("属性已达凡身根基下限！")
+			return
+			
+		stats.set(attr_key, current_val - 1)
+		attribute_points += 1
+		
+		# 动态重算属性值
+		stats.recalculate()
+		
+		# 同步广播最新气血上限
+		stats.health_changed.emit(stats.current_health, stats.max_health)
+		stats.mana_changed.emit(stats.current_mana, stats.max_mana)
+		
+		# 立刻同步探测范围
+			
+		# 刷新面板UI
+		_update_character_data_ui()
+		if not silent:
+			show_notification("感悟收回！【" + _get_attribute_name_chinese(attr_key) + "】降低了 1 点")
+
+func _reset_attributes() -> void:
+	if stats:
+		stats.comprehension = 10
+		stats.aptitude = 10
+		stats.constitution = 10
+		stats.strength = 10
+		stats.speed = 10
+		stats.divine_sense = 10
+		
+		attribute_points = 1000
+		stats.recalculate()
+		
+		# 状态回满
+		stats.current_health = stats.max_health
+		stats.current_mana = stats.max_mana
+		stats.health_changed.emit(stats.current_health, stats.max_health)
+		stats.mana_changed.emit(stats.current_mana, stats.max_mana)
+		
+		_update_character_data_ui()
+		show_notification("调试洗点：已重置道基，返还 1000 点感悟点！")
+
+func _get_attribute_name_chinese(attr_key: String) -> String:
+	match attr_key:
+		"comprehension": return "悟性"
+		"aptitude": return "资质"
+		"constitution": return "体力"
+		"strength": return "力量"
+		"speed": return "速度"
+		"divine_sense": return "神识"
+	return attr_key

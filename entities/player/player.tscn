@@ -1,0 +1,371 @@
+[gd_scene load_steps=8 format=3 uid="uid://c1yv4yexs2rgy"]
+
+[ext_resource type="Script" path="res://entities/player/player.gd" id="1_player"]
+
+[ext_resource type="Script" path="res://entities/player/components/movement_comp.gd" id="mov_comp"]
+[ext_resource type="Script" path="res://entities/player/components/camera_comp.gd" id="cam_comp"]
+[ext_resource type="Script" path="res://entities/player/components/flight_comp.gd" id="fly_comp"]
+[ext_resource type="Script" path="res://entities/player/components/combat_comp.gd" id="com_comp"]
+[ext_resource type="Script" path="res://entities/player/components/interact_comp.gd" id="int_comp"]
+[ext_resource type="Script" path="res://components/stats.gd" id="2_stats"]
+[ext_resource type="Script" path="res://components/inventory_component.gd" id="3_inventory"]
+[ext_resource type="Script" path="res://entities/player/components/ui/hud_manager.gd" id="20_hud"]
+[ext_resource type="Script" path="res://entities/player/components/ui/inventory_ui.gd" id="21_inv"]
+[ext_resource type="Script" path="res://entities/player/components/ui/hotbar_ui.gd" id="22_hot"]
+[ext_resource type="Script" path="res://entities/player/components/ui/status_bars_ui.gd" id="23_stat"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1"]
+radius = 0.5
+height = 2.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hp_fill"]
+bg_color = Color(0.9, 0.16, 0.22, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mp_fill"]
+bg_color = Color(0, 0.68, 0.9, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
+bg_color = Color(0.06, 0.06, 0.08, 0.6)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 1, 1, 0.1)
+
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_player"]
+albedo_color = Color(0.2, 0.6, 1, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sword"]
+albedo_color = Color(0.8, 0.9, 1, 1)
+emission_enabled = true
+emission = Color(0.4, 0.8, 1, 1)
+emission_energy_multiplier = 2.0
+
+[node name="Player" type="CharacterBody3D"]
+
+script = ExtResource("1_player")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_1")
+
+[node name="Head" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Head"]
+
+[node name="InteractionRay" type="RayCast3D" parent="Head/Camera3D"]
+target_position = Vector3(0, 0, -2.5)
+collide_with_areas = true
+
+[node name="HUD" type="CanvasLayer" parent="."]
+script = ExtResource("20_hud")
+
+[node name="StatusBars" type="Control" parent="HUD"]
+script = ExtResource("23_stat")
+
+
+[node name="Crosshair" type="Label" parent="HUD"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="NotificationLabel" type="Label" parent="HUD"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -250.0
+offset_top = 80.0
+offset_right = 250.0
+offset_bottom = 120.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.75, 0.35, 1.0, 1)
+theme_override_font_sizes/font_size = 22
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="InventoryPanel" type="ColorRect" parent="HUD"]
+script = ExtResource("21_inv")
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -260.0
+offset_top = -225.0
+offset_right = 260.0
+offset_bottom = 225.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.08, 0.08, 0.1, 0.92)
+
+[node name="TitleLabel" type="Label" parent="HUD/InventoryPanel"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -150.0
+offset_top = 10.0
+offset_right = 150.0
+offset_bottom = 35.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.9, 0.7, 0.1, 1.0)
+theme_override_font_sizes/font_size = 18
+text = "乾 坤 袋 (物品包裹)"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CharacterPanel" type="ColorRect" parent="HUD/InventoryPanel"]
+layout_mode = 1
+offset_left = 30.0
+offset_top = 45.0
+offset_right = 180.0
+offset_bottom = 175.0
+color = Color(0.04, 0.04, 0.06, 0.6)
+
+[node name="Silhouette" type="Label" parent="HUD/InventoryPanel/CharacterPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.3)
+theme_override_font_sizes/font_size = 13
+text = "👤
+角色镜面投影"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="EquipmentGrid" type="GridContainer" parent="HUD/InventoryPanel"]
+layout_mode = 0
+offset_left = 210.0
+offset_top = 45.0
+offset_right = 490.0
+offset_bottom = 175.0
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 2
+
+[node name="BagGrid" type="GridContainer" parent="HUD/InventoryPanel"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -230.0
+offset_top = -250.0
+offset_right = 230.0
+offset_bottom = -30.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/h_separation = 15
+theme_override_constants/v_separation = 15
+columns = 5
+
+[node name="HealthBar" type="ProgressBar" parent="HUD"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 50.0
+offset_top = -60.0
+offset_right = 350.0
+offset_bottom = -35.0
+grow_vertical = 0
+theme_override_styles/background = SubResource("StyleBoxFlat_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_hp_fill")
+value = 80.0
+show_percentage = false
+
+[node name="ValueLabel" type="Label" parent="HUD/HealthBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.95)
+theme_override_font_sizes/font_size = 13
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ManaBar" type="ProgressBar" parent="HUD"]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -350.0
+offset_top = -60.0
+offset_right = -50.0
+offset_bottom = -35.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_styles/background = SubResource("StyleBoxFlat_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_mp_fill")
+value = 40.0
+show_percentage = false
+
+[node name="ValueLabel" type="Label" parent="HUD/ManaBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.95)
+theme_override_font_sizes/font_size = 13
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ActiveItemLabel" type="Label" parent="HUD"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -150.0
+offset_top = -105.0
+offset_right = 150.0
+offset_bottom = -80.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.9, 0.7, 0.1, 1.0)
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HotbarPanel" type="ColorRect" parent="HUD"]
+script = ExtResource("22_hot")
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -230.0
+offset_top = -75.0
+offset_right = 230.0
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+color = Color(0.06, 0.06, 0.08, 0.75)
+
+[node name="HotbarGrid" type="HBoxContainer" parent="HUD/HotbarPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_top = 5.0
+offset_right = -5.0
+offset_bottom = -5.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="CarriedItemVisual" type="Label" parent="HUD"]
+visible = false
+z_index = 10
+layout_mode = 1
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+horizontal_alignment = 1
+vertical_alignment = 1
+
+
+[node name="MovementComponent" type="Node" parent="."]
+script = ExtResource("mov_comp")
+character = NodePath("..")
+
+[node name="CameraComponent" type="Node" parent="."]
+script = ExtResource("cam_comp")
+character = NodePath("..")
+head = NodePath("../Head")
+camera = NodePath("../Head/Camera3D")
+
+[node name="FlightComponent" type="Node" parent="."]
+script = ExtResource("fly_comp")
+character = NodePath("..")
+camera = NodePath("../Head/Camera3D")
+head = NodePath("../Head")
+spring_arm = NodePath("../Head/SpringArm3D")
+tps_camera_pos = NodePath("../Head/SpringArm3D/TPSCameraPos")
+player_model = NodePath("../PlayerModel")
+
+[node name="CombatComponent" type="Node" parent="."]
+script = ExtResource("com_comp")
+player = NodePath("..")
+camera = NodePath("../Head/Camera3D")
+
+[node name="InteractionComponent" type="Node" parent="."]
+script = ExtResource("int_comp")
+player = NodePath("..")
+interaction_ray = NodePath("../Head/Camera3D/InteractionRay")
+combat_comp = NodePath("../CombatComponent")
+
+[node name="Stats" type="Node" parent="."]
+script = ExtResource("2_stats")
+
+[node name="Inventory" type="Node" parent="."]
+script = ExtResource("3_inventory")
+
+[node name="Hotbar" type="Node" parent="."]
+script = ExtResource("3_inventory")
+size = 9
+
+
+[node name="SpringArm3D" type="SpringArm3D" parent="Head"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+spring_length = 4.0
+margin = 0.2
+
+[node name="TPSCameraPos" type="Marker3D" parent="Head/SpringArm3D"]
+transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 0, 0, 4)
+
+[node name="PlayerModel" type="Node3D" parent="."]
+visible = false
+
+[node name="Body" type="CSGCylinder3D" parent="PlayerModel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+radius = 0.4
+height = 1.8
+material = SubResource("StandardMaterial3D_player")
+
+[node name="Sword" type="CSGBox3D" parent="PlayerModel/Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.8, 0)
+size = Vector3(0.2, 0.1, 2.5)
+material = SubResource("StandardMaterial3D_sword")
+
