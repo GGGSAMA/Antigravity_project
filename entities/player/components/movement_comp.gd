@@ -38,7 +38,7 @@ func _physics_process(delta: float) -> void:
 	var is_crouching = Input.is_key_pressed(KEY_CTRL)
 	var crouch_mult = 0.5 if is_crouching else 1.0
 	
-	var active_speed = (sprint_speed if Input.is_action_pressed("sprint") else base_speed) * speed_mult * crouch_mult
+	var active_speed = (sprint_speed * speed_mult if Input.is_action_pressed("sprint") else base_speed) * crouch_mult
 
 	# 头部下蹲动画
 	var head = character.get_node_or_null("Head")

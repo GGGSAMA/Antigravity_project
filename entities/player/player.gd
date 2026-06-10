@@ -62,10 +62,14 @@ func _ready() -> void:
 		var sophia = sophia_scene.instantiate()
 		sophia.name = "SophiaSkin"
 		sophia.rotation.y = PI # 旋转180度，让模型背对摄像机（面向正前方）
-		# 2. 清理旧的占位胶囊体
-		for child in player_model.get_children():
-			if child.name != "SophiaSkin":
-				child.queue_free()
+		# 2. 隐藏占位胶囊体，但把脚底的飞剑提出来保留
+		var body = player_model.get_node_or_null("Body")
+		if body:
+			body.visible = false
+			var sword = body.get_node_or_null("Sword")
+			if sword:
+				sword.reparent(player_model, true)
+				sword.position.y = 0.1 # 强行把飞剑放在脚底（地面上方 0.1 米），防止穿模到地下
 		# 3. 添加到树中
 		player_model.add_child(sophia)
 		# 4. 挂载动画控制器
