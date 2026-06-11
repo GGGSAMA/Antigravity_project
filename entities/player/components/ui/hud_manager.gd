@@ -63,7 +63,9 @@ func _ready():
 		dashboard.name = "DashboardUI"
 		dashboard.inventory_panel_ref = inventory_panel
 		add_child(dashboard)
-
+		# 强制将 Dashboard 插入到 hotbar_panel 之前，确保底部的快捷栏能够显示在界面上方
+		if hotbar_panel:
+			move_child(dashboard, hotbar_panel.get_index())
 func _process(delta):
 	# 更新拖拽图标和 Tooltip 的位置，使其跟随鼠标
 	if carried_item:

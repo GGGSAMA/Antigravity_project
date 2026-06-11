@@ -1,50 +1,76 @@
 {
   "小还丹": {
-	"icon": "🍶",
-	"color": "3d0d12a6",
-	"type": "potion",
-	"desc": "以百年朱砂与太乙灵泉炼制而成的辟谷小还丹，置于温润玉瓷瓶中。服用后能迅速补益法体气血。\n常规使用：恢复 20 HP；战术品尝：恢复 40 HP。",
-	"effects": { "heal": 20 },
-	"special_effects": { "heal": 40 }
+    "icon": "🍶",
+    "color": "3d0d12a6",
+    "type": "potion",
+    "desc": "以百年朱砂与太乙灵泉炼制而成的辟谷小还丹，置于温润玉瓷瓶中。服用后能迅速补益法体气血。\n常规使用：恢复 20 HP；战术品尝：恢复 40 HP。",
+    "effects": {
+      "heal": 20
+    },
+    "special_effects": {
+      "heal": 40
+    }
   },
   "聚灵散": {
-	"icon": "🍶",
-	"color": "0a2942a6",
-	"type": "potion",
-	"desc": "由聚灵草与玄清玉髓提炼而成的纯净聚灵散，置于碧青瓷瓶中。服用后能瞬间扩充丹田气海。\n常规使用：恢复 30 灵力；战术品尝：恢复 60 灵力。",
-	"effects": { "restore_mana": 30 },
-	"special_effects": { "restore_mana": 60 }
+    "icon": "🍶",
+    "color": "0a2942a6",
+    "type": "potion",
+    "desc": "由聚灵草与玄清玉髓提炼而成的纯净聚灵散，置于碧青瓷瓶中。服用后能瞬间扩充丹田气海。\n常规使用：恢复 30 灵力；战术品尝：恢复 60 灵力。",
+    "effects": {
+      "restore_mana": 30
+    },
+    "special_effects": {
+      "restore_mana": 60
+    }
   },
   "五毒散": {
-	"icon": "🏺",
-	"color": "2e0a3da6",
-	"type": "potion",
-	"desc": "采五毒毒腺研磨而成的剧毒粉末，置于粗陶小罐中。普通使用会遭致剧烈反噬；战术使用可涂抹于飞剑刀刃之上。\n常规使用：反噬扣减 30 HP；战术使用：兵刃淬毒。",
-	"effects": { "heal": -30 },
-	"special_effects": { "poison_weapon": true }
+    "icon": "🏺",
+    "color": "2e0a3da6",
+    "type": "potion",
+    "desc": "采五毒毒腺研磨而成的剧毒粉末，置于粗陶小罐中。普通使用会遭致剧烈反噬；战术使用可涂抹于飞剑刀刃之上。\n常规使用：反噬扣减 30 HP；战术使用：兵刃淬毒。",
+    "effects": {
+      "heal": -30
+    },
+    "special_effects": {
+      "poison_weapon": true
+    }
   },
   "九转金丹": {
-	"icon": "🌟",
-	"color": "42380aa6",
-	"type": "potion",
-	"desc": "修仙界传闻中的至高神丹。服用能生死人肉白骨，瞬间将元神与肉身状态回至巅峰。\n常规使用：生命与灵力完全回复。",
-	"effects": { "heal": 9999, "restore_mana": 9999 },
-	"special_effects": { "heal": 9999, "restore_mana": 9999 }
+    "icon": "🌟",
+    "color": "42380aa6",
+    "type": "potion",
+    "desc": "修仙界传闻中的至高神丹。服用能生死人肉白骨，瞬间将元神与肉身状态回至巅峰。\n常规使用：生命与灵力完全回复。",
+    "effects": {
+      "heal": 9999,
+      "restore_mana": 9999
+    },
+    "special_effects": {
+      "heal": 9999,
+      "restore_mana": 9999
+    }
   },
   "青钢剑": {
-	"icon": "🗡️",
-	"color": "2e3c4ba6",
-	"type": "weapon",
-	"desc": "以精铁与玄铜熔铸而成的三尺青锋，锋刃冰冷如霜。\n[装备位置]：⚔️武器栏\n[功能]：左键挥舞斩击。",
-	"effects": {},
-	"special_effects": {}
+    "icon": "🗡️",
+    "color": "2e3c4ba6",
+    "type": "weapon",
+    "desc": "以精铁与玄铜熔铸而成的三尺青锋，锋刃冰冷如霜。\n[装备位置]：⚔️武器栏\n[功能]：左键挥舞斩击。",
+    "effects": {},
+    "special_effects": {}
   },
   "玄铁法剑": {
-	"icon": "🪄",
-	"color": "3b1b54a6",
-	"type": "weapon",
-	"desc": "通体由千年玄铁锻造，剑身铭刻有聚灵阵法，散发着微弱的幽紫色灵光。\n[装备位置]：⚔️武器栏\n[功能]：可增幅法术，亦可左键挥舞斩击。",
-	"effects": {},
-	"special_effects": {}
+    "icon": "🪄",
+    "color": "3b1b54a6",
+    "type": "weapon",
+    "desc": "通体由千年玄铁锻造，剑身铭刻有聚灵阵法，散发着微弱的幽紫色灵光。\n[装备位置]：⚔️武器栏\n[功能]：可增幅法术，亦可左键挥舞斩击。",
+    "effects": {},
+    "special_effects": {}
+  },
+  "mystic_realm_token": {
+    "icon": "🌌",
+    "color": "1a4266a6",
+    "type": "artifact",
+    "desc": "传说中大能开辟的随身洞天信物。太玄洞天令。\n[操作]：在快捷栏中右键点击，可引动虚空之力，瞬间穿梭于大世界与随身秘境之间。",
+    "effects": {},
+    "special_effects": {}
   }
 }

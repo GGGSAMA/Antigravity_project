@@ -10,6 +10,8 @@ class_name FlightComponent
 
 @export_group("Flight Settings")
 @export var debug_speed_multiplier: float = 10.0
+@export var flight_camera_pullback: float = 2.5
+@export var flight_camera_height: float = 0.6
 
 func _ready() -> void:
 	if not character: character = get_parent() as CharacterBody3D
@@ -51,24 +53,35 @@ func _physics_process(delta: float) -> void:
 		fly_hold_time = 0.0
 	else:
 		if Input.is_action_pressed("jump") and not any_vis:
-			fly_hold_time += delta
-			if fly_hold_time >= FLIGHT_ACTIVATE_HOLD_TIME and not is_flying:
-				_set_flying(true)
+			if character.global_position.y > 40000.0:
+				fly_hold_time = 0.0 # 秘境禁飞，重置激活时间
+			else:
+				fly_hold_time += delta
+				if fly_hold_time >= FLIGHT_ACTIVATE_HOLD_TIME and not is_flying:
+					_set_flying(true)
 		else:
 			if not is_flying:
 				fly_hold_time = 0.0
 
 	# Flight Movement
 	if is_flying:
-		_handle_flight_movement(delta, any_vis)
+		if character.global_position.y > 40000.0:
+			_set_flying(false)
+			var hud = character.get_node_or_null("HUD")
+			if hud and hud.has_method("show_notification"):
+				hud.show_notification("【秘境法则】此方天地禁锢灵力，无法御空飞行！")
+		else:
+			_handle_flight_movement(delta, any_vis)
 		
 	# Camera Transition (俯瞰视角随档位拉远)
 	var target_cam_local_pos = Vector3.ZERO
 	if is_flying and spring_arm and tps_camera_pos:
 		target_cam_local_pos = head.to_local(tps_camera_pos.global_position)
-		# 根据档位和按住 Shift 的爆发力动态计算拉远和拔高
-		var pullback = current_speed_gear_float * 1.0 + dash_camera_boost * 2.0
-		var height_up = current_speed_gear_float * 0.2 + dash_camera_boost * 0.5
+		
+		# 加入基础的“御剑视角”拉远偏移量，防止镜头贴后脑勺太近
+		# 根据档位和按住 Shift 的爆发力动态计算额外拉远和拔高
+		var pullback = flight_camera_pullback + current_speed_gear_float * 1.0 + dash_camera_boost * 2.0
+		var height_up = flight_camera_height + current_speed_gear_float * 0.2 + dash_camera_boost * 0.5
 		target_cam_local_pos += Vector3(0, height_up, pullback)
 		
 	if camera:

@@ -98,6 +98,12 @@ func _ready() -> void:
 	spells.name = "Spells"
 	add_child(spells)
 
+	# 给玩家发放测试用的太玄洞天令（放入背包或快捷栏）
+	if inventory_comp:
+		inventory_comp.add_item("mystic_realm_token", 1)
+	elif hotbar_comp:
+		hotbar_comp.add_item("mystic_realm_token", 1)
+
 # ==========================================
 # 物品使用胶水层 (连接 UI 与 实际效果)
 # ==========================================
@@ -126,7 +132,25 @@ func use_active_hotbar_item() -> void:
 				hud.show_notification("服用了 " + meta.get("name", item.id))
 
 func special_use_active_hotbar_item() -> void:
-	pass # 保留给法宝/阵盘的右键特殊使用
+	var hud = get_node_or_null("HUD")
+	if hud and hud.has_node("HotbarPanel"):
+		active_hotbar_index = hud.get_node("HotbarPanel").active_index
+		
+	if active_hotbar_index >= hotbar_comp.size: return
+	
+	var item = hotbar_comp.slots[active_hotbar_index]
+	if item:
+		if item.id == "mystic_realm_token":
+			var root = get_tree().current_scene
+			if root.has_method("enter_mystic_realm"):
+				if root.in_mystic_realm:
+					root.exit_mystic_realm()
+					if hud and hud.has_method("show_notification"):
+						hud.show_notification("【太玄洞天令】灵光流转，重返凡尘！")
+				else:
+					root.enter_mystic_realm()
+					if hud and hud.has_method("show_notification"):
+						hud.show_notification("【太玄洞天令】开启界门，遁入太玄洞天！")
 
 # ==========================================
 # 施法系统 (动态生成魔法弹)
@@ -146,3 +170,16 @@ func _spawn_spell_projectile(spell: Dictionary, is_left: bool) -> void:
 	proj.global_position = start_pos
 	
 	get_tree().current_scene.add_child(proj)
+
+func _unhandled_input(event: InputEvent) -> void:
+	# 只有在鼠标被捕获（非UI模式）时，才响应战斗点击
+	if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
+		return
+		
+	if event is InputEventMouseButton and event.pressed:
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			if combat_comp and combat_comp.has_method("handle_left_click"):
+				combat_comp.handle_left_click()
+		elif event.button_index == MOUSE_BUTTON_RIGHT:
+			if combat_comp and combat_comp.has_method("handle_right_click"):
+				combat_comp.handle_right_click()

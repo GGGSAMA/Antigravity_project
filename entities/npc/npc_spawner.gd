@@ -9,41 +9,31 @@ func _ready() -> void:
 	spawn_test_npcs()
 
 func spawn_test_npcs() -> void:
-	# 宗门 A：蜀山剑派 (正道)
-	var f1 = FactionData.new()
-	f1.faction_name = "蜀山剑派"
-	f1.alignment = 0
+	var spawn_points = [
+		Vector3(510, 0.5, 5), # 李逍遥
+		Vector3(500, 0.5, 5), # 血老怪
+		Vector3(505, 0.5, 2)  # 钱百万
+	]
 	
-	# 宗门 B：万骨窟 (魔道)
-	var f2 = FactionData.new()
-	f2.faction_name = "万骨窟"
-	f2.alignment = 1
+	var test_ids = ["npc_li_xiaoyao", "npc_xue_laoguai", "npc_qian_baiwan"]
 	
-	# 宗门 C：四海商会 (中立)
-	var f3 = FactionData.new()
-	f3.faction_name = "四海商会"
-	f3.alignment = 2
-	
-	# 生成 NPC 1
-	var n1_data = NPCData.new()
-	n1_data.npc_name = "李逍遥"
-	n1_data.faction = f1
-	n1_data.cultivation_realm = 2 # 筑基期
-	_instantiate_npc(n1_data, Vector3(5, 0.5, -5))
-	
-	# 生成 NPC 2
-	var n2_data = NPCData.new()
-	n2_data.npc_name = "血老怪"
-	n2_data.faction = f2
-	n2_data.cultivation_realm = 3 # 金丹期
-	_instantiate_npc(n2_data, Vector3(-5, 0.5, -5))
-	
-	# 生成 NPC 3
-	var n3_data = NPCData.new()
-	n3_data.npc_name = "钱百万"
-	n3_data.faction = f3
-	n3_data.cultivation_realm = 1 # 炼气期
-	_instantiate_npc(n3_data, Vector3(0, 0.5, -8))
+	for i in range(test_ids.size()):
+		var npc_id = test_ids[i]
+		if SocialManager.has_method("get_npc"):
+			var attr = SocialManager.get_npc(npc_id)
+			if attr.is_empty():
+				continue
+				
+			var f_data = FactionData.new()
+			f_data.faction_name = attr.get("faction_name", "无门无派")
+			f_data.alignment = attr.get("alignment", 2)
+			
+			var n_data = NPCData.new()
+			n_data.npc_name = attr.get("name", "无名散修")
+			n_data.faction = f_data
+			n_data.cultivation_realm = attr.get("cultivation", 1)
+			
+			_instantiate_npc(n_data, spawn_points[i])
 
 func _instantiate_npc(data: NPCData, pos: Vector3) -> void:
 	var npc_instance = NPC_SCENE.instantiate()

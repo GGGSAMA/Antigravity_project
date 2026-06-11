@@ -15,6 +15,7 @@ class_name NPCBase
 # --- 内部状态变量 ---
 var is_dead: bool = false
 var has_gifted: bool = false
+var is_passive: bool = true
 
 # --- 子节点引用 ---
 @onready var stats: CharacterStats = $Stats
@@ -71,13 +72,14 @@ func interact(player: CharacterBody3D) -> void:
 		var remaining = player.inventory_comp.add_item("小还丹", 1)
 		
 		if remaining == 0:
-			player.show_dialogue(npc_name, "「" + npc_name + "」：道友请留步！我看你骨骼惊奇、印堂发亮，必是万中无一的修仙奇才。这颗刚出炉的 🍶小还丹 便赠予你防身吧！")
-			player.show_notification("获得了 🍶小还丹 x1")
+			DialogueManager.start_dialogue(self, npc_name, "「" + npc_name + "」：道友请留步！我看你骨骼惊奇、印堂发亮，必是万中无一的修仙奇才。这颗刚出炉的 🍶小还丹 便赠予你防身吧！", [])
+			if player.hud and player.hud.has_method("show_notification"):
+				player.hud.show_notification("获得了 🍶小还丹 x1")
 		else:
-			player.show_dialogue(npc_name, "「" + npc_name + "」：道友请留步！老夫看你背包已满，先整理一下乾坤袋，再来取这颗 🍶小还丹 吧。")
+			DialogueManager.start_dialogue(self, npc_name, "「" + npc_name + "」：道友请留步！老夫看你背包已满，先整理一下乾坤袋，再来取这颗 🍶小还丹 吧。", [])
 			has_gifted = false # 重置，让其整理后能继续拿药
 	else:
-		player.show_dialogue(npc_name, "「" + npc_name + "」：丹道浩瀚，道友此去凶险，切记保重法体。待你功成名就，再来与老夫论道。")
+		DialogueManager.start_dialogue(self, npc_name, "「" + npc_name + "」：丹道浩瀚，道友此去凶险，切记保重法体。待你功成名就，再来与老夫论道。", [])
 
 # --- 受击战斗契约 (Damageable Contract) ---
 func take_damage(amount: int) -> void:
