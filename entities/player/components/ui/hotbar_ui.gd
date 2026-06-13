@@ -9,9 +9,15 @@ var manager # 指向 HUDManager
 const ItemDatabase = preload("res://components/item_database.gd")
 
 func _ready():
-	await owner.ready
-	hotbar_comp = owner.get("hotbar_comp")
-	manager = get_parent() # HUDManager
+	var player = get_tree().get_first_node_in_group("player")
+	if player:
+		if not player.is_node_ready():
+			await player.ready
+		hotbar_comp = player.get("hotbar_comp")
+		manager = player.get_node_or_null("HUD")
+	
+	if not manager:
+		manager = get_node_or_null("/root/GameRoot/Player/HUD")
 	if not hotbar_comp: return
 	
 	_build_slots()
@@ -25,8 +31,17 @@ func _build_slots():
 		var btn = Button.new()
 		btn.custom_minimum_size = Vector2(44, 50)
 		btn.focus_mode = Control.FOCUS_NONE
-		btn.add_theme_stylebox_override("normal", UIStyles.style_normal)
-		btn.add_theme_stylebox_override("hover", UIStyles.style_hover)
+		btn.mouse_filter = Control.MOUSE_FILTER_PASS
+		btn.flat = true
+		
+		var bg = ColorRect.new()
+		bg.name = "Background"
+		bg.color = Color(0.1, 0.1, 0.15, 0.9)
+		bg.anchors_preset = 15
+		bg.anchor_right = 1.0
+		bg.anchor_bottom = 1.0
+		bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		btn.add_child(bg)
 		
 		var icon = Label.new()
 		icon.name = "Icon"
@@ -61,15 +76,16 @@ func _build_slots():
 		grid.add_child(btn)
 
 func update_ui():
+	var active_idx = hotbar_comp.active_slot_index if hotbar_comp else 0
 	for i in range(grid.get_child_count()):
 		var btn = grid.get_child(i)
 		var item = hotbar_comp.slots[i]
 		
-		if i == active_index:
-			btn.add_theme_stylebox_override("normal", UIStyles.style_active)
+		var bg = btn.get_node("Background")
+		if i == active_idx:
+			bg.color = Color(0.4, 0.35, 0.2, 0.9) # Active style
 		else:
-			btn.add_theme_stylebox_override("normal", UIStyles.style_normal)
-			
+			bg.color = Color(0.1, 0.1, 0.15, 0.9) # Normal style
 		var icon = btn.get_node("Icon")
 		var qty = btn.get_node("Qty")
 		
@@ -117,23 +133,24 @@ func _on_slot_gui_input(event: InputEvent, idx: int):
 				manager.hide_tooltip()
 			else:
 				# 正常游戏中，点击直接选中快捷栏
-				active_index = idx
+				hotbar_comp.set_active_slot(idx)
 				update_ui()
 
 func _unhandled_input(event: InputEvent) -> void:
-	if not visible: return
+	if not visible or not hotbar_comp: return
 	if event is InputEventMouseButton and event.pressed:
+		var current = hotbar_comp.active_slot_index
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
-			active_index = (active_index - 1 + hotbar_comp.size) % hotbar_comp.size
+			hotbar_comp.set_active_slot((current - 1 + hotbar_comp.size) % hotbar_comp.size)
 			update_ui()
 			get_viewport().set_input_as_handled()
 		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			active_index = (active_index + 1) % hotbar_comp.size
+			hotbar_comp.set_active_slot((current + 1) % hotbar_comp.size)
 			update_ui()
 			get_viewport().set_input_as_handled()
 	elif event is InputEventKey and event.pressed and event.keycode >= KEY_1 and event.keycode <= KEY_9:
 		var target = event.keycode - KEY_1
 		if target < hotbar_comp.size:
-			active_index = target
+			hotbar_comp.set_active_slot(target)
 			update_ui()
 			get_viewport().set_input_as_handled()

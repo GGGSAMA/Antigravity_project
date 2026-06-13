@@ -7,25 +7,157 @@ extends CharacterBody3D
 @onready var player_model = $PlayerModel
 
 func _ready() -> void:
-	# 动态加载双马尾小人 (Sophia) 模型
-	var sophia_scene = load("res://models/characters/gdquest_sophia/sophia_skin.tscn")
-	if sophia_scene and player_model:
-		var sophia = sophia_scene.instantiate()
-		sophia.name = "SophiaSkin"
-		sophia.rotation.y = PI # 背对摄像机
-		player_model.add_child(sophia)
-		
-		# 隐藏原有的蓝色胶囊体，但保留飞剑
-		var body = player_model.get_node_or_null("Body")
-		if body:
-			body.visible = false
-			var sword = body.get_node_or_null("Sword")
-			if sword:
-				sword.reparent(player_model, true)
-				sword.position.y = 0.1 # 强行把飞剑放在脚底（地面上方 0.1 米）
+	# The fem_warrior model is loaded directly via npc.tscn PlayerModel.
 
 	if data:
 		refresh_from_data()
+		
+	# 动态挂载神识被扫组件
+	var NPCScannable = load("res://components/npc_scannable.gd")
+	if NPCScannable:
+		var scannable = NPCScannable.new()
+		scannable.name = "ScannableComponent"
+		scannable.scan_name = data.npc_name if data else "无名修士"
+		scannable.scan_icon = "👤"
+		scannable.scan_color = Color(0.8, 0.2, 0.8) # 紫色代表活物修士
+		scannable.scan_type = 4 # NPC
+		add_child(scannable)
+
+	# 延迟初始化 AI
+	call_deferred("_init_ai")
+
+# ----------------- AI 状态与神识机制 (LimboAI) -----------------
+var affinity: int = 0
+var target_player: Node3D = null
+
+# LimboAI 组件
+var hsm: Node
+var blackboard: RefCounted
+
+func _init_ai() -> void:
+	if data:
+		if data.npc_name == "李逍遥": affinity = 100
+		elif data.npc_name == "血老怪": affinity = -100
+		else: affinity = 0
+		
+	# 动态构建 LimboHSM 状态机 (由于是在无编辑器的代码环境，这里手动实例化 Node 模拟 HSM 的控制流)
+	# 如果用户本地有具体的 LimboState 脚本，可以直接挂载。这里为了通用性，采用极简代码路由架构
+	
+	if ClassDB.class_exists("LimboHSM"):
+		print("[NPC] LimboAI 已加载，初始化 HSM...")
+		hsm = ClassDB.instantiate("LimboHSM")
+		hsm.name = "Brain"
+		add_child(hsm)
+		
+		# 尝试获取黑板
+		if hsm.has_method("get_blackboard"):
+			blackboard = hsm.get_blackboard()
+			if blackboard and blackboard.has_method("set_var"):
+				blackboard.set_var("ai_state", "idle")
+	else:
+		print("[NPC] 未检测到 LimboHSM 原生类，降级为内置简单状态机。")
+		hsm = Node.new()
+		hsm.set_meta("ai_state", "idle")
+		add_child(hsm)
+
+func _set_state(state: String) -> void:
+	if blackboard and blackboard.has_method("set_var"):
+		blackboard.set_var("ai_state", state)
+	elif hsm:
+		hsm.set_meta("ai_state", state)
+
+func _get_state() -> String:
+	if blackboard and blackboard.has_method("get_var"):
+		return blackboard.get_var("ai_state", "idle")
+	elif hsm and hsm.has_meta("ai_state"):
+		return hsm.get_meta("ai_state")
+	return "idle"
+
+func on_being_spied(scanner: Node, is_provoked: bool) -> void:
+	if not is_inside_tree(): return
+	
+	target_player = scanner as Node3D
+	
+	if is_provoked:
+		if has_node("/root/Log"): get_node("/root/Log").warn("NPC", data.npc_name + " 被低阶神识窥探，大怒！")
+		if affinity < 0:
+			_set_state("attack")
+			_show_bubble("蝼蚁！敢用神识窥探老夫？！找死！", Color.RED)
+		else:
+			_set_state("idle")
+			_show_bubble("哼，念你初犯，下不为例！", Color.YELLOW)
+	else:
+		if affinity >= 50:
+			_set_state("approach")
+			_show_bubble("道友，神识传音可是有事相商？", Color.GREEN)
+		elif affinity < -50:
+			_set_state("attack")
+			_show_bubble("既然被你发现了，那就留下吧！", Color.RED)
+		else:
+			_set_state("idle")
+			_show_bubble("哪来的道友在此窥探？", Color.WHITE)
+
+func _show_bubble(text: String, color: Color) -> void:
+	name_tag.text = text
+	name_tag.modulate = color
+	var tween = create_tween()
+	tween.tween_callback(func(): refresh_from_data(); name_tag.modulate = Color.WHITE).set_delay(4.0)
+
+func _physics_process(delta: float) -> void:
+	if not is_on_floor():
+		velocity.y -= 9.8 * delta
+	else:
+		velocity.y = 0
+		
+	var is_moving = false
+	var current_state = _get_state()
+	
+	# 行为树 / 状态机的 Execute Update 逻辑
+	if current_state == "approach" and target_player:
+		var dir = global_position.direction_to(target_player.global_position)
+		dir.y = 0
+		if global_position.distance_to(target_player.global_position) > 2.0:
+			velocity.x = dir.x * 3.0
+			velocity.z = dir.z * 3.0
+			look_at(global_position + dir, Vector3.UP)
+			is_moving = true
+		else:
+			velocity.x = 0
+			velocity.z = 0
+			_set_state("idle")
+			interact(target_player)
+			
+	elif current_state == "attack" and target_player:
+		var dir = global_position.direction_to(target_player.global_position)
+		dir.y = 0
+		if global_position.distance_to(target_player.global_position) > 1.5:
+			velocity.x = dir.x * 4.5
+			velocity.z = dir.z * 4.5
+			look_at(global_position + dir, Vector3.UP)
+			is_moving = true
+		else:
+			velocity.x = 0
+			velocity.z = 0
+			if has_node("/root/Log"): get_node("/root/Log").warn("Combat", data.npc_name + " 对你发起了攻击！")
+			if player_model and player_model.has_method("set_animation_state"):
+				player_model.set_animation_state("attack")
+			_set_state("idle")
+	else:
+		if velocity.length() > 0.1:
+			is_moving = true
+		velocity.x = move_toward(velocity.x, 0, delta * 10.0)
+		velocity.z = move_toward(velocity.z, 0, delta * 10.0)
+	
+	move_and_slide()
+	
+	if player_model and player_model.has_method("set_animation_state") and current_state != "attack":
+		if is_moving:
+			if velocity.length() > 3.5:
+				player_model.set_animation_state("run")
+			else:
+				player_model.set_animation_state("walk")
+		else:
+			player_model.set_animation_state("idle")
 
 func interact(player: Node) -> void:
 	var speaker = "神秘修士"

@@ -20,7 +20,7 @@ var is_passive: bool = true
 # --- 子节点引用 ---
 @onready var stats: CharacterStats = $Stats
 @onready var billboard_label: Label3D = $BillboardLabel
-@onready var mesh_instance: MeshInstance3D = $MeshInstance3D
+@onready var mesh_instance: Node3D = $MeshInstance3D
 
 func _ready() -> void:
 	# 动态配置 Stats 气血属性
@@ -141,16 +141,25 @@ func _die() -> void:
 	# 2. 全身赤光充盈爆裂，Alpha淡化消逝
 	var tween = create_tween()
 	
-	if mesh_instance:
-		var mat = mesh_instance.material_override
+	var actual_mesh: MeshInstance3D = null
+	if mesh_instance is MeshInstance3D:
+		actual_mesh = mesh_instance
+	elif mesh_instance:
+		# Search for first MeshInstance3D child (e.g., inside fem_warrior instance)
+		var meshes = mesh_instance.find_children("*", "MeshInstance3D", true, false)
+		if meshes.size() > 0:
+			actual_mesh = meshes[0]
+	
+	if actual_mesh:
+		var mat = actual_mesh.material_override
 		if mat == null:
-			if mesh_instance.mesh and mesh_instance.mesh.get_material():
-				mat = mesh_instance.mesh.get_material().duplicate()
-				mesh_instance.material_override = mat
+			if actual_mesh.mesh and actual_mesh.mesh.get_material():
+				mat = actual_mesh.mesh.get_material().duplicate()
+				actual_mesh.material_override = mat
 			else:
 				var new_mat = StandardMaterial3D.new()
 				new_mat.albedo_color = Color(0.8, 0.8, 0.8) # 默认灰色
-				mesh_instance.material_override = new_mat
+				actual_mesh.material_override = new_mat
 				mat = new_mat
 				
 		if mat is StandardMaterial3D:

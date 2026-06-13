@@ -7,12 +7,7 @@ class_name RogScatterer
 
 func _ready() -> void:
 	if prop_scenes.is_empty():
-		# 加载默认的一些道具作为测试
-		var test_prop = load("res://assets/environment/table_medium.tscn")
-		if test_prop:
-			prop_scenes.append(test_prop)
-			prop_scenes.append(load("res://assets/environment/chair.tscn"))
-			prop_scenes.append(load("res://assets/environment/table_small.tscn"))
+		return
 	
 	# 等待一帧，确保物理服务器和地形已经准备就绪
 	await get_tree().process_frame

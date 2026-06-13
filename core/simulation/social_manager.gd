@@ -20,8 +20,9 @@ var npc_attributes: Dictionary = {}
 var relationships: Dictionary = {}
 
 func _ready() -> void:
-	print("[SocialManager] 启动修仙界羁绊引擎...")
+	print("[", Time.get_ticks_msec(), " ms] [SocialManager] 启动修仙界羁绊引擎...")
 	_initialize_test_data()
+	print("[", Time.get_ticks_msec(), " ms] [SocialManager] 数据图谱初始化完成")
 
 # 初始化测试数据 (3个基础NPC)
 func _initialize_test_data() -> void:

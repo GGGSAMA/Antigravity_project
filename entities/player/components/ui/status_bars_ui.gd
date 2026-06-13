@@ -7,8 +7,11 @@ class_name StatusBarsUI
 var stats
 
 func _ready():
-	await owner.ready
-	stats = owner.get("stats")
+	var player = get_tree().get_first_node_in_group("player")
+	if player:
+		if not player.is_node_ready():
+			await player.ready
+		stats = player.get("stats")
 	if stats:
 		stats.health_changed.connect(_on_health_changed)
 		stats.mana_changed.connect(_on_mana_changed)

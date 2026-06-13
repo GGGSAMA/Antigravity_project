@@ -14,6 +14,15 @@ var player_world_rotation: Vector3 = Vector3.ZERO
 var in_mystic_realm: bool = false
 
 func _ready() -> void:
+	# 自动向根节点注入全局日志系统，省去用户手动配置 Autoload
+	var root = get_tree().root
+	if not root.has_node("Log"):
+		var log_script = load("res://core/log_manager.gd")
+		if log_script:
+			var log_node = log_script.new()
+			log_node.name = "Log"
+			root.call_deferred("add_child", log_node)
+			
 	# On startup, load main.tscn as the default level
 	load_level("res://main.tscn")
 
@@ -46,6 +55,9 @@ func load_level(level_path: String, spawn_pos: Variant = null) -> void:
 	current_level_node = level_scene.instantiate()
 	level_container.add_child(current_level_node)
 	
+	# 强制剥夺地图场景中带有的所有幽灵 UI 拦截权
+	_disable_level_ui(current_level_node)
+	
 	# Handle player positioning
 	var target_pos = Vector3.ZERO
 	var target_rot = Vector3.ZERO
@@ -65,16 +77,15 @@ func load_level(level_path: String, spawn_pos: Variant = null) -> void:
 		target_rot = Vector3(0, deg_to_rad(-40.0), 0)
 	
 	# Trigger the safe positioning coroutine
-	_position_player_safely(target_pos, target_rot)
-	
-	# Spawn test FBX models dynamically near player
-	_spawn_fbx_test_nodes(current_level_node, target_pos)
-	
-	# V0.0008: Spawn test NPCs dynamically to avoid modifying 26MB main.tscn
-	if level_path == "res://main.tscn":
-		_spawn_test_npcs(target_pos)
+	_position_player_safely(target_pos, target_rot, level_path)
 
-func _position_player_safely(target_pos: Vector3, target_rot: Vector3) -> void:
+func _disable_level_ui(node: Node) -> void:
+	if node is Control:
+		node.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	for child in node.get_children():
+		_disable_level_ui(child)
+
+func _position_player_safely(target_pos: Vector3, target_rot: Vector3, level_path: String = "") -> void:
 	# 暂时把玩家拉高并禁用物理，等待 Terrain3D 异步生成碰撞体
 	player.process_mode = Node.PROCESS_MODE_DISABLED
 	player.global_position = Vector3(target_pos.x, target_pos.y + 1000.0, target_pos.z)
@@ -106,9 +117,17 @@ func _position_player_safely(target_pos: Vector3, target_rot: Vector3) -> void:
 	if result:
 		player.global_position = result.position + Vector3(0, 1.0, 0)
 		print("[GameRoot] Safe spawn raycast hit terrain at: ", result.position, " after ", time_waited, "s")
+		
+		var safe_pos = result.position
+		_spawn_fbx_test_nodes(current_level_node, safe_pos)
+		if level_path == "res://main.tscn":
+			_spawn_test_npcs(safe_pos)
 	else:
 		player.global_position = target_pos
 		print("[GameRoot] Safe spawn raycast missed! Using default pos: ", target_pos)
+		_spawn_fbx_test_nodes(current_level_node, target_pos)
+		if level_path == "res://main.tscn":
+			_spawn_test_npcs(target_pos)
 		
 	# 恢复物理
 	player.process_mode = Node.PROCESS_MODE_INHERIT

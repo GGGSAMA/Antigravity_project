@@ -1,15 +1,10 @@
 # ==============================================================================
 # 【Godot 核心架构类：角色状态组件（CharacterStats）】
 # ------------------------------------------------------------------------------
-# 牢大（用户）需求档案：修仙点卡机制（时间经济学）
-# 1. 灵石产出：挂机/现实时间流逝 = 自动产出灵石。
-# 2. 灵力恢复：当灵力不满时，燃烧灵石转换为灵力（受“资质 aptitude”属性加成）。
-# 3. 灵力消耗：施法、神识扫描（V键）等均消耗灵力。灵力枯竭则无法行动。
-# 4. 全局组件：此组件可挂载于玩家、NPC 或怪物，作为数值运算的数据中心。
-#
-# 【AI 建议】：
-# - 当前为 1秒 = 1灵石，测试期没问题。后续建议按真实修仙设定，改为“聚灵阵”环境下产出效率翻倍，
-#   或者离线挂机时根据闭关时长一次性结算灵石。
+# 牢大（用户）需求档案：修仙时间与点卡经济学
+# 1. 寿命系统：引入 `age` 和 `max_age`，这是所有经济活动的最终天花板。
+# 2. 灵力与时间锚定：不再按现实秒数自动回蓝。回蓝必须通过 `TimeManager` 进行岁月跳跃（打坐闭关）来实现，强行扣除对应比例的寿命。
+# 3. 灵力消耗：所有动作（跑图、采药、战斗）均消耗灵力。
 # ==============================================================================
 
 extends Node
@@ -47,7 +42,12 @@ var current_health: int = 80 # 故意设为80，方便测试拾取加血！
 var current_mana: int = 40 # 故意设为40，方便测试回蓝！
 
 @export var spirit_stones: int = 0
-var time_accumulator: float = 0.0
+
+@export_group("岁月与寿元")
+@export var age_days: float = 0.0          # 当前年龄（天数）
+@export var max_age_days: float = 36500.0  # 寿元大限（默认 100年 = 36500天）
+signal lifespan_changed(current_days: float, max_days: float)
+signal character_died_of_old_age
 
 
 func recalculate() -> void:
@@ -61,30 +61,45 @@ func recalculate() -> void:
 
 func _ready() -> void:
 	recalculate()
-	# 按比例初始化当前生命与元气（留出空间方便拾取药水/加点测试回复）
+	# 按比例初始化当前生命与元气
 	current_health = int(max_health * 0.8)
 	current_mana = int(max_mana * 0.4)
 	
-	# 初始化时，延迟一帧广播一次当前血量和灵力，确保 UI 已经就绪并连上信号
+	# 初始化时，延迟一帧广播
 	await get_tree().process_frame
 	health_changed.emit(current_health, max_health)
 	mana_changed.emit(current_mana, max_mana)
 	spirit_stones_changed.emit(spirit_stones)
+	lifespan_changed.emit(age_days, max_age_days)
+	
+	# 监听宏观岁月跳跃信号 (只有玩家或者常驻 NPC 需要，普通的怪物其实不需要监听闭关，这里简化处理全监听)
+	if TimeManager:
+		TimeManager.time_skipped_macro.connect(_on_time_skipped_macro)
+
+func _on_time_skipped_macro(hours_skipped: float) -> void:
+	# 1. 扣除寿命 (1 天 = 24 小时)
+	var days_skipped = hours_skipped / 24.0
+	age_days += days_skipped
+	lifespan_changed.emit(age_days, max_age_days)
+	
+	# 检查是否老死
+	if age_days >= max_age_days:
+		character_died_of_old_age.emit()
+		print("【天道无情】玩家大限已至，身死道消！")
+		return
+		
+	# 2. 宏观打坐回蓝 (每天固定回蓝，加上资质修正)
+	# 基础设定：打坐 1 天恢复 100 蓝
+	var base_mana_regen_per_day = 100.0
+	var total_regen = int(base_mana_regen_per_day * days_skipped * (1.0 + aptitude * 0.05))
+	
+	if total_regen > 0 and current_mana < max_mana:
+		restore_mana(total_regen)
+		print("【闭关结算】经过 %.2f 天闭关，扣除同等寿命，恢复了 %d 点灵力。" % [days_skipped, total_regen])
 
 func _process(delta: float) -> void:
-	time_accumulator += delta
-	# 核心经济循环：现实时间 -> 灵石 -> 灵力
-	if time_accumulator >= 1.0:
-		time_accumulator -= 1.0
-		# 1. 随着时间修行，自动产出灵石（类似点卡时间）
-		spirit_stones += 1
-		spirit_stones_changed.emit(spirit_stones)
-		
-		# 2. 如果灵力不满，消耗灵石补充灵力
-		if current_mana < max_mana and spirit_stones > 0:
-			spirit_stones -= 1
-			spirit_stones_changed.emit(spirit_stones)
-			restore_mana(2 + int(aptitude * 0.5)) # 资质影响转换效率
+	pass # 移除了早期的按现实秒自动回蓝逻辑，现在的回蓝全靠宏观岁月跳跃
+
 
 
 # --- 属性操作方法（API） ---
@@ -126,6 +141,41 @@ func consume_mana(amount: int) -> bool:
 		mana_changed.emit(current_mana, max_mana)
 		return true
 	return false
+
+# --- 修为与境界提升 (Cultivation & Breakthrough) ---
+signal cultivation_changed(current: int, max_val: int)
+signal breakthrough_achieved(new_level: int)
+
+@export var cultivation_level: int = 1
+var cultivation_points: int = 0
+var max_cultivation: int = 100
+
+func gain_cultivation(amount: int) -> void:
+	cultivation_points += amount
+	
+	while cultivation_points >= max_cultivation:
+		cultivation_points -= max_cultivation
+		_breakthrough()
+		
+	cultivation_changed.emit(cultivation_points, max_cultivation)
+
+func _breakthrough() -> void:
+	cultivation_level += 1
+	max_cultivation = int(max_cultivation * 1.5 + 100) # 突破难度递增
+	
+	# 核心属性成长
+	constitution += 5
+	divine_sense += 5
+	aptitude += 2
+	
+	# 重新计算生命法力上限，并瞬间补满状态 (修仙大突破的效果)
+	recalculate()
+	heal(max_health)
+	restore_mana(max_mana)
+	
+	breakthrough_achieved.emit(cultivation_level)
+	
+	print("【境界突破】当前境界：", cultivation_level, " 最大生命：", max_health, " 最大法力：", max_mana)
 
 
 func get_speed_multiplier() -> float:

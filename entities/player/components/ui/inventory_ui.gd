@@ -24,15 +24,37 @@ var manager # 指向 HUDManager 以获取全局 carried_item
 const ItemDatabase = preload("res://components/item_database.gd")
 
 func _ready():
-	await owner.ready
-	inventory_comp = owner.get("inventory_comp")
-	equipment_comp = owner.get("equipment_comp")
-	hotbar_comp = owner.get("hotbar_comp")
-	manager = get_parent() # HUDManager
+	# 延迟初始化，避免在 reparent 的瞬间被 await 中断导致组件没有构建完毕
+	call_deferred("_init_ui")
+
+func _init_ui():
+	var player = get_tree().get_first_node_in_group("player")
+	if not player:
+		player = get_node_or_null("/root/GameRoot/Player")
+		
+	if player:
+		if not player.is_node_ready():
+			await player.ready
+		inventory_comp = player.get("inventory_comp")
+		equipment_comp = player.get("equipment_comp")
+		hotbar_comp = player.get("hotbar_comp")
+		manager = player.get_node_or_null("HUD")
 	
-	if inventory_comp: _build_bag_slots()
-	if equipment_comp: _build_equip_slots()
+	if not manager:
+		manager = get_node_or_null("/root/GameRoot/Player/HUD")
+	
+	if inventory_comp: 
+		_build_bag_slots()
+		if not inventory_comp.slots_changed.is_connected(update_ui.unbind(2)):
+			inventory_comp.slots_changed.connect(update_ui.unbind(2))
+			
+	if equipment_comp: 
+		_build_equip_slots()
+		if not equipment_comp.slots_changed.is_connected(update_ui.unbind(2)):
+			equipment_comp.slots_changed.connect(update_ui.unbind(2))
+			
 	visibility_changed.connect(_on_visibility_changed)
+	if visible: update_ui()
 
 func _on_visibility_changed():
 	if visible: update_ui()
@@ -42,7 +64,7 @@ func _build_bag_slots():
 	for child in bag_grid.get_children(): child.queue_free()
 	for i in range(inventory_comp.size):
 		var btn = _create_slot_button(Vector2(80, 44), false)
-		
+			
 		# 连接事件
 		btn.gui_input.connect(_on_bag_gui_input.bind(i))
 		btn.mouse_entered.connect(_on_bag_hover.bind(i))
@@ -66,13 +88,25 @@ func _create_slot_button(size: Vector2, is_equip: bool, title_text: String = "")
 	var btn = Button.new()
 	btn.custom_minimum_size = size
 	btn.focus_mode = Control.FOCUS_NONE
-	btn.add_theme_stylebox_override("normal", UIStyles.style_equip if is_equip else UIStyles.style_normal)
-	btn.add_theme_stylebox_override("hover", UIStyles.style_hover)
+	btn.mouse_filter = Control.MOUSE_FILTER_STOP
+	# 使用 Flat 模式，让按钮透明，完全由我们自己控制颜色，或者通过 StyleBox 控制
+	btn.flat = true
+	
+	# 添加一个背景色块
+	var bg = ColorRect.new()
+	bg.name = "Background"
+	bg.color = Color(0.15, 0.15, 0.18, 0.8) if is_equip else Color(0.2, 0.2, 0.25, 0.6)
+	bg.anchors_preset = 15
+	bg.anchor_right = 1.0
+	bg.anchor_bottom = 1.0
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	btn.add_child(bg)
 	
 	if title_text != "":
 		var lbl = Label.new()
 		lbl.name = "Title"
 		lbl.text = title_text
+		lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		lbl.anchors_preset = 15
 		lbl.anchor_right = 1.0
 		lbl.anchor_bottom = 1.0
@@ -84,6 +118,7 @@ func _create_slot_button(size: Vector2, is_equip: bool, title_text: String = "")
 		
 	var icon = Label.new()
 	icon.name = "Icon"
+	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	icon.anchors_preset = 15
 	icon.anchor_right = 1.0
 	icon.anchor_bottom = 1.0
@@ -94,6 +129,7 @@ func _create_slot_button(size: Vector2, is_equip: bool, title_text: String = "")
 	
 	var qty = Label.new()
 	qty.name = "Qty"
+	qty.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	qty.anchors_preset = 3
 	qty.anchor_left = 1.0
 	qty.anchor_top = 1.0
@@ -139,60 +175,91 @@ func _update_slot_visuals(btn: Button, item: Variant, is_equip: bool):
 # ==========================================
 # 交互事件：Tooltip 悬停
 # ==========================================
+# ==========================================
+# 交互事件：Tooltip 悬停
+# ==========================================
 func _on_bag_hover(idx: int):
 	if not manager or manager.carried_item != null: return
 	var item = inventory_comp.slots[idx]
 	if item:
-		var txt = _generate_tooltip(item.id)
+		var txt = _generate_tooltip(item)
 		manager.show_tooltip(txt)
 
 func _on_equip_hover(idx: int):
 	if not manager or manager.carried_item != null: return
 	var item = equipment_comp.slots[idx]
 	if item:
-		var txt = _generate_tooltip(item.id)
+		var txt = _generate_tooltip(item)
 		manager.show_tooltip(txt)
 
-func _generate_tooltip(item_id: String) -> String:
+func _generate_tooltip(item: Dictionary) -> String:
+	var item_id = item.id
 	var meta = ItemDatabase.get_item(item_id)
 	var type = meta.get("type", "potion")
-	var text = "[color=#F0D050][b]" + meta.get("name", item_id) + "[/b][/color]\n"
+	var quality = item.get("quality", 0)
+	var affixes = item.get("affixes", {})
+	
+	var prefix = ""
+	var color_hex = "#F0D050"
+	if quality == 1: prefix = "【良品】"; color_hex = "#50F050"
+	elif quality == 2: prefix = "【上品】"; color_hex = "#5050F0"
+	elif quality >= 3: prefix = "【极品】"; color_hex = "#F050F0"
+	
+	var text = "[color=" + color_hex + "][b]" + prefix + meta.get("name", item_id) + "[/b][/color]\n"
 	text += "[color=#A0A0A0]" + meta.get("desc", "未知物品") + "[/color]\n"
 	
-	if meta.has("effects"):
-		var eff = meta.effects
-		if eff.has("heal"): text += "[color=#FF5050]回复气血: +" + str(eff.heal) + "[/color]\n"
-		if eff.has("mana"): text += "[color=#5050FF]恢复灵力: +" + str(eff.mana) + "[/color]\n"
-		if eff.has("damage"): text += "[color=#FF3030]攻击力: " + str(eff.damage) + "[/color]\n"
+	# 合并基础特效与动态词缀
+	var effects = meta.get("effects", {}).duplicate()
+	for k in affixes:
+		if typeof(affixes[k]) == TYPE_INT or typeof(affixes[k]) == TYPE_FLOAT:
+			effects[k] = effects.get(k, 0) + affixes[k]
+		else:
+			effects[k] = affixes[k]
+			
+	if not effects.is_empty():
+		text += "\n[color=#FFD700]-- 物品特效 --[/color]\n"
+		for k in effects:
+			var affix_str = ItemDatabase.get_affix_text(k, effects[k])
+			if affix_str != "":
+				text += affix_str + "\n"
 	
-	if type == "potion": text += "\n[color=#808080][右键使用] [1-9快捷栏][/color]"
-	elif type == "weapon": text += "\n[color=#808080][右键装备] [拖拽装备][/color]"
+	if type == "potion": text += "\n[color=#808080][右键使用] [1-9快捷栏]\n[Shift+右键] 戒指老爷爷洗练[/color]"
+	elif type == "weapon": text += "\n[color=#808080][右键装备] [拖拽装备]\n[Shift+右键] 戒指老爷爷洗练[/color]"
 	return text
 
 # ==========================================
 # 交互事件：左键拖拽、右键使用、数字键绑定
 # ==========================================
 func _on_bag_gui_input(event: InputEvent, idx: int):
+	# 重度 DEBUG 打印
+	if event is InputEventMouseButton:
+		print("[DEBUG InventoryUI] _on_bag_gui_input | 槽位:", idx, " | pressed:", event.pressed, " | button:", event.button_index)
+	
 	if event is InputEventMouseButton and event.pressed:
 		var data = inventory_comp.slots[idx]
+		print("[DEBUG InventoryUI] 点击数据 data = ", data, " | carried_item = ", manager.carried_item)
 		
 		# 左键：拖拽交换
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if manager.carried_item == null:
 				if data != null:
+					print("[DEBUG InventoryUI] 左键抓起物品: ", data.id)
 					manager.carried_item = data
 					inventory_comp.clear_slot(idx)
 			else:
 				if data == null:
-					inventory_comp.set_slot(idx, manager.carried_item.id, manager.carried_item.qty)
+					print("[DEBUG InventoryUI] 左键放下物品: ", manager.carried_item.id)
+					inventory_comp.set_slot(idx, manager.carried_item.id, manager.carried_item.qty, {"affixes": manager.carried_item.get("affixes", {}), "quality": manager.carried_item.get("quality", 0)})
 					manager.carried_item = null
 				else:
-					if data.id == manager.carried_item.id:
+					if data.id == manager.carried_item.id and data.get("affixes",{}).is_empty() and manager.carried_item.get("affixes",{}).is_empty():
+						print("[DEBUG InventoryUI] 左键合并物品: ", manager.carried_item.id)
 						inventory_comp.set_slot(idx, data.id, data.qty + manager.carried_item.qty)
 						manager.carried_item = null
 					else:
+						print("[DEBUG InventoryUI] 左键交换物品: ", data.id, " <-> ", manager.carried_item.id)
 						var temp = data
-						inventory_comp.set_slot(idx, manager.carried_item.id, manager.carried_item.qty)
+						inventory_comp.set_slot(idx, manager.carried_item.id, manager.carried_item.qty, {"affixes": manager.carried_item.get("affixes", {}), "quality": manager.carried_item.get("quality", 0)})
 						manager.carried_item = temp
 			update_ui()
 			manager.hide_tooltip()
@@ -200,22 +267,31 @@ func _on_bag_gui_input(event: InputEvent, idx: int):
 		# 右键：快捷使用或装备
 		elif event.button_index == MOUSE_BUTTON_RIGHT and manager.carried_item == null:
 			if data == null: return
+			print("[DEBUG InventoryUI] 右键点击物品: ", data.id)
+			
+			if Input.is_key_pressed(KEY_SHIFT):
+				_ring_grandpa_upgrade(idx, data)
+				return
+				
 			var meta = ItemDatabase.get_item(data.id)
 			var type = meta.get("type", "potion")
 			
-			if type == "weapon":
+			if type == "weapon" or type == "armor":
+				print("[DEBUG InventoryUI] 右键装备: ", data.id)
 				var old_equip = equipment_comp.slots[0]
-				equipment_comp.set_slot(0, data.id, 1)
+				equipment_comp.set_slot(0, data.id, 1, {"affixes": data.get("affixes", {}), "quality": data.get("quality", 0)})
 				inventory_comp.set_slot(idx, null, 0)
 				if old_equip:
-					inventory_comp.set_slot(idx, old_equip.id, 1)
+					inventory_comp.set_slot(idx, old_equip.id, 1, {"affixes": old_equip.get("affixes", {}), "quality": old_equip.get("quality", 0)})
 				update_ui()
-			elif type == "potion":
-				inventory_comp.remove_item(data.id, 1)
-				var stats = owner.get("stats")
-				if stats and meta.has("effects"):
-					if meta.effects.has("heal"): stats.heal(meta.effects.heal)
-					if meta.effects.has("mana"): stats.restore_mana(meta.effects.mana)
+			elif type == "potion" or type == "consumable" or type == "artifact":
+				print("[DEBUG InventoryUI] 右键消耗/使用: ", data.id)
+				var ItemEffectDispatcher = get_node_or_null("/root/ItemEffectDispatcher")
+				var player = get_tree().get_first_node_in_group("player")
+				if ItemEffectDispatcher and player and ItemEffectDispatcher.use_item(player, data):
+					if meta.get("uses", 1) != -1:
+						inventory_comp.remove_item(data.id, 1)
+						
 				update_ui()
 				_on_bag_hover(idx) # 刷新 Tooltip
 
@@ -225,6 +301,7 @@ func _on_bag_gui_input(event: InputEvent, idx: int):
 			var data = inventory_comp.slots[idx]
 			if data != null and hotbar_comp:
 				var hotbar_idx = event.keycode - KEY_1
+				print("[DEBUG InventoryUI] 快捷键绑定: ", data.id, " -> 槽位 ", hotbar_idx)
 				hotbar_comp.set_slot(hotbar_idx, data.id, data.qty) # 镜像绑定到快捷栏
 				manager.get_node("HotbarPanel").update_ui()
 				manager.show_notification("已绑定到快捷栏 " + str(hotbar_idx + 1))
@@ -244,11 +321,11 @@ func _on_equip_gui_input(event: InputEvent, idx: int):
 				var req_type = "weapon" if idx == 0 else "armor" # 简易校验
 				if meta.get("type", "potion") == req_type:
 					if data == null:
-						equipment_comp.set_slot(idx, manager.carried_item.id, manager.carried_item.qty)
+						equipment_comp.set_slot(idx, manager.carried_item.id, manager.carried_item.qty, {"affixes": manager.carried_item.get("affixes", {}), "quality": manager.carried_item.get("quality", 0)})
 						manager.carried_item = null
 					else:
 						var temp = data
-						equipment_comp.set_slot(idx, manager.carried_item.id, manager.carried_item.qty)
+						equipment_comp.set_slot(idx, manager.carried_item.id, manager.carried_item.qty, {"affixes": manager.carried_item.get("affixes", {}), "quality": manager.carried_item.get("quality", 0)})
 						manager.carried_item = temp
 				else:
 					manager.show_notification("该物品无法装备到此槽位！")
@@ -260,9 +337,39 @@ func _on_equip_gui_input(event: InputEvent, idx: int):
 			if data == null: return
 			for i in range(inventory_comp.size):
 				if inventory_comp.slots[i] == null:
-					inventory_comp.set_slot(i, data.id, data.qty)
+					inventory_comp.set_slot(i, data.id, data.qty, {"affixes": data.get("affixes", {}), "quality": data.get("quality", 0)})
 					equipment_comp.clear_slot(idx)
 					update_ui()
 					manager.hide_tooltip()
 					return
 			manager.show_notification("背包已满，无法卸下装备！")
+
+# ==========================================
+# 金手指：戒指老爷爷系统 (万物升阶洗练)
+# ==========================================
+func _ring_grandpa_upgrade(idx: int, data: Dictionary) -> void:
+	if manager: manager.show_notification("【戒指老爷爷】出手了！耗费本源，重塑造化！")
+	
+	var affixes = data.get("affixes", {})
+	var quality = data.get("quality", 0)
+	
+	# 提升品质
+	quality += 1
+	
+	# 随机抽取一个词缀注入 (模拟 PoE 词缀池)
+	var affix_pool = [
+		{"key": "damage", "val": randi_range(10, 50)},
+		{"key": "heal", "val": randi_range(20, 100)},
+		{"key": "restore_mana", "val": randi_range(20, 100)},
+		{"key": "lifesteal", "val": randi_range(5, 15)},
+		{"key": "crit_chance", "val": randi_range(5, 20)}
+	]
+	
+	var chosen = affix_pool[randi() % affix_pool.size()]
+	affixes[chosen.key] = affixes.get(chosen.key, 0) + chosen.val
+	
+	# 重新写回槽位，使其成为不可堆叠的独立物品
+	inventory_comp.set_slot(idx, data.id, 1, {"affixes": affixes, "quality": quality})
+	
+	update_ui()
+	_on_bag_hover(idx) # 刷新 Tooltip 展现特效

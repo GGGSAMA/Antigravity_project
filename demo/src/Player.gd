@@ -36,6 +36,16 @@ func _physics_process(p_delta) -> void:
 	if gravity_enabled:
 		velocity.y -= 40 * p_delta
 	move_and_slide()
+	
+	if has_node("Body") and $Body.has_method("set_animation_state"):
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+			$Body.set_animation_state("attack")
+		elif h_veloc.length() > MOVE_SPEED * 1.5:
+			$Body.set_animation_state("run")
+		elif h_veloc.length() > 0.1:
+			$Body.set_animation_state("walk")
+		else:
+			$Body.set_animation_state("idle")
 
 
 # Returns the input vector relative to the camera. Forward is always the direction the camera is facing

@@ -1,0 +1,11 @@
+﻿id,name,icon,color,mana_cost,cast_time,cooldown,base_damage,effect_type,cast_range,aoe_radius,projectile_speed,is_continuous,desc
+spell_fireball,火球术,🔥,#E6331A,15,1.0,1.0,35,projectile,25.0,2.0,18.0,false,汇聚天地火元气，掷出一枚爆裂火球。
+spell_water,水弹术,💧,#40E0D0,8,0.5,0.5,15,projectile,20.0,1.0,22.0,false,凝水成弹，连绵不绝，消耗较低。
+spell_wind,风刃术,🌪️,#40E640,12,0.8,0.8,25,projectile,30.0,1.0,28.0,false,极速压缩风元素形成的锋锐气刃。
+spell_lightning,掌心雷,⚡,#E6C040,10,0.0,0.2,10,projectile,15.0,1.0,40.0,true,近战爆发，按住可源源不断释放高压雷电。
+spell_ice,冰锥术,❄️,#99E6FF,20,1.5,2.0,45,projectile,20.0,1.0,25.0,false,凝结极寒冰锥，伤害极高且有几率冻结敌人。
+spell_earth,岩突刺,🪨,#996633,25,2.0,3.0,60,aoe,15.0,3.0,0.0,false,召唤大地之力，在目标脚下突起锐利岩石。
+spell_heal,回血术,🌿,#4DCC4D,30,2.5,5.0,-50,heal,0.0,0.0,0.0,false,汲取草木生机，大幅恢复自身气血。
+spell_meteor,陨石术,☄️,#E64026,50,3.0,8.0,150,projectile,40.0,6.0,15.0,false,大范围毁灭禁咒，召唤天外陨石洗地。
+spell_sword,御剑诀,⚔️,#CCCCE6,40,2.0,4.0,80,projectile,35.0,1.0,50.0,false,以气御剑，百步之外取敌首级，速度极快。
+spell_shield,真气盾,🛡️,#E6CC66,35,1.5,10.0,0,buff,0.0,0.0,0.0,false,真气外放形成护体罡气，大幅提升防御。

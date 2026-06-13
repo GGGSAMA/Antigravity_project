@@ -6,16 +6,20 @@ class_name Player
 # 牢大（用户）的增量需求档案：
 # 1. 游戏基调：修仙题材，带有时间经济学与神识降维打击机制。
 # 2. 经济循环：现实时间 -> 产出灵石 -> 燃烧灵石补充灵力 (Mana) -> 消耗灵力施法/神识。
-# 3. 战斗系统：支持右手武器挥砍，左手捏诀施法。空手时双手皆可施法。
+# 3. 战斗系统：支持左手武器挥砍（左键），右手使用道具/捏诀施法（右键）。空手时双手皆可施法。
 # 4. 神识系统 (V键)：消耗 20 灵力展开全息扫描。半径取决于神识属性。
 #    - 探索：高亮范围内的药草/物品。
 #    - 威压：若自身神识高于敌人 5 点以上，造成位阶压制，使敌人定身 4 秒。
 # 5. UI 架构：必须极致解耦（1500行的面条代码已被彻底推翻），UI 挂载于独立节点，按需调用。
-# 6. AI 协作理念：宁可删掉重写，绝不在烂代码上缝补（发挥 AI 重构优势）。
+# 6. 核心巧思设定：宗门基底气息系统 (Sect Aura / Foundation Buff)
+#    - 每个宗门的基础练气功法，会给玩家打上【绝对的底层 Buff】。
+#    - 它是所有后续技能的根基。释放技能时会带有专属气息（小说中所谓的“青云门气息”或“魔修气息”），
+#      用于游戏内的身份识别、技能威力增幅或派系互斥等具体实现。
+# 7. AI 协作理念：宁可删掉重写，绝不在烂代码上缝补（发挥 AI 重构优势）。
 #
 # 【AI 建议】：
 # - 目前“灵石”存储在内存中，下一步建议引入 Save/Load 系统（Resource 或 JSON）确保修仙进度不丢失。
-# - 神识威压目前是硬控，建议后续加入“识海受损”的反噬机制（如果扫描到神识比自己高的老怪，自己会掉血/眩晕）。
+# - 神识威压目前是硬控，建议后续加入“识海受损”的反噬机制。
 # ==============================================================================
 
 
@@ -97,60 +101,67 @@ func _ready() -> void:
 	spells = SpellComponent.new()
 	spells.name = "Spells"
 	add_child(spells)
+	
+	var ScannerComp = load("res://entities/player/components/scanner_component.gd")
+	if ScannerComp:
+		var scanner = ScannerComp.new()
+		scanner.name = "ScannerComponent"
+		add_child(scanner)
 
-	# 给玩家发放测试用的太玄洞天令（放入背包或快捷栏）
+	# 给玩家发放测试用的初始物品（放入大背包）
 	if inventory_comp:
-		inventory_comp.add_item("mystic_realm_token", 1)
+		inventory_comp.add_item("千里传送令", 1)
+		inventory_comp.add_item("青钢剑", 1)
+		inventory_comp.add_item("玄铁法剑", 1)
+		inventory_comp.add_item("小还丹", 5)
+		inventory_comp.add_item("五毒散", 2)
 	elif hotbar_comp:
-		hotbar_comp.add_item("mystic_realm_token", 1)
+		hotbar_comp.add_item("千里传送令", 1)
+		
+	# 监听快捷栏和装备栏变动以刷新手中模型
+	if hotbar_comp:
+		hotbar_comp.active_slot_changed.connect(_on_hotbar_changed)
+		hotbar_comp.slots_changed.connect(func(idx, data): _on_hotbar_changed(hotbar_comp.active_slot_index))
+	if equipment_comp:
+		equipment_comp.slots_changed.connect(func(idx, data): _on_hotbar_changed(hotbar_comp.active_slot_index if hotbar_comp else 0))
+		
+	# 延迟一帧初始化手持模型
+	call_deferred("_on_hotbar_changed", hotbar_comp.active_slot_index if hotbar_comp else 0)
+
+func _on_hotbar_changed(active_idx: int) -> void:
+	if not viewmodel or not viewmodel.has_method("update_hands"): return
+	var weapon_id = ""
+	if equipment_comp and equipment_comp.slots[0] != null:
+		weapon_id = equipment_comp.slots[0].id
+		
+	var active_item_id = ""
+	if hotbar_comp and active_idx >= 0 and active_idx < hotbar_comp.slots.size():
+		var item = hotbar_comp.slots[active_idx]
+		if item != null:
+			active_item_id = item.id
+			
+	viewmodel.update_hands(weapon_id, active_item_id)
 
 # ==========================================
 # 物品使用胶水层 (连接 UI 与 实际效果)
 # ==========================================
 func use_active_hotbar_item() -> void:
-	# 从 UI 同步当前的激活索引
-	var hud = get_node_or_null("HUD")
-	if hud and hud.has_node("HotbarPanel"):
-		active_hotbar_index = hud.get_node("HotbarPanel").active_index
-		
-	if active_hotbar_index >= hotbar_comp.size: return
+	if not hotbar_comp: return
+	var idx = hotbar_comp.active_slot_index
+	var item = hotbar_comp.slots[idx]
 	
-	var item = hotbar_comp.slots[active_hotbar_index]
 	if item:
-		var meta = ItemDatabase.get_item(item.id)
-		var type = meta.get("type", "potion")
-		
-		# 如果是消耗品（如血瓶、蓝药）
-		if type == "potion" and meta.has("effects"):
-			hotbar_comp.remove_item(item.id, 1)
-			if meta.effects.has("heal"): stats.heal(meta.effects.heal)
-			if meta.effects.has("mana"): stats.restore_mana(meta.effects.mana)
-			
+		var ItemEffectDispatcher = get_node_or_null("/root/ItemEffectDispatcher")
+		if ItemEffectDispatcher and ItemEffectDispatcher.use_item(self, item.id):
+			var ItemDatabase = preload("res://components/item_database.gd")
+			var meta = ItemDatabase.get_item(item.id)
+			if meta.get("uses", 1) != -1:
+				hotbar_comp.remove_item(item.id, 1) # 成功使用则消耗1个
+
+			# 通知 UI 刷新
+			var hud = get_node_or_null("HUD")
 			if hud and hud.has_node("HotbarPanel"):
 				hud.get_node("HotbarPanel").update_ui()
-			if hud and hud.has_method("show_notification"):
-				hud.show_notification("服用了 " + meta.get("name", item.id))
-
-func special_use_active_hotbar_item() -> void:
-	var hud = get_node_or_null("HUD")
-	if hud and hud.has_node("HotbarPanel"):
-		active_hotbar_index = hud.get_node("HotbarPanel").active_index
-		
-	if active_hotbar_index >= hotbar_comp.size: return
-	
-	var item = hotbar_comp.slots[active_hotbar_index]
-	if item:
-		if item.id == "mystic_realm_token":
-			var root = get_tree().current_scene
-			if root.has_method("enter_mystic_realm"):
-				if root.in_mystic_realm:
-					root.exit_mystic_realm()
-					if hud and hud.has_method("show_notification"):
-						hud.show_notification("【太玄洞天令】灵光流转，重返凡尘！")
-				else:
-					root.enter_mystic_realm()
-					if hud and hud.has_method("show_notification"):
-						hud.show_notification("【太玄洞天令】开启界门，遁入太玄洞天！")
 
 # ==========================================
 # 施法系统 (动态生成魔法弹)
@@ -162,6 +173,7 @@ func _spawn_spell_projectile(spell: Dictionary, is_left: bool) -> void:
 	var proj = proj_scene.instantiate()
 	proj.spell_name = spell["name"]
 	proj.color = spell["color"]
+	proj.spell_data = spell
 	proj.direction = -camera.global_transform.basis.z.normalized()
 	
 	# 偏置微调，左/右手施法球从对应掌前飞出
@@ -171,15 +183,38 @@ func _spawn_spell_projectile(spell: Dictionary, is_left: bool) -> void:
 	
 	get_tree().current_scene.add_child(proj)
 
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed:
+		var pos = event.global_position
+		print("[DEBUG] _input 收到鼠标点击 btn=", event.button_index, " pos=", pos)
+		# 找出谁挡住了鼠标
+		_find_controls_under_mouse(get_tree().root, pos)
+
+func _find_controls_under_mouse(node: Node, pos: Vector2) -> void:
+	if node is Control and node.is_visible_in_tree() and node.mouse_filter != Control.MOUSE_FILTER_IGNORE:
+		var rect = node.get_global_rect()
+		if rect.has_point(pos):
+			print("  [UI拦截候选] ", node.get_path(), " | class: ", node.get_class(), " | filter: ", node.mouse_filter, " | rect: ", rect)
+	for child in node.get_children():
+		_find_controls_under_mouse(child, pos)
+
 func _unhandled_input(event: InputEvent) -> void:
 	# 只有在鼠标被捕获（非UI模式）时，才响应战斗点击
 	if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
+		if event is InputEventMouseButton and event.pressed:
+			print("[DEBUG Player] _unhandled_input 拦截到鼠标点击 (当前不是 CAPTURED 模式)，丢弃事件！")
+			if has_node("/root/Log"):
+				get_node("/root/Log").warn("Input", "鼠标未捕获(Mode=" + str(Input.mouse_mode) + ")，拦截丢弃战斗点击！")
 		return
 		
-	if event is InputEventMouseButton and event.pressed:
+	if event is InputEventMouseButton:
+		print("[DEBUG Player] 触发鼠标事件，button: ", event.button_index, " pressed: ", event.pressed)
+		if has_node("/root/Log"):
+			get_node("/root/Log").debug("Input", "战斗点击捕获: btn=" + str(event.button_index) + " pressed=" + str(event.pressed))
+			
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if combat_comp and combat_comp.has_method("handle_left_click"):
-				combat_comp.handle_left_click()
+				combat_comp.handle_left_click(event.pressed)
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
 			if combat_comp and combat_comp.has_method("handle_right_click"):
-				combat_comp.handle_right_click()
+				combat_comp.handle_right_click(event.pressed)

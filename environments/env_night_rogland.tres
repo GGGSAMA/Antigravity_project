@@ -1,4 +1,4 @@
-[gd_resource type="Environment" load_steps=4 format=3]
+[gd_resource type="Environment" format=3 uid="uid://cekjfy1kryvq2"]
 
 [ext_resource type="Texture2D" path="res://environments/skyboxes/rogland_clear_night_4k.exr" id="1_skybox"]
 

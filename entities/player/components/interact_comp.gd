@@ -92,6 +92,9 @@ func _physics_process(delta: float) -> void:
 		interaction_ray.target_position = Vector3(0, 0, -10.0)
 
 func _unhandled_input(event: InputEvent) -> void:
+	if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
+		return
+		
 	# 神识全息扫描 (V 键)
 	if event is InputEventKey and event.pressed and event.keycode == KEY_V:
 		execute_divine_scan()

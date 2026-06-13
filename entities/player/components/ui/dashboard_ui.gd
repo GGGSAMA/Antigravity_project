@@ -66,10 +66,23 @@ func _reparent_inventory_panel():
 		inventory_panel_ref.get_parent().remove_child(inventory_panel_ref)
 		inventory_tab.add_child(inventory_panel_ref)
 		# 修正原本 InventoryUI 的锚点和显示逻辑
+		inventory_panel_ref.custom_minimum_size = Vector2(520, 450)
+		inventory_panel_ref.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		inventory_panel_ref.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		inventory_panel_ref.set_anchors_preset(PRESET_CENTER)
 		inventory_panel_ref.visible = true # 在 Tab 里面永远为 true，由 Dashboard 统筹可见性
+
+func _gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed:
+		print("[DEBUG DashboardUI] _gui_input 拦截了鼠标点击！位置: ", event.position)
 
 func update_all():
 	if inventory_panel_ref and inventory_panel_ref.has_method("update_ui"):
 		inventory_panel_ref.update_ui()
 	# TODO: 更新 Stats 和 Skills
+
+func cycle_tab() -> void:
+	if tab_container:
+		var total_tabs = tab_container.get_tab_count()
+		if total_tabs > 0:
+			tab_container.current_tab = (tab_container.current_tab + 1) % total_tabs

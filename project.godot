@@ -21,15 +21,22 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-TimeManager="res://core/simulation/time/time_manager.gd"
-SocialManager="*res://core/simulation/social_manager.gd"
+TimeManager="*res://globals/time_manager.gd"
 NPCSpawner="res://entities/npc/npc_spawner.gd"
 DialogueManager="*res://core/ui/dialogue_manager.gd"
 WorldState="*res://globals/world_state.gd"
+SocialManager="*res://core/simulation/social_manager.gd"
+DevConsole="*res://core/debug/dev_console.tscn"
+ItemEffectDispatcher="*res://core/simulation/item_effect_dispatcher.gd"
+EconomyManager="*res://globals/economy_manager.gd"
 
 [dotnet]
 
 project/assembly_name="3d_game"
+
+[editor]
+
+version_control/autoload_on_startup=true
 
 [editor_plugins]
 

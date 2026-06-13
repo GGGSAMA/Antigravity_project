@@ -22,7 +22,7 @@ var days_to_skip: int = 0
 var days_skipped_so_far: int = 0
 
 func _ready() -> void:
-	print("[TimeEngine] 全局时间轴初始化，修仙历 1年 1月 1日")
+	print("[", Time.get_ticks_msec(), " ms] [TimeEngine] 全局时间轴初始化，修仙历 1年 1月 1日")
 
 # ------------------------------------------------------------------------------
 # 核心循环：支持分帧极速运算，不卡顿

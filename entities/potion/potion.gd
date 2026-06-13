@@ -14,6 +14,25 @@ class_name Potion # 注册为全局类
 
 func _ready() -> void:
 	print("【系统通知】可交互药品「", potion_type, "」已在地面生成就绪。")
+	
+	# 动态挂载神识扫描组件
+	var ScannableComp = load("res://components/scannable_component.gd")
+	if ScannableComp:
+		var scannable = ScannableComp.new()
+		scannable.name = "ScannableComponent"
+		scannable.scan_name = potion_type
+		scannable.scan_icon = "💊"
+		scannable.scan_color = Color(0.2, 0.8, 0.2)
+		scannable.scan_type = 1 # HERB/MEDICINE
+		add_child(scannable)
+
+# 被扫描时的视觉反馈（动画效果）
+func _on_scanned() -> void:
+	var mesh = get_node_or_null("MeshInstance3D")
+	if mesh:
+		var tween = create_tween()
+		tween.tween_property(mesh, "scale", Vector3(1.3, 1.3, 1.3), 0.1).set_trans(Tween.TRANS_SINE)
+		tween.tween_property(mesh, "scale", Vector3(1.0, 1.0, 1.0), 0.3).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
 
 # ==============================================================================
 # 【主动交互接口函数：被玩家的射线检测触发调用】

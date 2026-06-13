@@ -40,8 +40,8 @@ class_name Viewmodel
 @onready var right_palm_glow: MeshInstance3D = $RightArm/Palm/PalmGlow
 
 # --- 默认初始位置与旋转配置（当重置或未叠加物理偏角时） ---
-const VM_LEFT_DEFAULT_POS = Vector3(-0.24, -0.20, -0.42)
-const VM_RIGHT_DEFAULT_POS = Vector3(0.24, -0.20, -0.42)
+const VM_LEFT_DEFAULT_POS = Vector3(-0.35, -0.40, -0.55)
+const VM_RIGHT_DEFAULT_POS = Vector3(0.35, -0.40, -0.55)
 const VM_LEFT_DEFAULT_ROT = Vector3(0.087, 0.209, 0.0)
 const VM_RIGHT_DEFAULT_ROT = Vector3(0.087, -0.209, 0.0)
 
@@ -71,6 +71,10 @@ const SWING_SPEED = 4.5
 var left_swing_progress: float = 0.0
 var is_left_swinging: bool = false
 const LEFT_SWING_SPEED = 4.0
+
+# --- 施法蓄力 (Casting) 状态机 ---
+var is_casting_left: bool = false
+var is_casting_right: bool = false
 
 func _ready() -> void:
 	if not camera or not player:
@@ -105,46 +109,75 @@ func update_hands(weapon_id: String, active_item_id: String) -> void:
 	# 1. 彻底清除已有网格和子节点
 	_clear_mesh_node(left_held_item_visual)
 	_clear_mesh_node(right_held_item_visual)
-	_clear_mesh_node(right_weapon_visual)
+	if right_weapon_visual: _clear_mesh_node(right_weapon_visual)
 	
 	if left_palm_glow: left_palm_glow.visible = false
 	if right_palm_glow: right_palm_glow.visible = false
 	
-	# 2. 状态分发逻辑
+	# 2. 牢大指示：将武器换到左手，物品换到右手
 	if weapon_id != "":
-		# A. 右手持有装备的武器：构建 3D Voxel 像素利剑
-		_build_voxel_sword(weapon_id)
+		# A. 左手持有装备的武器：构建 3D Voxel 像素利剑
+		_build_voxel_sword(left_held_item_visual, weapon_id)
 		
-		# B. 当右手占满时，快捷栏物品智能分流至左手拿持
-		if active_item_id != "":
-			_build_potion_bottle(left_held_item_visual, active_item_id)
-	else:
-		# 右手无武器：快捷栏物品常规在右手持握渲染，左手空置
-		if active_item_id != "":
-			_build_potion_bottle(right_held_item_visual, active_item_id)
+	if active_item_id != "":
+		# B. 右手持有快捷栏物品
+		_build_potion_bottle(right_held_item_visual, active_item_id)
 
-# 外部高阶接口：触发掌心法术吟唱元素强光
-func show_palm_glow(is_left: bool, color: Color) -> void:
-	var glow_node = left_palm_glow if is_left else right_palm_glow
-	if glow_node == null:
-		return
+# 外部高阶接口：开始施法蓄力，抬起手掌并生成法术光球
+func start_casting_animation(is_left: bool, color: Color) -> void:
+	if is_left:
+		is_casting_left = true
+	else:
+		is_casting_right = true
 		
-	# 生成一块掌心发光晶体
-	var mesh = BoxMesh.new()
-	mesh.size = Vector3(0.018, 0.018, 0.018)
-	glow_node.mesh = mesh
+	var glow_node = left_palm_glow if is_left else right_palm_glow
+	if glow_node:
+		var sphere = SphereMesh.new()
+		sphere.radius = 0.04
+		sphere.height = 0.08
+		glow_node.mesh = sphere
+		
+		var mat = StandardMaterial3D.new()
+		mat.albedo_color = Color(color.r, color.g, color.b, 0.8)
+		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		mat.roughness = 0.2
+		mat.emission_enabled = true
+		mat.emission = Color(color.r, color.g, color.b) * 2.5
+		glow_node.material_override = mat
+		glow_node.visible = true
+
+# 外部高阶接口：法术蓄力完毕，光球闪烁提示
+func flash_cast_ready(is_left: bool) -> void:
+	var glow_node = left_palm_glow if is_left else right_palm_glow
+	if glow_node and glow_node.material_override:
+		var mat = glow_node.material_override as StandardMaterial3D
+		var tween = create_tween()
+		var base_emission = mat.emission
+		tween.tween_property(mat, "emission", base_emission * 4.0, 0.1)
+		tween.tween_property(mat, "emission", base_emission, 0.2)
+
+# 外部高阶接口：停止施法，放下手臂，隐藏光球
+func stop_casting_animation(is_left: bool) -> void:
+	if is_left:
+		is_casting_left = false
+	else:
+		is_casting_right = false
 	
-	var mat = StandardMaterial3D.new()
-	mat.albedo_color = Color(color.r, color.g, color.b, 0.9)
-	mat.roughness = 0.1
-	mat.emission_enabled = true
-	mat.emission = Color(color.r, color.g, color.b) * 4.0 # 强力微光辐射
-	glow_node.material_override = mat
-	glow_node.visible = true
-	
-	# 施法完毕 0.45 秒后，将法术光晕淡出隐藏
+	var glow_node = left_palm_glow if is_left else right_palm_glow
+	if glow_node:
+		var tween = create_tween()
+		tween.tween_property(glow_node, "visible", false, 0.1)
+
+# 外部高阶接口：触发掌心法术吟唱元素强光 (旧接口，兼容瞬发闪烁)
+func show_palm_glow(is_left: bool, color: Color) -> void:
+	start_casting_animation(is_left, color)
+	flash_cast_ready(is_left)
 	var tween = create_tween()
+	var glow_node = left_palm_glow if is_left else right_palm_glow
 	tween.tween_property(glow_node, "visible", false, 0.1).set_delay(0.45)
+	
+	if is_left: is_casting_left = false
+	else: is_casting_right = false
 
 # --- 辅助方法：智能清空 MeshInstance3D 节点 ---
 func _clear_mesh_node(node: MeshInstance3D) -> void:
@@ -219,8 +252,8 @@ func _build_potion_bottle(node: MeshInstance3D, item_id: String) -> void:
 	node.add_child(cork_mesh)
 
 # --- 辅助方法：程序化构建精致 Voxel 像素长剑 ---
-func _build_voxel_sword(weapon_id: String) -> void:
-	if right_weapon_visual == null:
+func _build_voxel_sword(node: MeshInstance3D, weapon_id: String) -> void:
+	if node == null:
 		return
 		
 	# 1. 配置像素金属与木质材质
@@ -245,7 +278,7 @@ func _build_voxel_sword(weapon_id: String) -> void:
 	grip_mesh.mesh = grip_box
 	grip_mesh.position = Vector3(0, -0.01, 0)
 	grip_mesh.material_override = wood_mat
-	right_weapon_visual.add_child(grip_mesh)
+	node.add_child(grip_mesh)
 	
 	# 3. 拼接黄金护手格 (Guard Crossbar)
 	var guard_mesh = MeshInstance3D.new()
@@ -254,7 +287,7 @@ func _build_voxel_sword(weapon_id: String) -> void:
 	guard_mesh.mesh = guard_box
 	guard_mesh.position = Vector3(0, 0.03, 0)
 	guard_mesh.material_override = gold_mat
-	right_weapon_visual.add_child(guard_mesh)
+	node.add_child(guard_mesh)
 	
 	# 4. 拼接剑首圆帽 (Pommel)
 	var pommel_mesh = MeshInstance3D.new()
@@ -263,7 +296,7 @@ func _build_voxel_sword(weapon_id: String) -> void:
 	pommel_mesh.mesh = pommel_box
 	pommel_mesh.position = Vector3(0, -0.05, 0)
 	pommel_mesh.material_override = gold_mat
-	right_weapon_visual.add_child(pommel_mesh)
+	node.add_child(pommel_mesh)
 	
 	# 5. 拼接亮钢长剑刃 (Steel Blade)
 	var blade_mesh = MeshInstance3D.new()
@@ -272,7 +305,7 @@ func _build_voxel_sword(weapon_id: String) -> void:
 	blade_mesh.mesh = blade_box
 	blade_mesh.position = Vector3(0, 0.17, 0)
 	blade_mesh.material_override = steel_mat
-	right_weapon_visual.add_child(blade_mesh)
+	node.add_child(blade_mesh)
 	
 	# 6. 「玄铁法剑」高能发光魔能槽嵌入
 	if weapon_id == "玄铁法剑":
@@ -288,7 +321,7 @@ func _build_voxel_sword(weapon_id: String) -> void:
 		core_mat.emission_enabled = true
 		core_mat.emission = Color(0.6, 0.15, 1.0) * 3.5 # 强烈的紫霞荧光
 		core_mesh.material_override = core_mat
-		right_weapon_visual.add_child(core_mesh)
+		node.add_child(core_mesh)
 
 func _process(delta: float) -> void:
 	if left_arm == null or right_arm == null or not player:
@@ -365,17 +398,30 @@ func _process(delta: float) -> void:
 				left_swing_offset = Vector3(0.08 * swing_factor, -0.12 * swing_factor, -0.15 * swing_factor)
 				left_swing_rot = Vector3(deg_to_rad(-45 * swing_factor), deg_to_rad(-30 * swing_factor), deg_to_rad(25 * swing_factor))
 				
+	# --- D3. 捏诀蓄力姿态 (Casting Pose) ---
+	var left_cast_offset = Vector3.ZERO
+	var left_cast_rot = Vector3.ZERO
+	if is_casting_left:
+		left_cast_offset = Vector3(0.12, 0.15, 0.20)  # 向中间和上方举起
+		left_cast_rot = Vector3(deg_to_rad(45), deg_to_rad(-20), deg_to_rad(30))
+		
+	var right_cast_offset = Vector3.ZERO
+	var right_cast_rot = Vector3.ZERO
+	if is_casting_right:
+		right_cast_offset = Vector3(-0.12, 0.15, 0.20)
+		right_cast_rot = Vector3(deg_to_rad(45), deg_to_rad(20), deg_to_rad(-30))
+
 	# --- E. 统筹并插值平滑叠加至骨架双臂空间 ---
-	var target_left_pos = VM_LEFT_DEFAULT_POS + current_sway + walk_offset + breath_offset + left_swing_offset
-	var target_right_pos = VM_RIGHT_DEFAULT_POS + current_sway + walk_offset + breath_offset + right_swing_offset
+	var target_left_pos = VM_LEFT_DEFAULT_POS + current_sway + walk_offset + breath_offset + left_swing_offset + left_cast_offset
+	var target_right_pos = VM_RIGHT_DEFAULT_POS + current_sway + walk_offset + breath_offset + right_swing_offset + right_cast_offset
 	
 	# 位置 Lerp 平滑过渡
-	left_arm.position = left_arm.position.lerp(target_left_pos, 25.0 * delta)
-	right_arm.position = right_arm.position.lerp(target_right_pos, 25.0 * delta)
+	left_arm.position = left_arm.position.lerp(target_left_pos, 15.0 * delta)
+	right_arm.position = right_arm.position.lerp(target_right_pos, 15.0 * delta)
 	
 	# 旋转 Lerp (同样叠加视角惯性的微小惯性偏转)
-	var target_left_rot = VM_LEFT_DEFAULT_ROT + Vector3(-current_sway.y * 0.5, current_sway.x * 0.5, 0.0) + left_swing_rot
-	var target_right_rot = VM_RIGHT_DEFAULT_ROT + Vector3(-current_sway.y * 0.5, current_sway.x * 0.5, 0.0) + right_swing_rot
+	var target_left_rot = VM_LEFT_DEFAULT_ROT + Vector3(-current_sway.y * 0.5, current_sway.x * 0.5, 0.0) + left_swing_rot + left_cast_rot
+	var target_right_rot = VM_RIGHT_DEFAULT_ROT + Vector3(-current_sway.y * 0.5, current_sway.x * 0.5, 0.0) + right_swing_rot + right_cast_rot
 	
-	left_arm.rotation = left_arm.rotation.lerp(target_left_rot, 25.0 * delta)
-	right_arm.rotation = right_arm.rotation.lerp(target_right_rot, 25.0 * delta)
+	left_arm.rotation = left_arm.rotation.lerp(target_left_rot, 15.0 * delta)
+	right_arm.rotation = right_arm.rotation.lerp(target_right_rot, 15.0 * delta)

@@ -21,21 +21,10 @@ func _ready() -> void:
 var mouse_turn_velocity: float = 0.0
 var fov_boost: float = 0.0
 
-func _unhandled_input(event: InputEvent) -> void:
+func _input(event: InputEvent) -> void:
 	if not character or not head: return
 	
-	if event.is_action_pressed("ui_cancel"):
-		if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-		else:
-			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-		get_viewport().set_input_as_handled()
-		return
-		
-	var hud = character.get_node_or_null("HUD")
-	var any_vis = (Input.mouse_mode != Input.MOUSE_MODE_CAPTURED)
-		
-	if not any_vis and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+	if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		if event is InputEventMouseMotion:
 			var is_flying = character.get("is_flying")
 			# 飞行时降低鼠标灵敏度，增加“仙人御风”的重量感和飘逸感
@@ -58,8 +47,12 @@ func _physics_process(delta: float) -> void:
 	var target_tilt = 0.0
 	
 	if is_flying:
+		var horizontal_speed = Vector2(character.velocity.x, character.velocity.z).length()
+		var speed_ratio = clamp(horizontal_speed / 10.0, 0.0, 1.0)
+		
 		target_tilt = -input_dir.x * 0.15
 		target_tilt -= mouse_turn_velocity * flight_tilt_sensitivity
+		target_tilt *= speed_ratio # 静止时不发生偏转镜头晕眩
 		target_tilt = clamp(target_tilt, -flight_tilt_max, flight_tilt_max)
 	
 	if is_flying and Input.is_action_pressed("sprint"):
