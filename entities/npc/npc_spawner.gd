@@ -20,19 +20,10 @@ func spawn_test_npcs() -> void:
 	for i in range(test_ids.size()):
 		var npc_id = test_ids[i]
 		if SocialManager.has_method("get_npc"):
-			var attr = SocialManager.get_npc(npc_id)
-			if attr.is_empty():
+			var n_data = SocialManager.get_npc(npc_id)
+			if n_data == null or typeof(n_data) == TYPE_DICTIONARY:
 				continue
 				
-			var f_data = FactionData.new()
-			f_data.faction_name = attr.get("faction_name", "无门无派")
-			f_data.alignment = attr.get("alignment", 2)
-			
-			var n_data = NPCData.new()
-			n_data.npc_name = attr.get("name", "无名散修")
-			n_data.faction = f_data
-			n_data.cultivation_realm = attr.get("cultivation", 1)
-			
 			_instantiate_npc(n_data, spawn_points[i])
 
 func _instantiate_npc(data: NPCData, pos: Vector3) -> void:

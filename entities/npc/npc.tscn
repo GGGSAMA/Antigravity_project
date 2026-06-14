@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://entities/npc/npc.gd" id="1_script"]
 [ext_resource type="Script" path="res://components/stats.gd" id="2_stats"]
 
-[ext_resource type="PackedScene" uid="uid://b5m3x3m4fem11" path="res://entities/player/models/fem_warrior.tscn" id="3_fem"]
+[ext_resource type="PackedScene" path="res://models/Magic Locomotion Pack/arissa.tscn" id="3_shadow"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_npc"]
 radius = 0.5
@@ -16,7 +16,7 @@ script = ExtResource("1_script")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 shape = SubResource("CapsuleShape3D_npc")
 
-[node name="PlayerModel" parent="." instance=ExtResource("3_fem")]
+[node name="PlayerModel" parent="." instance=ExtResource("3_shadow")]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
 
 [node name="NameTag" type="Label3D" parent="."]

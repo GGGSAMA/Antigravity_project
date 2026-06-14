@@ -1,0 +1,3 @@
+A03 Libs: [&"", &"locomotion"]
+Anim in : [&"RESET", &"Take 001"]
+Anim in locomotion: []

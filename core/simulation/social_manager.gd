@@ -11,6 +11,9 @@ extends Node
 # 4. 未来供后台“因果事件引擎”跑日志运算。
 # ==============================================================================
 
+const NPCData = preload("res://core/simulation/factions/npc_data.gd")
+const FactionData = preload("res://core/simulation/factions/faction_data.gd")
+
 # 人物属性字典 (Key: npc_id)
 # 存储他们是谁，什么境界，什么性格
 var npc_attributes: Dictionary = {}
@@ -99,11 +102,39 @@ func _initialize_test_data() -> void:
 
 # 注册一个新 NPC 到属性池
 func register_npc(npc_id: String, attributes: Dictionary) -> void:
-	npc_attributes[npc_id] = attributes
+	var data = NPCData.new()
+	data.npc_name = attributes.get("name", "无名")
+	
+	var f_data = FactionData.new()
+	f_data.faction_name = attributes.get("faction_name", "无门无派")
+	f_data.alignment = attributes.get("alignment", 2)
+	data.faction = f_data
+	
+	data.cultivation_realm = attributes.get("cultivation", 1)
+	
+	data.personality_weights = {
+		"cultivation_weight": 1.0,
+		"hunt_weight": 1.0,
+		"heal_weight": 1.0,
+		"social_weight": 1.0
+	}
+	
+	var tags = attributes.get("personality_tags", [])
+	if "剑痴" in tags:
+		data.personality_weights["cultivation_weight"] = 2.0
+		data.needs["cultivation"] = 20.0
+	if "极度贪婪" in tags:
+		data.personality_weights["hunt_weight"] = 2.0
+		data.needs["wealth"] = 10.0
+	if "胆小" in tags:
+		data.personality_weights["heal_weight"] = 1.5
+		data.needs["safety"] = 50.0
+		
+	npc_attributes[npc_id] = data
 
 # 获取 NPC 属性
-func get_npc(npc_id: String) -> Dictionary:
-	return npc_attributes.get(npc_id, {})
+func get_npc(npc_id: String) -> NPCData:
+	return npc_attributes.get(npc_id, null)
 
 # 设置/覆盖两人之间的单向关系
 func set_relationship(source_id: String, target_id: String, relation_data: Dictionary) -> void:

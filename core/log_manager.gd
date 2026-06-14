@@ -34,6 +34,7 @@ func _ready():
 	log_file_full = FileAccess.open("res://logs/game_full.log", FileAccess.WRITE)
 	log_file_error = FileAccess.open("res://logs/game_error.log", FileAccess.WRITE)
 	log_file_ai_trace = FileAccess.open("res://logs/game_ai_trace.log", FileAccess.WRITE)
+	log_file_console = FileAccess.open("res://logs/game_console.log", FileAccess.WRITE)
 	
 	if log_file_full:
 		info("System", "LogManager 初始化成功，开始分级记录日志。")

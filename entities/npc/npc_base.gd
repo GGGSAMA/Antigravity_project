@@ -20,7 +20,7 @@ var is_passive: bool = true
 # --- 子节点引用 ---
 @onready var stats: CharacterStats = $Stats
 @onready var billboard_label: Label3D = $BillboardLabel
-@onready var mesh_instance: Node3D = $MeshInstance3D
+@onready var mesh_instance: Node3D = $PlayerModel
 
 func _ready() -> void:
 	# 动态配置 Stats 气血属性
@@ -82,7 +82,7 @@ func interact(player: CharacterBody3D) -> void:
 		DialogueManager.start_dialogue(self, npc_name, "「" + npc_name + "」：丹道浩瀚，道友此去凶险，切记保重法体。待你功成名就，再来与老夫论道。", [])
 
 # --- 受击战斗契约 (Damageable Contract) ---
-func take_damage(amount: int) -> void:
+func take_damage(amount: int, source_pos: Vector3 = Vector3.ZERO) -> void:
 	if is_dead:
 		return
 		

@@ -20,6 +20,8 @@ config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
+WorldGridDebugger="*res://systems/world_grid/world_grid_debugger.gd"
+WorldGridManager="*res://systems/world_grid/world_grid_manager.gd"
 
 TimeManager="*res://globals/time_manager.gd"
 NPCSpawner="res://entities/npc/npc_spawner.gd"
@@ -29,6 +31,7 @@ SocialManager="*res://core/simulation/social_manager.gd"
 DevConsole="*res://core/debug/dev_console.tscn"
 ItemEffectDispatcher="*res://core/simulation/item_effect_dispatcher.gd"
 EconomyManager="*res://globals/economy_manager.gd"
+MacroSimulator="*res://core/simulation/ai/macro_simulator.gd"
 
 [dotnet]
 
@@ -87,3 +90,6 @@ freefly={
 [rendering]
 
 anti_aliasing/quality/msaa_3d=2
+
+
+

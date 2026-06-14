@@ -8,9 +8,13 @@ extends CharacterBody3D
 		if first_person:
 			var tween: Tween = create_tween()
 			tween.tween_property($CameraManager/Arm, "spring_length", 0.0, .33)
-			tween.tween_callback($Body.set_visible.bind(false))
+			var body = get_node_or_null("Body")
+			if body:
+				tween.tween_callback(body.set_visible.bind(false))
 		else:
-			$Body.visible = true
+			var body = get_node_or_null("Body")
+			if body:
+				body.visible = true
 			create_tween().tween_property($CameraManager/Arm, "spring_length", 6.0, .33)
 
 @export var gravity_enabled: bool = true :

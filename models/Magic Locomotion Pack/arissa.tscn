@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://models/Magic Locomotion Pack/arissa_dynamic.gd" id="1_dynamic"]
+
+[node name="Arissa" type="Node3D"]
+script = ExtResource("1_dynamic")
+

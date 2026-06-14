@@ -12,24 +12,8 @@ func _init() -> void:
 func _process(p_delta) -> void:
 	$Label.text = "FPS: %d\n" % Engine.get_frames_per_second()
 	if(visible_mode == 1):
-		$Label.text += "Move Speed: %.1f\n" % player.MOVE_SPEED if player else ""
-		$Label.text += "Position: %.1v\n" % player.global_position if player else ""
-		$Label.text += """
-			Player
-			Move: WASDEQ,Space,Mouse
-			Move speed: Wheel,+/-,Shift
-			Camera View: V
-			Gravity toggle: G
-			Collision toggle: C
-
-			Window
-			Quit: F8
-			UI toggle: F9
-			Render mode: F10
-			Full screen: F11
-			Mouse toggle: Escape / F12
-			"""
-
+		# 仅保留基础信息，多余的 WASD 提示已删除，为世界网格调试器腾出空间
+		pass
 
 func _unhandled_key_input(p_event: InputEvent) -> void:
 	if p_event is InputEventKey and p_event.pressed:

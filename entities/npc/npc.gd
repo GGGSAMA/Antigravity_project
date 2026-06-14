@@ -111,53 +111,92 @@ func _physics_process(delta: float) -> void:
 		
 	var is_moving = false
 	var current_state = _get_state()
+	var override_macro = false
 	
-	# 行为树 / 状态机的 Execute Update 逻辑
-	if current_state == "approach" and target_player:
-		var dir = global_position.direction_to(target_player.global_position)
-		dir.y = 0
-		if global_position.distance_to(target_player.global_position) > 2.0:
-			velocity.x = dir.x * 3.0
-			velocity.z = dir.z * 3.0
-			look_at(global_position + dir, Vector3.UP)
-			is_moving = true
-		else:
-			velocity.x = 0
-			velocity.z = 0
+	if data and data.current_action != "":
+		if data.current_action in ["修炼", "疗伤"]:
+			velocity.x = move_toward(velocity.x, 0, delta * 10.0)
+			velocity.z = move_toward(velocity.z, 0, delta * 10.0)
+			override_macro = true
+			is_moving = false
 			_set_state("idle")
-			interact(target_player)
+		elif data.current_action in ["打猎", "社交"]:
+			override_macro = true
+			if not has_meta("wander_target") or global_position.distance_to(get_meta("wander_target")) < 1.0:
+				var r_pos = global_position + Vector3(randf_range(-10, 10), 0, randf_range(-10, 10))
+				set_meta("wander_target", r_pos)
+				set_meta("wander_wait", 2.0)
 			
-	elif current_state == "attack" and target_player:
-		var dir = global_position.direction_to(target_player.global_position)
-		dir.y = 0
-		if global_position.distance_to(target_player.global_position) > 1.5:
-			velocity.x = dir.x * 4.5
-			velocity.z = dir.z * 4.5
-			look_at(global_position + dir, Vector3.UP)
-			is_moving = true
+			var wait_time = get_meta("wander_wait")
+			if wait_time != null and wait_time > 0:
+				set_meta("wander_wait", wait_time - delta)
+				velocity.x = move_toward(velocity.x, 0, delta * 10.0)
+				velocity.z = move_toward(velocity.z, 0, delta * 10.0)
+				is_moving = false
+			else:
+				var target = get_meta("wander_target")
+				var dir = global_position.direction_to(target)
+				dir.y = 0
+				velocity.x = dir.x * 2.0
+				velocity.z = dir.z * 2.0
+				look_at(global_position + dir, Vector3.UP)
+				is_moving = true
+				if randf() < 0.005: # Occasional wait
+					set_meta("wander_wait", randf_range(1.0, 3.0))
+
+	if not override_macro:
+		# 行为树 / 状态机的 Execute Update 逻辑
+		if current_state == "approach" and target_player:
+			var dir = global_position.direction_to(target_player.global_position)
+			dir.y = 0
+			if global_position.distance_to(target_player.global_position) > 2.0:
+				velocity.x = dir.x * 3.0
+				velocity.z = dir.z * 3.0
+				look_at(global_position + dir, Vector3.UP)
+				is_moving = true
+			else:
+				velocity.x = 0
+				velocity.z = 0
+				_set_state("idle")
+				interact(target_player)
+				
+		elif current_state == "attack" and target_player:
+			var dir = global_position.direction_to(target_player.global_position)
+			dir.y = 0
+			if global_position.distance_to(target_player.global_position) > 1.5:
+				velocity.x = dir.x * 4.5
+				velocity.z = dir.z * 4.5
+				look_at(global_position + dir, Vector3.UP)
+				is_moving = true
+			else:
+				velocity.x = 0
+				velocity.z = 0
+				if has_node("/root/Log"): get_node("/root/Log").warn("Combat", data.npc_name + " 对你发起了攻击！")
+				if player_model and player_model.has_method("set_animation_state"):
+					player_model.set_animation_state("attack")
+				_set_state("idle")
 		else:
-			velocity.x = 0
-			velocity.z = 0
-			if has_node("/root/Log"): get_node("/root/Log").warn("Combat", data.npc_name + " 对你发起了攻击！")
-			if player_model and player_model.has_method("set_animation_state"):
-				player_model.set_animation_state("attack")
-			_set_state("idle")
-	else:
-		if velocity.length() > 0.1:
-			is_moving = true
-		velocity.x = move_toward(velocity.x, 0, delta * 10.0)
-		velocity.z = move_toward(velocity.z, 0, delta * 10.0)
+			if velocity.length() > 0.1:
+				is_moving = true
+			velocity.x = move_toward(velocity.x, 0, delta * 10.0)
+			velocity.z = move_toward(velocity.z, 0, delta * 10.0)
 	
 	move_and_slide()
 	
-	if player_model and player_model.has_method("set_animation_state") and current_state != "attack":
+	if player_model and player_model.has_method("set_animation_state"):
 		if is_moving:
 			if velocity.length() > 3.5:
 				player_model.set_animation_state("run")
 			else:
 				player_model.set_animation_state("walk")
 		else:
-			player_model.set_animation_state("idle")
+			var is_attacking = false
+			if player_model.get("anim_player") and player_model.anim_player:
+				var curr = player_model.anim_player.current_animation.to_lower()
+				if ("attack" in curr or "slash" in curr) and player_model.anim_player.is_playing():
+					is_attacking = true
+			if not is_attacking:
+				player_model.set_animation_state("idle")
 
 func interact(player: Node) -> void:
 	var speaker = "神秘修士"
@@ -168,6 +207,7 @@ func interact(player: Node) -> void:
 	var options = [
 		{"text": "闲聊", "action": "chat"},
 		{"text": "交易", "action": "trade"},
+		{"text": "查看对方底细 (窥探面板)", "action": "view_stats"},
 		{"text": "告辞", "action": "leave"}
 	]
 	
@@ -177,25 +217,91 @@ func interact(player: Node) -> void:
 
 func handle_dialogue_action(action: String) -> void:
 	print("[NPC] 收到玩家对话指令: ", action)
+	var dm = get_node_or_null("/root/DialogueManager")
+	var speaker = data.npc_name if data else "神秘修士"
+	
 	if action == "chat":
-		var dm = get_node_or_null("/root/DialogueManager")
 		if dm:
-			dm.start_dialogue(self, data.npc_name if data else "神秘修士", "天下熙熙皆为利来，天下攘攘皆为利往。道友想聊些什么？", [
+			dm.start_dialogue(self, speaker, "天下熙熙皆为利来，天下攘攘皆为利往。道友想聊些什么？", [
 				{"text": "打听宗门传闻", "action": "rumor"},
 				{"text": "暂且不聊了", "action": "leave"}
 			])
 	elif action == "rumor":
-		var dm = get_node_or_null("/root/DialogueManager")
 		if dm:
-			dm.start_dialogue(self, data.npc_name if data else "神秘修士", "最近修仙界可不太平，听说有几个大能陨落了...哎，不说了，咱们修为太低，不掺和。", [
+			dm.start_dialogue(self, speaker, "最近修仙界可不太平，听说有几个大能陨落了...哎，不说了，咱们修为太低，不掺和。", [
 				{"text": "告辞", "action": "leave"}
 			])
 	elif action == "trade":
-		var dm = get_node_or_null("/root/DialogueManager")
 		if dm:
-			dm.start_dialogue(self, data.npc_name if data else "神秘修士", "我这儿穷得叮当响，道友还是去坊市看看吧。", [
+			dm.start_dialogue(self, speaker, "我这儿穷得叮当响，道友还是去坊市看看吧。", [
 				{"text": "告辞", "action": "leave"}
 			])
+	elif action == "view_stats":
+		_show_debug_stats_ui()
+		# 保持当前对话界面不关闭
+		if dm:
+			dm.start_dialogue(self, speaker, "道友，你用神识扫我作甚？！", [
+				{"text": "冒犯了，告辞", "action": "leave"}
+			])
+
+func _show_debug_stats_ui() -> void:
+	var panel = PanelContainer.new()
+	panel.name = "NPCStatsUI"
+	
+	# 给动态面板挂载一个简易脚本，实现 ESC 关闭功能
+	var script = GDScript.new()
+	script.source_code = """
+extends PanelContainer
+func _input(event):
+	if event.is_action_pressed("ui_cancel"):
+		queue_free()
+		get_viewport().set_input_as_handled()
+"""
+	script.reload()
+	panel.set_script(script)
+	
+	var style = StyleBoxFlat.new()
+	style.bg_color = Color(0.1, 0.1, 0.1, 0.9)
+	style.border_width_left = 2
+	style.border_color = Color(0.8, 0.6, 0.2)
+	panel.add_theme_stylebox_override("panel", style)
+	
+	var vbox = VBoxContainer.new()
+	var label = RichTextLabel.new()
+	label.bbcode_enabled = true
+	label.custom_minimum_size = Vector2(400, 300)
+	
+	var t = "[b][color=gold]=== 神识窥探：NPC 属性面板 ===[/color][/b]\n\n"
+	t += "姓名: [color=cyan]%s[/color]\n" % (data.npc_name if data else "未知")
+	var realm_str = ["凡人", "炼气期", "筑基期", "金丹期", "元婴期", "化神期"]
+	var r_idx = data.cultivation_realm if data else 1
+	t += "境界: [color=purple]%s[/color]\n" % (realm_str[r_idx] if r_idx < realm_str.size() else "深不可测")
+	t += "宗门: %s\n" % (data.faction.faction_name if data and data.faction else "散修")
+	t += "状态: %s\n\n" % (data.current_action if data else "闲置")
+	
+	if data and data.needs:
+		t += "[color=orange]-- 宏观 AI 需求条 (满100) --[/color]\n"
+		t += "生命安全: %.1f\n" % data.needs.get("safety", 100.0)
+		t += "修为进度: %.1f\n" % data.needs.get("cultivation", 100.0)
+		t += "财富资源: %.1f\n" % data.needs.get("wealth", 100.0)
+		t += "社交执念: %.1f\n\n" % data.needs.get("social", 100.0)
+		
+	label.text = t
+	vbox.add_child(label)
+	
+	var btn = Button.new()
+	btn.text = "关闭神识窥探"
+	btn.pressed.connect(func(): panel.queue_free())
+	vbox.add_child(btn)
+	
+	panel.add_child(vbox)
+	
+	var ui_layer = get_node_or_null("/root/Game/UI Layer")
+	if not ui_layer: ui_layer = get_tree().root
+	
+	# 居中显示
+	panel.set_anchors_preset(Control.PRESET_CENTER)
+	ui_layer.add_child(panel)
 
 func refresh_from_data() -> void:
 	var fac_name = "散修"

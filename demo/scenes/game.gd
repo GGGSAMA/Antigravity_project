@@ -37,6 +37,11 @@ func _ready() -> void:
 	hp_bar.max_value = player.get_health().max_health
 	player.get_health().damaged.connect(func(_a,_b): hp_bar.value = player.get_health().get_current())
 	player.death.connect(_on_player_death)
+	
+	# Hide leftover demo UI from the screen
+	var ui_layer = get_node_or_null("UI Layer")
+	if ui_layer:
+		ui_layer.visible = false
 
 
 func _update_round_counter() -> void:

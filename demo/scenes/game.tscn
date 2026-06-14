@@ -194,3 +194,4 @@ position = Vector2(1859, 3)
 
 [connection signal="pressed" from="UI Layer/Control/Toolbar/HBoxContainer/Switch to Showcase" to="." method="_on_switch_to_showcase_pressed"]
 [connection signal="gong_struck" from="Gong" to="." method="_on_gong_gong_struck"]
+

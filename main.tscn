@@ -37,14 +37,12 @@
 [ext_resource type="PackedScene" uid="uid://dipnoqkfcigk1" path="res://world/props/keg_decorated.tscn" id="27_otl2k"]
 [ext_resource type="PackedScene" uid="uid://crnus7ufi4h4f" path="res://world/props/table_small.tscn" id="28_rn0w5"]
 [ext_resource type="PackedScene" uid="uid://d8c8jsj5obww" path="res://world/props/key_ring.tscn" id="29_r247n"]
-[ext_resource type="PackedScene" uid="uid://q2qm0disgbdi" path="res://models/zombie/ZombieMale_AAB_BodyParts.fbx" id="42_d2t1y"]
-[ext_resource type="PackedScene" uid="uid://coeq5l43326id" path="res://models/zombie/ZombieMale_AAB.fbx" id="43_gngh3"]
 [ext_resource type="PackedScene" uid="uid://70eoghy3185j" path="res://anim/Animations/FemaleLocomotionSet/Mannequin/RootMotion/A_JogFwd_Loop.fbx" id="44_gngh3"]
 [ext_resource type="PackedScene" uid="uid://df7w1yexs2rgy" path="res://entities/potion/potion.tscn" id="bottle_scene"]
 [ext_resource type="PackedScene" uid="uid://cx6w7yexs2rgy" path="res://entities/npc/npc_base.tscn" id="npc_scene"]
+[ext_resource type="Script" uid="uid://brvnifnhhl4k8" path="res://entities/npc/npc_spawner.gd" id="npc_spawner_script"]
 [ext_resource type="Script" uid="uid://vd3apk8gwhj6" path="res://systems/world_generation/rog_scatterer.gd" id="rs_script"]
 [ext_resource type="Script" uid="uid://bjbk5yf0qecdi" path="res://systems/world_generation/world_generator.gd" id="wg_script"]
-[ext_resource type="Script" path="res://entities/npc/npc_spawner.gd" id="npc_spawner_script"]
 
 [sub_resource type="Gradient" id="Gradient_vr1m7"]
 offsets = PackedFloat32Array(0.2, 1)
@@ -116,7 +114,7 @@ data = PackedVector3Array(-1.0898, 0.5, 0.25, -2, 3.2, 0.25, -1.0894, 2.1643, 0.
 
 [node name="Main" type="Node3D" unique_id=1618885587]
 
-[node name="NPCSpawner" type="Node3D" parent="."]
+[node name="NPCSpawner" type="Node3D" parent="." unique_id=681609432]
 script = ExtResource("npc_spawner_script")
 
 [node name="erarth" type="Node" parent="." unique_id=56798423]
@@ -162,7 +160,7 @@ size = Vector3(59.4, 1, 71.6)
 metadata/_edit_lock_ = true
 
 [node name="PlayerSpawn" type="Marker3D" parent="." unique_id=77589238]
-transform = Transform3D(0.766044, 0, -0.642788, 0, 1, 0, 0.642788, 0, 0.766044, 591.6548, 1.0272366, -9.929918)
+transform = Transform3D(0.766044, 0, -0.642788, 0, 1, 0, 0.642788, 0, 0.766044, 528.153, 1.0272366, 20.004583)
 
 [node name="TestBottle" parent="." unique_id=452615284 instance=ExtResource("bottle_scene")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 591.6238, 0.34681633, 12.163337)
@@ -767,12 +765,6 @@ script = ExtResource("rs_script")
 
 [node name="FloorStone10" type="Node3D" parent="." unique_id=1034235466]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 568.68604, 8.152676, 29.2)
-
-[node name="ZombieMale_AAB_BodyParts" parent="." unique_id=1745783852 instance=ExtResource("42_d2t1y")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 571.83203, 0.00849908, 11.920231)
-
-[node name="ZombieMale_AAB" parent="." unique_id=1563012539 instance=ExtResource("43_gngh3")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 570.8423, 0.008299059, 18.926945)
 
 [node name="A_JogFwd_Loop" parent="." unique_id=874719589 instance=ExtResource("44_gngh3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 571.7105, -2.3841858e-07, 14.744905)

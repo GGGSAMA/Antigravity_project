@@ -124,7 +124,7 @@ func _position_player_safely(target_pos: Vector3, target_rot: Vector3, level_pat
 			_spawn_test_npcs(safe_pos)
 	else:
 		player.global_position = target_pos
-		print("[GameRoot] Safe spawn raycast missed! Using default pos: ", target_pos)
+		if has_node("/root/Log"): get_node("/root/Log").info("GameRoot", "Safe spawn raycast missed! Using default pos: " + str(target_pos))
 		_spawn_fbx_test_nodes(current_level_node, target_pos)
 		if level_path == "res://main.tscn":
 			_spawn_test_npcs(target_pos)

@@ -58,15 +58,20 @@ var current_speed_gear: int = 0
 var active_hotbar_index: int = 0
 
 func _ready() -> void:
-	# 动态替换角色模型（使用用户指定的 Sophia 模型）
-	var sophia_scene = load("res://models/characters/gdquest_sophia/sophia_skin.tscn")
 	var player_model = get_node_or_null("PlayerModel")
-	if sophia_scene and player_model:
-		# 1. 挂载新模型
-		var sophia = sophia_scene.instantiate()
-		sophia.name = "SophiaSkin"
-		sophia.rotation.y = PI # 旋转180度，让模型背对摄像机（面向正前方）
-		# 2. 隐藏占位胶囊体，但把脚底的飞剑提出来保留
+	if player_model:
+		player_model.visible = true
+		var shadow_scene = load("res://models/shadow_striker/shadow_striker.tscn")
+		if shadow_scene:
+			var shadow = shadow_scene.instantiate()
+			shadow.name = "shadow_striker"
+			player_model.add_child(shadow)
+			player_model.move_child(shadow, 0) # 放到最前面，作为 get_child(0)
+			
+			# 缩放调整一下，免得太大或太小
+			shadow.scale = Vector3(1.0, 1.0, 1.0) 
+
+		# 隐藏占位胶囊体，但把脚底的飞剑提出来保留
 		var body = player_model.get_node_or_null("Body")
 		if body:
 			body.visible = false
@@ -74,14 +79,6 @@ func _ready() -> void:
 			if sword:
 				sword.reparent(player_model, true)
 				sword.position.y = 0.1 # 强行把飞剑放在脚底（地面上方 0.1 米），防止穿模到地下
-		# 3. 添加到树中
-		player_model.add_child(sophia)
-		# 4. 挂载动画控制器
-		var AnimComp = load("res://entities/player/components/anim_comp.gd")
-		if AnimComp:
-			var anim = AnimComp.new()
-			anim.name = "AnimationComponent"
-			add_child(anim)
 
 	# 动态加载并挂载 Viewmodel（第一人称手臂模型）
 	viewmodel = get_node_or_null("Head/Camera3D/Viewmodel")
@@ -189,6 +186,31 @@ func _input(event: InputEvent) -> void:
 		print("[DEBUG] _input 收到鼠标点击 btn=", event.button_index, " pos=", pos)
 		# 找出谁挡住了鼠标
 		_find_controls_under_mouse(get_tree().root, pos)
+
+func _physics_process(delta: float) -> void:
+	var player_model = get_node_or_null("PlayerModel")
+	var anim_node = player_model.get_child(0) if (player_model and player_model.get_child_count() > 0) else null
+		
+	if anim_node and anim_node.has_method("set_animation_state"):
+		var speed = Vector2(velocity.x, velocity.z).length()
+		var state = "idle"
+		if is_flying:
+			state = "idle" # 飞行使用idle，暂时
+		elif not is_on_floor():
+			state = "jump"
+		elif speed > 3.5:
+			state = "run"
+		elif speed > 0.5:
+			state = "walk"
+			
+		var is_attacking = false
+		if anim_node.get("anim_player") and anim_node.anim_player:
+			var curr = anim_node.anim_player.current_animation.to_lower()
+			if ("attack" in curr or "slash" in curr) and anim_node.anim_player.is_playing():
+				is_attacking = true
+				
+		if not is_attacking or speed > 0.5:
+			anim_node.set_animation_state(state)
 
 func _find_controls_under_mouse(node: Node, pos: Vector2) -> void:
 	if node is Control and node.is_visible_in_tree() and node.mouse_filter != Control.MOUSE_FILTER_IGNORE:

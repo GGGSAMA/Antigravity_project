@@ -1,28 +1,20 @@
-00:20:09 [INFO] [System] LogManager 初始化成功，开始分级记录日志。
-00:20:12 [DEBUG] [Input] 战斗点击捕获: btn=2 pressed=true
-00:20:12 [INFO] [Combat] 右键按下，空手状态，准备蓄力右手法术
-00:20:12 [DEBUG] [Combat] 尝试开始蓄力，is_left: false
-00:20:12 [DEBUG] [Combat] 选定法术: 火球术
-00:20:12 [INFO] [Combat] 开始蓄力法术：火球术 需要时间：1.0
-00:20:13 [DEBUG] [Combat] 【接口】播放蓄力完成音效：火球术
-00:20:13 [DEBUG] [Combat] 【接口】播放蓄力完成特效：火球术
-00:20:16 [DEBUG] [Input] 战斗点击捕获: btn=2 pressed=false
-00:20:16 [INFO] [Combat] 右键松开，判断是否结算施法
-00:20:16 [INFO] [Combat] 施法结算。已蓄力时间：3.59562044444443 / 1.0
-00:20:17 [WARN] [NPC] 李逍遥 被低阶神识窥探，大怒！
-00:20:17 [WARN] [NPC] 血老怪 被低阶神识窥探，大怒！
-00:20:17 [INFO] [Scanner] 神识横扫！范围 50.0 米，共发现 3 个目标。
-00:20:21 [WARN] [Combat] 血老怪 对你发起了攻击！
-00:20:22 [DEBUG] [Input] 战斗点击捕获: btn=1 pressed=true
-00:20:22 [DEBUG] [Input] 战斗点击捕获: btn=1 pressed=false
-00:20:22 [DEBUG] [Input] 战斗点击捕获: btn=2 pressed=true
-00:20:22 [INFO] [Combat] 右键按下，空手状态，准备蓄力右手法术
-00:20:22 [DEBUG] [Combat] 尝试开始蓄力，is_left: false
-00:20:22 [DEBUG] [Combat] 选定法术: 火球术
-00:20:22 [INFO] [Combat] 开始蓄力法术：火球术 需要时间：1.0
-00:20:23 [DEBUG] [Combat] 【接口】播放蓄力完成音效：火球术
-00:20:23 [DEBUG] [Combat] 【接口】播放蓄力完成特效：火球术
-00:20:24 [DEBUG] [Input] 战斗点击捕获: btn=2 pressed=false
-00:20:24 [INFO] [Combat] 右键松开，判断是否结算施法
-00:20:24 [INFO] [Combat] 施法结算。已蓄力时间：1.04947155555555 / 1.0
-00:20:26 [INFO] [System] 游戏关闭，停止记录日志。
+14:51:22 [INFO] [System] LogManager 初始化成功，开始分级记录日志。
+14:51:26 [DEBUG] [Input] 战斗点击捕获: btn=2 pressed=true
+14:51:26 [INFO] [Combat] 右键按下，空手状态，准备蓄力右手法术
+14:51:26 [DEBUG] [Combat] 尝试开始蓄力，is_left: false
+14:51:26 [DEBUG] [Combat] 选定法术: 火球术
+14:51:26 [INFO] [Combat] 开始蓄力法术：火球术 需要时间：1.0
+14:51:26 [DEBUG] [Input] 战斗点击捕获: btn=2 pressed=false
+14:51:26 [INFO] [Combat] 右键松开，判断是否结算施法
+14:51:26 [INFO] [Combat] 施法结算。已蓄力时间：0.11111111111111 / 1.0
+14:51:39 [DEBUG] [Input] 战斗点击捕获: btn=2 pressed=true
+14:51:39 [INFO] [Combat] 右键按下，空手状态，准备蓄力右手法术
+14:51:39 [DEBUG] [Combat] 尝试开始蓄力，is_left: false
+14:51:39 [DEBUG] [Combat] 选定法术: 火球术
+14:51:39 [INFO] [Combat] 开始蓄力法术：火球术 需要时间：1.0
+14:51:40 [DEBUG] [Combat] 【接口】播放蓄力完成音效：火球术
+14:51:40 [DEBUG] [Combat] 【接口】播放蓄力完成特效：火球术
+14:51:40 [DEBUG] [Input] 战斗点击捕获: btn=2 pressed=false
+14:51:40 [INFO] [Combat] 右键松开，判断是否结算施法
+14:51:40 [INFO] [Combat] 施法结算。已蓄力时间：1.42352 / 1.0
+14:51:58 [INFO] [System] 游戏关闭，停止记录日志。

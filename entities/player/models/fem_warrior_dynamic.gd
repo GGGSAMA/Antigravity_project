@@ -16,7 +16,7 @@ func _find_skeleton(node: Node) -> Skeleton3D:
 	return null
 
 func build_model():
-	print("Dynamically building fem_warrior model...")
+	if has_node("/root/Log"): get_node("/root/Log").info("GameRoot", "Dynamically building fem_warrior model...")
 	
 	var base_scene = load("res://models/femWarrior/Characters/A03.FBX")
 	if not base_scene:
@@ -36,8 +36,31 @@ func build_model():
 	var skel_path: String = ""
 	if skeleton and anim_player:
 		skel_path = str(anim_player.get_node(anim_player.root_node).get_path_to(skeleton))
+		if has_node("/root/Log"): get_node("/root/Log").info("AnimDebug", "Target Skeleton found at: " + str(skel_path))
+		var bone_count = skeleton.get_bone_count()
+		if bone_count > 0:
+			var bones = []
+			for i in range(min(10, bone_count)):
+				bones.append(skeleton.get_bone_name(i))
+			if has_node("/root/Log"): get_node("/root/Log").info("AnimDebug", "A03 Bones start with: " + str(bones))
+	else:
+		print("[AnimDebug] WARNING: No Skeleton3D found in A03.FBX!")
 	
 	var anim_lib = AnimationLibrary.new()
+	var target_lib_name = "locomotion"
+	if anim_player.has_animation_library(target_lib_name):
+		anim_lib = anim_player.get_animation_library(target_lib_name)
+	else:
+		anim_player.add_animation_library(target_lib_name, anim_lib)
+
+	if anim_player:
+		var f = FileAccess.open("res://anim_dump.txt", FileAccess.WRITE)
+		if f:
+			var libs = anim_player.get_animation_library_list()
+			f.store_line("A03 Libs: " + str(libs))
+			for ln in libs:
+				f.store_line("Anim in " + ln + ": " + str(anim_player.get_animation_library(ln).get_animation_list()))
+			f.close()
 	
 	var anim_files = {
 		"idle": "res://models/femWarrior/RootAnimsFemale/BaseFemale@1HIdle.fbx",
@@ -62,15 +85,20 @@ func build_model():
 					if skel_path != "":
 						for t in range(anim.get_track_count()):
 							var path_str = str(anim.track_get_path(t))
-							var parts = path_str.split(":")
-							if parts.size() > 1:
-								anim.track_set_path(t, NodePath(str(skel_path) + ":" + parts[1]))
+							var colon_idx = path_str.find(":")
+							if colon_idx != -1:
+								var subnames = path_str.substr(colon_idx)
+								var new_path = NodePath(str(skel_path) + subnames)
+								anim.track_set_path(t, new_path)
+								if t == 0:
+									print("[AnimDebug] Rewriting track[0] for ", anim_name, " from '", path_str, "' to '", new_path, "'")
 								
 					anim_lib.add_animation(anim_name, anim)
 				else:
 					if lib:
 						var anim_list = lib.get_animation_list()
 						for a in anim_list:
+							if a == "RESET" or a == "default": continue
 							var anim = lib.get_animation(a).duplicate()
 							if anim_name in ["idle", "walk", "run"]:
 								anim.loop_mode = Animation.LOOP_LINEAR
@@ -78,9 +106,11 @@ func build_model():
 							if skel_path != "":
 								for t in range(anim.get_track_count()):
 									var path_str = str(anim.track_get_path(t))
-									var parts = path_str.split(":")
-									if parts.size() > 1:
-										anim.track_set_path(t, NodePath(str(skel_path) + ":" + parts[1]))
+									var colon_idx = path_str.find(":")
+									if colon_idx != -1:
+										var subnames = path_str.substr(colon_idx)
+										var new_path = NodePath(str(skel_path) + subnames)
+										anim.track_set_path(t, new_path)
 										
 							anim_lib.add_animation(anim_name, anim)
 							break
@@ -123,11 +153,26 @@ func build_model():
 	add_trans.call("attack", "idle", AnimationNodeStateMachineTransition.SWITCH_MODE_AT_END, AnimationNodeStateMachineTransition.ADVANCE_MODE_AUTO)
 	
 	anim_tree.tree_root = statemachine
-	anim_tree.active = true
+	anim_tree.active = false # DISABLE FOR DEBUGGING
 	
 	self.animation_tree = anim_tree
 
 func set_animation_state(state: String):
+	if get_child_count() > 0:
+		var anim_player = get_child(0).get_node_or_null("AnimationPlayer")
+		if anim_player:
+			var anim_to_play = "locomotion/" + state
+			if anim_player.current_animation != anim_to_play:
+				if has_node("/root/Log"): get_node("/root/Log").info("AnimState", "Playing: " + anim_to_play)
+				anim_player.play(anim_to_play)
+				
+				# Debug track (ONLY ON CHANGE)
+				var lib = anim_player.get_animation_library("locomotion")
+				if lib and lib.has_animation(state):
+					var anim = lib.get_animation(state)
+					if anim.get_track_count() > 0:
+						if has_node("/root/Log"): get_node("/root/Log").info("AnimState", "Track0 path for " + state + ": " + str(anim.track_get_path(0)))
+	
 	if animation_tree and animation_tree.get("parameters/playback"):
 		var playback = animation_tree.get("parameters/playback")
 		playback.travel(state)

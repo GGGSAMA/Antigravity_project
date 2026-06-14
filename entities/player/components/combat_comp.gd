@@ -247,10 +247,18 @@ func _execute_weapon_attack() -> void:
 	var vm = player.get("viewmodel")
 	if vm: vm.trigger_right_swing() # 武器在右手，触发右手挥击
 
-	var anim_comp = player.get_node_or_null("AnimationComponent")
-	if anim_comp and anim_comp.has_method("play_attack"):
-		anim_comp.play_attack()
+	var player_model = player.get_node_or_null("PlayerModel")
+	if player_model:
+		var anim_node = player_model.get_child(0) if player_model.get_child_count() > 0 else player_model
+		if anim_node and anim_node.has_method("set_animation_state"):
+			anim_node.set_animation_state("attack")
 
+	# 新旧过渡兼容：如果不使用动画方法轨道，我们在这里开启一个延迟检测
+	# 推荐做法是在 AnimationPlayer 中给 attack 动画打一根 Method Track，调用 apply_hitbox_damage()
+	get_tree().create_timer(0.4).timeout.connect(apply_hitbox_damage)
+
+func apply_hitbox_damage() -> void:
+	if not player: return
 	var spell_origin = camera.global_position if camera else player.global_position
 	var forward_dir = -camera.global_transform.basis.z.normalized() if camera else -player.global_transform.basis.z.normalized()
 	
@@ -310,6 +318,12 @@ func _execute_spell_cast(is_left: bool, spell_data: Dictionary) -> void:
 		# 右手法术，如果拿了可以施法的武器，则可能播放不同的动画（可选）
 		# 暂用同样的动画
 		vm.trigger_right_swing()
+		
+	var player_model = player.get_node_or_null("PlayerModel")
+	if player_model:
+		var anim_node = player_model.get_child(0) if player_model.get_child_count() > 0 else player_model
+		if anim_node and anim_node.has_method("set_animation_state"):
+			anim_node.set_animation_state("attack")
 		
 	var stats = player.get("stats")
 	var mana_cost = spell_data.get("mana_cost", 10)
