@@ -1,6 +1,6 @@
 extends CharacterBody3D
 
-@export var data: NPCData
+@export var data: CharacterData
 
 @onready var name_tag = $NameTag
 @onready var stats = $Stats
@@ -25,6 +25,38 @@ func _ready() -> void:
 
 	# 延迟初始化 AI
 	call_deferred("_init_ai")
+	
+	if Engine.get_main_loop().root.has_node("DeathManager"):
+		Engine.get_main_loop().root.get_node("DeathManager").npc_died.connect(_on_death_event)
+
+func _on_death_event(d: CharacterData, cause: String) -> void:
+	if data and d.npc_id == data.npc_id:
+		print("[NPC] 接收到死亡事件：", data.npc_name, " 死因：", cause)
+		# 取消所有行为
+		set_physics_process(false)
+		
+		# 临时使用缩小和变暗来替代倒地动画
+		var tween = create_tween()
+		tween.tween_property(self, "scale", Vector3(0.1, 0.1, 0.1), 1.5)
+		
+		# 生成储物袋
+		if cause == "combat" or cause == "old_age":
+			_spawn_loot_bag()
+			
+		tween.tween_callback(queue_free)
+
+func _spawn_loot_bag() -> void:
+	var loot_scene = load("res://entities/items/loot_bag.tscn")
+	if loot_scene:
+		var bag = loot_scene.instantiate()
+		bag.money = data.need_resource * 100 # 临时用需财度代替金钱
+		# bag.inventory = data.inventory
+		
+		var parent = get_parent()
+		if parent:
+			parent.add_child(bag)
+			bag.global_position = global_position + Vector3(0, 0.5, 0)
+			print("[NPC] 掉落了储物袋！")
 
 # ----------------- AI 状态与神识机制 (LimboAI) -----------------
 var affinity: int = 0
@@ -103,6 +135,15 @@ func _show_bubble(text: String, color: Color) -> void:
 	var tween = create_tween()
 	tween.tween_callback(func(): refresh_from_data(); name_tag.modulate = Color.WHITE).set_delay(4.0)
 
+func take_damage(amount: int, source_pos: Vector3 = Vector3.ZERO) -> void:
+	if not data or not data.is_alive: return
+	data.stamina -= amount
+	_show_bubble("啊！何方道友偷袭！", Color.RED)
+	if data.stamina <= 0:
+		data.stamina = 0
+		if Engine.get_main_loop().root.has_node("DeathManager"):
+			Engine.get_main_loop().root.get_node("DeathManager").process_death(data, "combat", self)
+
 func _physics_process(delta: float) -> void:
 	if not is_on_floor():
 		velocity.y -= 9.8 * delta
@@ -114,13 +155,25 @@ func _physics_process(delta: float) -> void:
 	var override_macro = false
 	
 	if data and data.current_action != "":
-		if data.current_action in ["修炼", "疗伤"]:
+		if data.current_action in ["修炼", "闭关修炼", "疗伤"]:
 			velocity.x = move_toward(velocity.x, 0, delta * 10.0)
 			velocity.z = move_toward(velocity.z, 0, delta * 10.0)
 			override_macro = true
 			is_moving = false
 			_set_state("idle")
+			
+			if not has_meta("is_meditating"):
+				set_meta("is_meditating", true)
+				var tween = create_tween()
+				if player_model:
+					tween.tween_property(player_model, "scale", Vector3(1.0, 0.6, 1.0), 0.5)
 		elif data.current_action in ["打猎", "社交"]:
+			if has_meta("is_meditating"):
+				remove_meta("is_meditating")
+				var tween = create_tween()
+				if player_model:
+					tween.tween_property(player_model, "scale", Vector3(1.0, 1.0, 1.0), 0.5)
+					
 			override_macro = true
 			if not has_meta("wander_target") or global_position.distance_to(get_meta("wander_target")) < 1.0:
 				var r_pos = global_position + Vector3(randf_range(-10, 10), 0, randf_range(-10, 10))
@@ -145,6 +198,12 @@ func _physics_process(delta: float) -> void:
 					set_meta("wander_wait", randf_range(1.0, 3.0))
 
 	if not override_macro:
+		if has_meta("is_meditating"):
+			remove_meta("is_meditating")
+			var tween = create_tween()
+			if player_model:
+				tween.tween_property(player_model, "scale", Vector3(1.0, 1.0, 1.0), 0.5)
+				
 		# 行为树 / 状态机的 Execute Update 逻辑
 		if current_state == "approach" and target_player:
 			var dir = global_position.direction_to(target_player.global_position)
@@ -274,17 +333,21 @@ func _input(event):
 	var t = "[b][color=gold]=== 神识窥探：NPC 属性面板 ===[/color][/b]\n\n"
 	t += "姓名: [color=cyan]%s[/color]\n" % (data.npc_name if data else "未知")
 	var realm_str = ["凡人", "炼气期", "筑基期", "金丹期", "元婴期", "化神期"]
-	var r_idx = data.cultivation_realm if data else 1
+	var r_idx = data.cultivation_comp.cultivation_realm if data and data.cultivation_comp else 1
 	t += "境界: [color=purple]%s[/color]\n" % (realm_str[r_idx] if r_idx < realm_str.size() else "深不可测")
 	t += "宗门: %s\n" % (data.faction.faction_name if data and data.faction else "散修")
 	t += "状态: %s\n\n" % (data.current_action if data else "闲置")
 	
-	if data and data.needs:
+	if data:
 		t += "[color=orange]-- 宏观 AI 需求条 (满100) --[/color]\n"
-		t += "生命安全: %.1f\n" % data.needs.get("safety", 100.0)
-		t += "修为进度: %.1f\n" % data.needs.get("cultivation", 100.0)
-		t += "财富资源: %.1f\n" % data.needs.get("wealth", 100.0)
-		t += "社交执念: %.1f\n\n" % data.needs.get("social", 100.0)
+		t += "寿元紧迫: %.1f\n" % data.need_lifespan
+		t += "疗伤迫切: %.1f\n" % data.need_healing
+		t += "修炼渴望: %.1f\n" % data.need_cultivation
+		t += "资源追求: %.1f\n\n" % data.need_resource
+		
+		t += "[color=lightblue]-- AI 性格乘区 (0-100) --[/color]\n"
+		t += "野心: %d | 谨慎: %d | 贪婪: %d\n" % [data.trait_ambition, data.trait_cautious, data.trait_greed]
+		t += "仁善: %d | 社交: %d\n\n" % [data.trait_morality, data.trait_sociability]
 		
 	label.text = t
 	vbox.add_child(label)
@@ -313,9 +376,10 @@ func refresh_from_data() -> void:
 	
 	# 根据境界 (cultivation_realm) 给予底层属性加成
 	# 炼气期=1, 筑基期=2, 金丹期=3...
-	stats.aptitude = 10 * data.cultivation_realm
-	stats.constitution = 10 * data.cultivation_realm
-	stats.divine_sense = 10 * data.cultivation_realm
+	if data and data.cultivation_comp:
+		stats.aptitude = 10 * data.cultivation_comp.cultivation_realm
+		stats.constitution = 10 * data.cultivation_comp.cultivation_realm
+		stats.divine_sense = 10 * data.cultivation_comp.cultivation_realm
 	
 	# 强制重新计算血量蓝量上限
 	stats.recalculate()
@@ -323,4 +387,5 @@ func refresh_from_data() -> void:
 	stats.current_mana = stats.max_mana
 	
 	# 赋予初始灵石
-	stats.spirit_stones = 50 * data.cultivation_realm
+	if data and data.cultivation_comp:
+		stats.spirit_stones = 50 * data.cultivation_comp.cultivation_realm

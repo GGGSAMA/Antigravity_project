@@ -5,6 +5,10 @@ var ai_log_label: RichTextLabel
 var show_debug: bool = true
 var ai_logs: Array = []
 
+# UI 面板引用
+var grid_panel: PanelContainer
+var ai_panel: PanelContainer
+
 # 缓存的用于标记当前格子的 3D 边框
 var _current_cell_marker: MeshInstance3D
 
@@ -12,29 +16,31 @@ func _ready():
 	# 确保 Debug UI 永远在最上层
 	layer = 128
 	
-	# 创建富文本标签 (网格属性) -> 移动到右上角
-	debug_label = RichTextLabel.new()
-	debug_label.bbcode_enabled = true
-	debug_label.custom_minimum_size = Vector2(400, 300)
-	debug_label.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	debug_label.position = Vector2(-420, 100) # 在时间 UI 之下
-	debug_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(debug_label)
+	# === 1. 加载世界网格属性面板 (右侧居中) ===
+	var grid_scene = preload("res://systems/world_grid/grid_debug_panel.tscn")
+	grid_panel = grid_scene.instantiate()
+	add_child(grid_panel)
+	debug_label = grid_panel.get_node("MarginContainer/VBoxContainer/DebugContent")
 	
-	# 创建 AI 日志标签 (左侧靠下) -> 移动到左侧
-	ai_log_label = RichTextLabel.new()
-	ai_log_label.bbcode_enabled = true
-	ai_log_label.custom_minimum_size = Vector2(500, 600)
-	ai_log_label.set_anchors_preset(Control.PRESET_CENTER_LEFT)
-	ai_log_label.position = Vector2(20, -100)
-	ai_log_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(ai_log_label)
+	# === 2. 加载宏观 AI 日志面板 (左侧居中) ===
+	var ai_scene = preload("res://systems/world_grid/ai_log_panel.tscn")
+	ai_panel = ai_scene.instantiate()
+	add_child(ai_panel)
+	ai_log_label = ai_panel.get_node("MarginContainer/VBoxContainer/LogContent")
 	
-	# 连接 AI 模拟器信号
-	if MacroSimulator.has_signal("macro_event_logged"):
-		MacroSimulator.macro_event_logged.connect(_on_ai_logged)
+	# 初始状态
+	grid_panel.visible = show_debug
+	ai_panel.visible = show_debug
+	
+	# 连接 AI 模拟器信号 (延迟一点确保 MacroSimulator 准备好)
+	call_deferred("_connect_signals")
 	
 	_create_cell_marker()
+
+func _connect_signals() -> void:
+	if Engine.get_main_loop().root.has_node("MacroSimulator"):
+		var ms = Engine.get_main_loop().root.get_node("MacroSimulator")
+		ms.macro_event_logged.connect(_on_ai_logged)
 
 func _on_ai_logged(msg: String) -> void:
 	ai_logs.append(msg)
@@ -68,9 +74,10 @@ func _unhandled_input(event):
 	if event is InputEventKey and event.pressed:
 		if event.keycode == KEY_F3:
 			show_debug = !show_debug
-			debug_label.visible = show_debug
-			ai_log_label.visible = show_debug
-			_current_cell_marker.visible = show_debug
+			grid_panel.visible = show_debug
+			ai_panel.visible = show_debug
+			if _current_cell_marker:
+				_current_cell_marker.visible = show_debug
 
 func _process(_delta):
 	if not show_debug: return
@@ -107,7 +114,7 @@ func _process(_delta):
 	
 	# 构建 UI 文本
 	var text = "[b][color=yellow]=== 世界网格调试仪 (F3隐藏) ===[/color][/b]\n"
-	text += "当前世界坐标: (X: %.1f, Z: %.1f)\n" % [probe_pos.x, probe_pos.z]
+	text += "世界坐标: [color=white]X: %.1f  Y: %.1f  Z: %.1f[/color]\n" % [probe_pos.x, probe_pos.y, probe_pos.z]
 	text += "所处逻辑网格: [color=cyan]%s[/color]\n\n" % str(grid_pos)
 	
 	text += "[color=orange]-- 自然属性 --[/color]\n"

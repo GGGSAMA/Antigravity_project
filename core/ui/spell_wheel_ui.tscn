@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://spell_wheel_001"]
+[gd_scene format=3 uid="uid://cjst7hqvndtsb"]
 
-[ext_resource type="Script" path="res://core/ui/spell_wheel_ui.gd" id="1_spell_wheel"]
+[ext_resource type="Script" uid="uid://dbvfc3oof5cx8" path="res://core/ui/spell_wheel_ui.gd" id="1_spell_wheel"]
 
-[node name="SpellWheelUI" type="Control"]
+[node name="SpellWheelUI" type="Control" unique_id=386965642]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -12,7 +12,7 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_spell_wheel")
 
-[node name="Center" type="Control" parent="."]
+[node name="Center" type="Control" parent="." unique_id=265337173]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -23,7 +23,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="SpellIcons" type="Control" parent="Center"]
+[node name="SpellIcons" type="Control" parent="Center" unique_id=1388649203]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -31,7 +31,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="SelectedName" type="Label" parent="Center"]
+[node name="SelectedName" type="Label" parent="Center" unique_id=1889066027]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5

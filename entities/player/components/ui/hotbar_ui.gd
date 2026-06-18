@@ -102,8 +102,8 @@ func _on_slot_hover(idx: int):
 	var item = hotbar_comp.slots[idx]
 	if item:
 		var meta = ItemDatabase.get_item(item.id)
-		var text = "[color=#F0D050][b]" + meta.get("name", item.id) + "[/b][/color]\n"
-		text += "[color=#A0A0A0]" + meta.get("desc", "未知物品") + "[/color]\n"
+		var text = "[color=#F0D050][b]" + str(meta.get("name", item.id)) + "[/b][/color]\n"
+		text += "[color=#A0A0A0]" + str(meta.get("desc", "未知物品")) + "[/color]\n"
 		manager.show_tooltip(text)
 
 func _on_slot_gui_input(event: InputEvent, idx: int):
@@ -119,15 +119,15 @@ func _on_slot_gui_input(event: InputEvent, idx: int):
 						hotbar_comp.clear_slot(idx)
 				else:
 					if data == null:
-						hotbar_comp.set_slot(idx, manager.carried_item.id, manager.carried_item.qty)
+						hotbar_comp.set_slot(idx, manager.carried_item.id, manager.carried_item.qty, {"affixes": manager.carried_item.get("affixes", {}), "quality": manager.carried_item.get("quality", 0)})
 						manager.carried_item = null
 					else:
 						if data.id == manager.carried_item.id:
-							hotbar_comp.set_slot(idx, data.id, data.qty + manager.carried_item.qty)
+							hotbar_comp.set_slot(idx, data.id, data.qty + manager.carried_item.qty, {"affixes": manager.carried_item.get("affixes", {}), "quality": manager.carried_item.get("quality", 0)})
 							manager.carried_item = null
 						else:
 							var temp = data
-							hotbar_comp.set_slot(idx, manager.carried_item.id, manager.carried_item.qty)
+							hotbar_comp.set_slot(idx, manager.carried_item.id, manager.carried_item.qty, {"affixes": manager.carried_item.get("affixes", {}), "quality": manager.carried_item.get("quality", 0)})
 							manager.carried_item = temp
 				update_ui()
 				manager.hide_tooltip()
@@ -138,6 +138,7 @@ func _on_slot_gui_input(event: InputEvent, idx: int):
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not visible or not hotbar_comp: return
+	if UIFocusManager.is_gameplay_blocked(): return
 	if event is InputEventMouseButton and event.pressed:
 		var current = hotbar_comp.active_slot_index
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP:

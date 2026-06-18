@@ -38,6 +38,25 @@
 [ext_resource type="PackedScene" uid="uid://crnus7ufi4h4f" path="res://world/props/table_small.tscn" id="28_rn0w5"]
 [ext_resource type="PackedScene" uid="uid://d8c8jsj5obww" path="res://world/props/key_ring.tscn" id="29_r247n"]
 [ext_resource type="PackedScene" uid="uid://70eoghy3185j" path="res://anim/Animations/FemaleLocomotionSet/Mannequin/RootMotion/A_JogFwd_Loop.fbx" id="44_gngh3"]
+[ext_resource type="PackedScene" uid="uid://dth4h610qc4o8" path="res://models/building/GLB/props_woodpile_01.glb" id="44_ruth0"]
+[ext_resource type="PackedScene" uid="uid://7romm6ktr2yg" path="res://models/building/GLB/props_waterbucket_01.glb" id="45_rm4vd"]
+[ext_resource type="PackedScene" uid="uid://ci53h4ohhypqq" path="res://models/building/GLB/props_torch_01.glb" id="46_pjyto"]
+[ext_resource type="PackedScene" uid="uid://dsm7w0e2tyi6n" path="res://models/building/GLB/props_marketTable.glb" id="47_sm6fg"]
+[ext_resource type="PackedScene" uid="uid://mhagvsn4styo" path="res://models/building/GLB/props_marketstall_B.glb" id="48_b17eg"]
+[ext_resource type="PackedScene" uid="uid://b06c80ru4lqc" path="res://models/building/GLB/props_marketstall_A.glb" id="49_ntx8l"]
+[ext_resource type="PackedScene" uid="uid://dbj7435hgvk3p" path="res://models/building/GLB/props_lamppost_01.glb" id="50_uatky"]
+[ext_resource type="PackedScene" uid="uid://blblpmlhmnlcx" path="res://models/building/GLB/props_ironcrate.glb" id="51_rqtf5"]
+[ext_resource type="PackedScene" uid="uid://bgf7yc000yecd" path="res://models/building/GLB/props_fence_01.glb" id="52_1vm84"]
+[ext_resource type="PackedScene" uid="uid://b0b77mqk764fk" path="res://models/building/GLB/props_emptycrate_B.glb" id="53_wu3dr"]
+[ext_resource type="PackedScene" uid="uid://bofsr22m7wyx0" path="res://models/building/GLB/props_emptycrate_A.glb" id="54_cyx1q"]
+[ext_resource type="PackedScene" uid="uid://bybx7gu3y5ega" path="res://models/building/GLB/props_cart_02.glb" id="55_0dhbp"]
+[ext_resource type="PackedScene" uid="uid://xjk15fhlgmvk" path="res://models/building/GLB/props_cart_01.glb" id="56_jx0wj"]
+[ext_resource type="PackedScene" uid="uid://cx8xbpq52xl4k" path="res://models/building/GLB/props_campfire_01.glb" id="57_kkkcx"]
+[ext_resource type="PackedScene" uid="uid://bu0kn6qwm4gbw" path="res://models/building/GLB/props_bucket.glb" id="58_34ol3"]
+[ext_resource type="PackedScene" uid="uid://qvyj8x0ddcj1" path="res://models/building/GLB/props_applecrate_B.glb" id="59_c2n8d"]
+[ext_resource type="PackedScene" uid="uid://cwkx3crxksh8c" path="res://models/building/GLB/props_applecrate_A.glb" id="60_wy5fy"]
+[ext_resource type="PackedScene" uid="uid://b8h2liidfj2qb" path="res://models/building/3d-model.fbx" id="61_rm4vd"]
+[ext_resource type="Script" uid="uid://bwpuatgtfma3f" path="res://world/architecture/building_auto_setup.gd" id="62_pjyto"]
 [ext_resource type="PackedScene" uid="uid://df7w1yexs2rgy" path="res://entities/potion/potion.tscn" id="bottle_scene"]
 [ext_resource type="PackedScene" uid="uid://cx6w7yexs2rgy" path="res://entities/npc/npc_base.tscn" id="npc_scene"]
 [ext_resource type="Script" uid="uid://brvnifnhhl4k8" path="res://entities/npc/npc_spawner.gd" id="npc_spawner_script"]
@@ -768,6 +787,61 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 568.68604, 8.152676, 29.2)
 
 [node name="A_JogFwd_Loop" parent="." unique_id=874719589 instance=ExtResource("44_gngh3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 571.7105, -2.3841858e-07, 14.744905)
+
+[node name="props_woodpile_012" parent="." unique_id=1080487510 instance=ExtResource("44_ruth0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 644.56995, 0.12385833, -21.158829)
+
+[node name="props_waterbucket_012" parent="." unique_id=613351475 instance=ExtResource("45_rm4vd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 644.56995, 0.12385833, -21.158829)
+
+[node name="props_torch_012" parent="." unique_id=1946535781 instance=ExtResource("46_pjyto")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 644.56995, 0.12385833, -21.158829)
+
+[node name="props_marketTable2" parent="." unique_id=1135227170 instance=ExtResource("47_sm6fg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 644.56995, 0.12385833, -21.158829)
+
+[node name="props_marketstall_B2" parent="." unique_id=567607312 instance=ExtResource("48_b17eg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 644.56995, 0.12385833, -21.158829)
+
+[node name="props_marketstall_A2" parent="." unique_id=299573169 instance=ExtResource("49_ntx8l")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 644.56995, 0.12385833, -21.158829)
+
+[node name="props_lamppost_012" parent="." unique_id=267950539 instance=ExtResource("50_uatky")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 644.56995, 0.12385833, -21.158829)
+
+[node name="props_ironcrate2" parent="." unique_id=1495491566 instance=ExtResource("51_rqtf5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 644.56995, 0.12385833, -21.158829)
+
+[node name="props_fence_012" parent="." unique_id=592370745 instance=ExtResource("52_1vm84")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 644.56995, 0.12385833, -21.158829)
+
+[node name="props_emptycrate_B2" parent="." unique_id=1174133893 instance=ExtResource("53_wu3dr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 644.56995, 0.12385833, -21.158829)
+
+[node name="props_emptycrate_A2" parent="." unique_id=641584877 instance=ExtResource("54_cyx1q")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 644.56995, 0.12385833, -21.158829)
+
+[node name="props_cart_022" parent="." unique_id=312228988 instance=ExtResource("55_0dhbp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 644.56995, 0.12385833, -21.158829)
+
+[node name="props_cart_012" parent="." unique_id=1013555706 instance=ExtResource("56_jx0wj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 644.56995, 0.12385833, -21.158829)
+
+[node name="props_campfire_012" parent="." unique_id=2074012163 instance=ExtResource("57_kkkcx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 644.56995, 0.12385833, -21.158829)
+
+[node name="props_bucket2" parent="." unique_id=1515827476 instance=ExtResource("58_34ol3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 644.56995, 0.12385833, -21.158829)
+
+[node name="props_applecrate_B2" parent="." unique_id=1395271307 instance=ExtResource("59_c2n8d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 644.56995, 0.12385833, -21.158829)
+
+[node name="props_applecrate_A2" parent="." unique_id=966112662 instance=ExtResource("60_wy5fy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 644.56995, 0.12385833, -21.158829)
+
+[node name="3d-model" parent="." unique_id=2035049091 instance=ExtResource("61_rm4vd")]
+transform = Transform3D(-0.8367356, 0, 0.5476071, 0, 1, 0, -0.5476071, 0, -0.8367356, 541.6097, 0, -152.09271)
+script = ExtResource("62_pjyto")
 
 [editable path="Building/WallDoorway2"]
 [editable path="Building/WallDoorway2/wall_doorway2"]

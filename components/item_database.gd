@@ -19,7 +19,10 @@ const AFFIX_TRANSLATION = {
 	"lifesteal": {"name": "吸血率(%)", "color": "#DC143C", "prefix": "+"},
 	"crit_chance": {"name": "暴击率(%)", "color": "#FF8C00", "prefix": "+"},
 	"mystic_realm_teleport": {"name": "附带特效: 破界穿梭", "color": "#DDA0DD", "prefix": ""},
-	"poison_weapon": {"name": "武器淬毒", "color": "#32CD32", "prefix": ""}
+	"poison_weapon": {"name": "武器淬毒", "color": "#32CD32", "prefix": ""},
+	"sect_foundation": {"name": "开宗立派", "color": "#FFD700", "prefix": ""},
+	"sect_name": {"name": "空间印记归属", "color": "#FFD700", "prefix": " - "},
+	"teleport": {"name": "传送阵眼坐标", "color": "#DDA0DD", "prefix": ": "}
 }
 
 # 快捷获取格式化后的中文词缀描述
@@ -30,9 +33,15 @@ static func get_affix_text(key: String, value: Variant) -> String:
 		if typeof(value) == TYPE_INT or typeof(value) == TYPE_FLOAT:
 			val_str = ": " + trans["prefix"] + str(value)
 		elif typeof(value) == TYPE_BOOL and value == true:
-			val_str = "" # bool 为 true 时只显示名字，如“武器淬毒”
+			val_str = "" # bool 为 true 时只显示名字
 		elif typeof(value) == TYPE_BOOL and value == false:
 			return "" # bool 为 false 隐形
+		elif typeof(value) == TYPE_STRING:
+			val_str = trans["prefix"] + value
+		elif typeof(value) == TYPE_ARRAY or typeof(value) == TYPE_PACKED_VECTOR3_ARRAY:
+			# 将数组转换为好看的字符串
+			val_str = trans["prefix"] + str(value)
+			
 		return "[color=" + trans["color"] + "]" + trans["name"] + val_str + "[/color]"
 	else:
 		return "[color=#00FA9A]未知道纹: " + key + " (" + str(value) + ")[/color]"
@@ -150,6 +159,14 @@ static func _load_fallback_items() -> void:
 			"effects": { "mystic_realm_teleport": true },
 			"special_effects": {}
 		},
+		"宗门传送令": {
+			"type": "artifact",
+			"icon": "令牌",
+			"color": Color(0.8, 0.6, 0.1, 0.8), # 暗金
+			"desc": "由宗门阵法孕育而成的核心信物，持有者可无视空间阻隔直接传送至宗门阵眼处。这是造物主的特权道具。",
+			"effects": {}, # 动态通过 affixes 传入 teleport
+			"special_effects": {}
+		},
 		"九转金丹": {
 			"type": "consumable",
 			"icon": "🌟",
@@ -157,6 +174,14 @@ static func _load_fallback_items() -> void:
 			"desc": "修仙界传闻中的至高神丹 (系统备用数据)",
 			"effects": { "heal": 9999, "restore_mana": 9999 },
 			"special_effects": { "heal": 9999, "restore_mana": 9999 }
+		},
+		"sect_foundation_token": {
+			"type": "artifact",
+			"icon": "🏛️",
+			"color": Color(0.83, 0.68, 0.21, 0.8), # 金色
+			"desc": "蕴含无上造化之力的开宗立派阵盘。使用后可于当前地块圈地建宗，演化宗门殿宇，招纳天下英才。",
+			"effects": { "sect_foundation": true },
+			"special_effects": {}
 		}
 	}
 	print("【物品数据库】已启用系统内置兜底物品配置！")

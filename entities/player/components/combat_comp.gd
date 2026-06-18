@@ -2,19 +2,14 @@ extends Node
 class_name CombatComponent
 
 # ==============================================================================
-# 【战斗系统组件 (CombatComponent) - 细节实现与调优基准】
-# ------------------------------------------------------------------------------
-# 牢大重点要求的“已调优细节前提”（绝对不可在重构中丢失的机制）：
-# 1. 左右手按键映射机制：
-#    - 鼠标左键 -> 对应左手模型动作 (trigger_left_swing)
-#    - 鼠标右键 -> 对应右手模型动作 (trigger_right_swing)
-# 2. 武器与空手施法逻辑分化：
-#    - 装备武器时：右键挥砍武器（造成物理+力量加成伤害）；左键吃药或单手施法（左侧法术）。
-#    - 空手状态时：双手皆可捏法诀施法！左键释放左侧设定的法术，右键释放右侧设定的法术。
-# 3. 施法弹道偏置细节：
-#    - 为了第一人称沉浸感，左侧法术生成时位置必须向左偏移 (offset_side = -0.16)
-#    - 右侧法术生成时位置必须向右偏移 (offset_side = 0.16)
-#    - 确保法术球看起来是从手掌中心发射出去的。
+# 【战斗系统组件 (CombatComponent)】
+# 职责：
+# 挂载于 Player 下，专门接管和处理所有的战斗输入（左右键）、蓄力施法、武器挥砍、
+# 以及法术弹道生成。它与 Inventory（物品）、Spells（法术书）和 ViewModel（第一人称手臂动画）高度耦合以实现战斗闭环。
+#
+# 架构规范：
+# - Player 的 _unhandled_input 必须将左右键点击事件路由到此类的 handle_left_click / handle_right_click
+# - 左侧法术位移偏移为 -0.16，右侧为 0.16，保持第一人称视觉沉浸感。
 # ==============================================================================
 
 
@@ -34,6 +29,7 @@ func _ready() -> void:
 	if player and not camera:
 		var head = player.get_node_or_null("Head")
 		if head: camera = head.get_node_or_null("Camera3D")
+
 
 func _process(delta: float) -> void:
 	if is_charging:
@@ -71,6 +67,11 @@ func _process(delta: float) -> void:
 				# 【接口2】触发蓄力完成特效 (这里暂时调用了 viewmodel 的手部发光闪烁)
 				_play_cast_ready_vfx(charge_is_left, current_action_data)
 
+# ------------------------------------------------------------------------------
+# 处理玩家左键输入
+# 优先级：快捷栏物品使用 > 武器物理挥砍 > 蓄力施展左手法术
+# @param pressed: bool - true 为按下，false 为松开
+# ------------------------------------------------------------------------------
 func handle_left_click(pressed: bool = true) -> void:
 	if not player: return
 	
@@ -104,31 +105,18 @@ func handle_left_click(pressed: bool = true) -> void:
 		if is_charging and charge_is_left:
 			_release_charge()
 
+# ------------------------------------------------------------------------------
+# 处理玩家右键输入
+# 优先级：无论手中是否持有武器，均触发蓄力施展右手法术 (允许持剑施法)
+# @param pressed: bool - true 为按下，false 为松开
+# ------------------------------------------------------------------------------
 func handle_right_click(pressed: bool = true) -> void:
 	if not player: return
 	
 	if pressed:
-		var has_weapon = false
-		var equip_comp = player.get("equipment_comp")
-		if equip_comp and equip_comp.slots[0] != null:
-			has_weapon = true
-			
-		var has_item = false
-		var hotbar = player.get("hotbar_comp")
-		if hotbar and player.get("active_hotbar_index") != null:
-			var idx = player.get("active_hotbar_index")
-			if idx >= 0 and idx < hotbar.slots.size() and hotbar.slots[idx] != null:
-				has_item = true
-				
-		if has_weapon or has_item:
-			if has_node("/root/Log"):
-				get_node("/root/Log").info("Combat", "右键按下，手中有物品或武器，无法施展法术。")
-			# 根据物品/武器特性触发右键能力，这里留作扩展，暂不施法
-			return
-			
 		if has_node("/root/Log"):
-			get_node("/root/Log").info("Combat", "右键按下，空手状态，准备蓄力右手法术")
-		# 右键永远是长按捏诀施展右手法术
+			get_node("/root/Log").info("Combat", "右键按下，准备蓄力右手法术")
+		# 右键捏诀施展右手法术
 		_start_charge(false)
 	else:
 		if has_node("/root/Log"):
@@ -165,10 +153,17 @@ func _start_charge(is_left: bool) -> void:
 		get_node("/root/Log").debug("Combat", "选定法术: " + current_action_data.get("name", "Unknown"))
 	
 	var stats = player.get("stats")
+	var base_mana_cost = current_action_data.get("mana_cost", 0)
+	var element = current_action_data.get("element", "fire")
+	
+	# 读取 CombatRuntimeAttr(alias: Stats) 缓存的减耗乘区，O(1)
+	var mana_reduction = stats.get_multiplier(element + "_mana_reduction", 0.0) if stats and stats.has_method("get_multiplier") else 0.0
+	var final_mana_cost = int(base_mana_cost * (1.0 - mana_reduction))
+	
 	var current_mana = stats.current_mana if stats else 100
 	if not spell_comp.can_cast(is_left, current_mana):
 		if has_node("/root/Log"):
-			get_node("/root/Log").warn("Combat", "灵力不足！当前灵力: " + str(current_mana) + " 需要: " + str(current_action_data.get("mana_cost", 0)))
+			get_node("/root/Log").warn("Combat", "灵力不足！当前灵力: " + str(current_mana) + " 需要: " + str(final_mana_cost))
 		var hud = player.get_node_or_null("HUD")
 		if hud and hud.has_method("show_notification"):
 			hud.show_notification("灵力不足！")
@@ -178,7 +173,10 @@ func _start_charge(is_left: bool) -> void:
 	charge_is_left = is_left
 	charge_time_passed = 0.0
 	charge_ready_flashed = false
-	continuous_cast_timer = current_action_data.get("cooldown", 0.2)
+	
+	var base_cooldown = current_action_data.get("cooldown", 0.2)
+	var cd_reduction = stats.get_multiplier(element + "_cd_reduction", 0.0) if stats and stats.has_method("get_multiplier") else 0.0
+	continuous_cast_timer = base_cooldown * (1.0 - cd_reduction)
 	
 	var vm = player.get("viewmodel")
 	if vm and vm.has_method("start_casting_animation"):
@@ -326,13 +324,19 @@ func _execute_spell_cast(is_left: bool, spell_data: Dictionary) -> void:
 			anim_node.set_animation_state("attack")
 		
 	var stats = player.get("stats")
-	var mana_cost = spell_data.get("mana_cost", 10)
+	var base_mana_cost = spell_data.get("mana_cost", 10)
+	var element = spell_data.get("element", "fire")
+	
+	var mana_reduction = stats.get_multiplier(element + "_mana_reduction", 0.0) if stats and stats.has_method("get_multiplier") else 0.0
+	var final_mana_cost = int(base_mana_cost * (1.0 - mana_reduction))
 	
 	if stats:
 		var current_mana = stats.get("current_mana")
-		stats.set("current_mana", current_mana - mana_cost)
+		stats.set("current_mana", current_mana - final_mana_cost)
 		stats.mana_changed.emit(stats.get("current_mana"), stats.get("max_mana"))
 		
 	if player.has_method("_spawn_spell_projectile"):
-		# 传入法术数据，is_left 标志，以及 is_catalyst（未来可用于计算附加法伤）
+		# 传入法术数据，is_left 标志，以及 is_catalyst
+		# 可以在 _spawn_spell_projectile 内部读取 cached_dmg_mults 给 projectile！
+		spell_data["_cached_dmg_mult"] = stats.get_multiplier(element + "_dmg_mult", 1.0) if stats and stats.has_method("get_multiplier") else 1.0
 		player._spawn_spell_projectile(spell_data, is_left)

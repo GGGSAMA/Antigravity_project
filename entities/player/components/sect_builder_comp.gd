@@ -40,26 +40,26 @@ func _setup_ui():
 	progress_bar.visible = false
 	control.add_child(progress_bar)
 
-func _process(delta):
-	# Toggle equip
-	if Input.is_action_just_pressed("ui_1") or Input.is_physical_key_pressed(KEY_1):
-		# Prevent multiple triggers in same frame if both map to same
-		if Input.is_physical_key_pressed(KEY_1) and Input.is_action_just_pressed("ui_1"):
-			pass # handle below
-		if Input.is_key_pressed(KEY_1):
-			pass
-			
-	# Let's just use Input.is_key_pressed, but properly debounced or just use Input.is_physical_key_pressed with a small delay or use InputEventKey
-	pass
 
-func _unhandled_input(event):
-	if event is InputEventKey and event.pressed and event.keycode == KEY_1 and not event.echo:
-		is_equipped = !is_equipped
-		prompt_label.text = "Sect Builder: [1] to Unequip" if is_equipped else "Sect Builder: [1] to Equip"
-		if not is_equipped:
-			_clear_preview()
-			build_timer = 0.0
-			progress_bar.visible = false
+
+var is_holding: bool = false
+
+func toggle_equip():
+	is_equipped = !is_equipped
+	prompt_label.text = "Sect Builder: [1] to Unequip" if is_equipped else "Sect Builder: [1] to Equip"
+	if not is_equipped:
+		_clear_preview()
+		build_timer = 0.0
+		progress_bar.visible = false
+		is_holding = false
+
+func handle_build_click(event: InputEventMouseButton):
+	if is_equipped:
+		if event.button_index == MOUSE_BUTTON_RIGHT or event.button_index == MOUSE_BUTTON_LEFT:
+			if event.pressed:
+				is_holding = true
+			else:
+				is_holding = false
 
 func _physics_process(delta):
 	if not is_equipped:
@@ -72,9 +72,8 @@ func _physics_process(delta):
 	var space_state = camera.get_world_3d().direct_space_state
 	var screen_center = get_viewport().get_visible_rect().size / 2
 	var origin = camera.project_ray_origin(screen_center)
-	var end = origin + camera.project_ray_normal(screen_center) * 100.0
+	var end = origin + camera.project_ray_normal(screen_center) * 200.0 # 增加距离
 	var query = PhysicsRayQueryParameters3D.create(origin, end)
-	# query.collision_mask = ... (if needed)
 	
 	var result = space_state.intersect_ray(query)
 	var hit_pos = Vector3.ZERO
@@ -101,8 +100,19 @@ func _create_preview():
 			preview_instance = scene.instantiate()
 			get_tree().current_scene.add_child(preview_instance)
 			
+			# 彻底关闭碰撞，防止射线检测到自己导致疯狂闪烁抖动
+			_disable_collision(preview_instance)
 			# Make it semi-transparent
 			_make_transparent(preview_instance)
+
+func _disable_collision(node: Node):
+	if node is CollisionObject3D:
+		node.collision_layer = 0
+		node.collision_mask = 0
+	if node is CollisionShape3D:
+		node.disabled = true
+	for child in node.get_children():
+		_disable_collision(child)
 
 func _make_transparent(node: Node):
 	if node is MeshInstance3D:
@@ -122,8 +132,6 @@ func _clear_preview():
 		preview_instance = null
 
 func _handle_building(delta: float, has_hit: bool, hit_pos: Vector3):
-	var is_holding = Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) or Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT)
-	
 	if has_hit and is_holding:
 		build_timer += delta
 		progress_bar.visible = true
@@ -137,11 +145,18 @@ func _handle_building(delta: float, has_hit: bool, hit_pos: Vector3):
 			prompt_label.text = "Sect Builder: [1] to Equip"
 			_clear_preview()
 			progress_bar.visible = false
+			is_holding = false
 	else:
 		build_timer = 0.0
 		progress_bar.visible = false
 
 func _spawn_pillar(pos: Vector3):
+	# 调用宗门大管家，在目标坐标创建全套宗门数据
+	var new_sect_id = ""
+	if get_node_or_null("/root/FactionManager"):
+		# 传入玩家当前的实体ID (暂时留空或传player_id)，这里先留空，表示天道随机降临
+		new_sect_id = FactionManager.create_sect_at_location(pos, "")
+	
 	if ResourceLoader.exists(pillar_scene_path):
 		var scene = load(pillar_scene_path) as PackedScene
 		if scene:
@@ -149,7 +164,13 @@ func _spawn_pillar(pos: Vector3):
 			get_tree().current_scene.add_child(inst)
 			inst.global_position = pos
 			
-			# Claim territory
-			if WorldGridManager.has_method("claim_territory_radius"):
-				WorldGridManager.claim_territory_radius(pos, 1, "Player_Sect")
-				print("Claimed territory for Player_Sect at: ", pos)
+			print("✅ [SectBuilder] 成功利用建宗阵盘在 ", pos, " 建立宗门：", new_sect_id)
+			
+			# 消耗物品
+			var p = get_parent()
+			if p and p.has_node("Hotbar"):
+				p.get_node("Hotbar").remove_item("sect_foundation_token", 1)
+				# 通知UI刷新
+				var hud = p.get_node_or_null("HUD")
+				if hud and hud.has_node("HotbarPanel"):
+					hud.get_node("HotbarPanel").update_ui()

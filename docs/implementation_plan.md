@@ -1,57 +1,47 @@
-# 行为 AI 重构框架设计图 (Implementation Plan)
+# 宗门/势力系统四层模块化底层实现计划
 
-本图纸专门用于规划如何用代码把《NPC 行为 AI 设计文档》真正落地。
+> [!NOTE]
+> 我们刚刚完成了微观（NPC 实体）的四层节点化。现在我们要将您构想的《文明》式地缘宏观推演架构（Terrain -> Faction 四模块 -> NPC）在代码库中打下地基。本计划不涉及 3D 建筑模型的摆放，只涉及后台推演引擎的搭建。
 
-## 1. 全局时间驱动框架 (Time-driven Architecture)
-目前的 `MacroSimulator` 靠真实的秒数（`Timer` 每隔 3 秒）触发，这不符合修仙逻辑。
-- **需要引入 `TimeManager`**：全局管理“太初历 x 年 x 月 x 日”。
-- `MacroSimulator` 不再使用 `Timer`，而是订阅 `TimeManager.on_day_passed`（每天或每月流逝信号）。
+## 目标
+重构 `FactionData` 和 `SocialManager`/`FactionManager`，确立宗门的四层数据解耦结构，并实现一个从“虚假地形数据 -> 宗门数据 -> NPC 生成参数”的单向测试管线。
 
-## 2. 数据结构扩充设计
-在 `NPCData` 资源类中扩充以下核心字段，承载 AI 的决策树状态：
-```gdscript
-@export var age: int = 20
-@export var max_lifespan: int = 100
-@export var combat_power: int = 10
-@export var current_mission: Dictionary = {}
+## Proposed Changes
 
-# 状态锁：AI 在接下来的多少天内处于执行状态，不进行新的决策推演
-var locked_days_remaining: int = 0
-# 修仙轨迹自传
-var history_trajectory: Array[String] = []
-```
+### 1. `core/simulation/factions/`
+将传统的单一 `FactionData` Resource 拆分为由四组字典或子类组成的数据结构。
 
-## 3. 决策引擎代码框架 (`behavior_engine.gd`)
-将以前极其简陋的 `macro_actions.gd` 彻底废弃，重写为严格的决策树类 `BehaviorEngine`：
+#### [MODIFY] `faction_data.gd`
+- 不再是一个扁平的变量堆砌，而是变成一个包含四个独立数据模块容器的 Resource：
+  - `geo_attr`: 存储地形匹配结果和主五行。
+  - `culture_attr`: 存储发展偏好（如炼丹权重、剑修权重）。
+  - `power_attr`: 存储灵石库存、弟子上限等动态推演数据。
+  - `building_attr`: 存储该宗门拥有的概念建筑列表（如 `"alchemy_lab": level 2`）。
 
-```gdscript
-class_name BehaviorEngine extends RefCounted
+### 2. 生成器流水线切分
+#### [MODIFY] `faction_manager.gd` (原有的生成脚本重构)
+- 新增 `generate_factions_from_terrain_mock(seed)` 接口。
+- **阶段 A**：模拟地形数据（例如输入“火山区域”）。
+- **阶段 B**：根据“火山”，写入宗门的 `geo_attr` (主属性=火)。
+- **阶段 C**：根据 `geo_attr`，初始化 `culture_attr` (重度偏向炼丹)。
+- **阶段 D**：根据 `culture_attr`，在 `building_attr` 里加入 `alchemy_lab`。
 
-static func evaluate_next_action(npc: NPCData) -> String:
-    if npc.get_health_percent() < 0.3:
-        return _start_action(npc, "闭关疗伤", 30, "身受重伤，闭死关苟延残喘。")
-        
-    if npc.max_lifespan - npc.age < 10:
-        return _start_action(npc, "寻延寿丹/强行突破", 60, "寿元将尽，破釜沉舟外出寻找机缘。")
-        
-    if not npc.current_mission.is_empty():
-        var req_cp = npc.current_mission.get("required_cp", 0)
-        if npc.combat_power < req_cp:
-            return _start_action(npc, "战前整备", 15, "任务艰险，前往坊市重金求购物资。")
-        else:
-            return _start_action(npc, "执行任务", 20, "奉宗门之命，下山执行任务。")
-            
-    # 日常内卷
-    return _start_action(npc, "打坐吐纳", 10, "天地灵气汇聚，打坐巩固修为。")
+### 3. 与微观 NPC 的单向对接
+#### [MODIFY] `entities/components/stats/social_faction_attr.gd` (NPC 社交节点)
+- 增加接口，使其在初始化时能够通过 `FactionManager` 查找到自己所属宗门的 `culture_attr` 和 `geo_attr`，从而缓存全局加成（例如获取炼丹成功率的势力 Buff）。
 
-static func _start_action(npc: NPCData, action_name: String, days: int, log_msg: String) -> String:
-    npc.current_action = action_name
-    npc.locked_days_remaining = days
-    npc.history_trajectory.append("[%s] %s" % [TimeManager.get_current_date_str(), log_msg])
-    return log_msg
-```
+#### [MODIFY] `entities/npc/npc_spawner.gd`
+- 修改生成逻辑：只根据宗门的 `building_attr` (如炼丹房) 来决定刷出什么灵根配置的 NPC 给 `RootGenAttr`，绝对不允许反向把 NPC 的数据写回宗门大类中。
 
-## 4. 开放问题与确认项
-- > [!IMPORTANT]
-- **TimeManager 是否已存在？**：如果没有现成的按“年月日”运转的 `TimeManager` 节点，我将先手写一个单例，将其挂载到 Autoload 中。
-- **轨迹查询 UI**：是否需要在与 NPC 对话的菜单里加一个选项：“打听生平”，然后把 `history_trajectory` 以列表的形式呈现给玩家看？
+## Verification Plan
+编写一个独立的测试命令或启动脚本，在控制台输出一次完整的“创世模拟”：
+1. 打印：【地形插件输出】：找到 1 个火属性区块，1 个金属性区块。
+2. 打印：【势力孵化】：生成“烈阳宗”，Culture=炼丹，包含建筑=炼丹大殿。
+3. 打印：【NPC生成规则输出】：烈阳宗炼丹大殿请求生成 5 名 NPC，灵根权重强制倾斜为 火/木，赋予专属宗门 Buff。
+
+## User Review Required
+> [!IMPORTANT]
+> 这是一份纯后台数据结构的剥离计划，也是将《文明》地缘机制落地的第一步。
+> 它的核心意义在于确保我们之后做“几千年岁月推演”时，只需要操作内存里的 `power_attr`，不需要加载任何 3D 节点。
+> 
+> 请您作为首席架构师评估这个路线：如果您认为这套底层数据拆分和流水线映射符合您的预期，请点击 **Proceed**，我将为您搭建这套最强力的宏观引擎骨架！

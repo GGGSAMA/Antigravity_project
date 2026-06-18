@@ -96,5 +96,13 @@ func _generate_mixed_terrain(seed_str: String) -> void:
 		if terrain_node.material:
 			terrain_node.material.show_checkered = true
 		print("Mixed Terrain Generation Completed!")
+		
+		# ======================================================================
+		# 创世最后一步：向世界大地上撒下初始宗门的种子
+		# ======================================================================
+		var faction_manager = get_node_or_null("/root/FactionManager")
+		if faction_manager and faction_manager.has_method("seed_initial_world"):
+			faction_manager.seed_initial_world(5) # 默认撒 5 个宗门
+			
 	else:
 		push_error("Terrain3D has no data instance!")

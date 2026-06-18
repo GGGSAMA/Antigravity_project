@@ -91,20 +91,9 @@ func _physics_process(delta: float) -> void:
 		# 强制把交互射线加长到 10 米，排除距离不够的问题
 		interaction_ray.target_position = Vector3(0, 0, -10.0)
 
-func _unhandled_input(event: InputEvent) -> void:
-	if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
-		return
-		
-	# 神识全息扫描 (V 键)
-	if event is InputEventKey and event.pressed and event.keycode == KEY_V:
-		execute_divine_scan()
-		get_viewport().set_input_as_handled()
-		
-	# 实体交互 (F 键)
-	if event is InputEventKey and event.pressed and event.keycode == KEY_F:
-		print("[DEBUG] _unhandled_input 捕获到 F 键按下事件！")
-		handle_interact_only()
-		get_viewport().set_input_as_handled()
+func handle_interact() -> void:
+	print("[DEBUG] InteractComponent 收到 Player 路由的 F 键按下事件！")
+	handle_interact_only()
 
 func execute_divine_scan() -> void:
 	if not player: return

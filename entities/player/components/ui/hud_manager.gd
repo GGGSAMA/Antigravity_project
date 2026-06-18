@@ -30,13 +30,15 @@ func _ready():
 	# 建立全局 Tooltip 面板
 	tooltip_panel = PanelContainer.new()
 	var style = StyleBoxFlat.new()
-	style.bg_color = Color(0.05, 0.05, 0.08, 0.95)
-	style.set_corner_radius_all(4)
-	style.border_width_left = 1
-	style.border_width_top = 1
-	style.border_width_right = 1
-	style.border_width_bottom = 1
-	style.border_color = Color(0.8, 0.6, 0.1, 0.5)
+	style.bg_color = Color(0.02, 0.15, 0.18, 0.95) # Deep teal
+	style.set_corner_radius_all(8)
+	style.border_width_left = 2
+	style.border_width_top = 2
+	style.border_width_right = 2
+	style.border_width_bottom = 2
+	style.border_color = Color(0.2, 0.8, 0.6, 0.8) # Jade border
+	style.shadow_color = Color(0, 0, 0, 0.6)
+	style.shadow_size = 4
 	tooltip_panel.add_theme_stylebox_override("panel", style)
 	tooltip_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	tooltip_panel.z_index = 99
@@ -82,6 +84,12 @@ func _ready():
 	var spell_wheel = get_node_or_null("SpellWheelUI")
 	if spell_wheel:
 		spell_wheel.spell_selected.connect(_on_spell_selected)
+		
+	var TradeUIScript = load("res://entities/player/components/ui/trade_ui.gd")
+	if TradeUIScript:
+		var trade_ui = TradeUIScript.new()
+		trade_ui.name = "TradeUI"
+		add_child(trade_ui)
 
 func _bind_scanner_hud(scanner_hud: Node) -> void:
 	var player = get_tree().get_first_node_in_group("player")
@@ -91,8 +99,6 @@ func _bind_scanner_hud(scanner_hud: Node) -> void:
 			scanner_hud.setup_scanner(scanner_comp)
 
 func _on_spell_selected(spell_id: String) -> void:
-	if spell_id == "": return
-	
 	var player = get_tree().get_first_node_in_group("player")
 	if not player: return
 	
@@ -127,8 +133,10 @@ func _input(event: InputEvent) -> void:
 		var is_action_menu_open = action_menu != null and action_menu.visible
 		var meditation = get_node_or_null("MeditationUI")
 		var is_meditation_open = meditation != null and meditation.visible
+		var trade_ui = get_node_or_null("TradeUI")
+		var is_trade_open = trade_ui != null and trade_ui.visible
 		
-		var any_ui_open = is_dashboard_open or is_action_menu_open or is_meditation_open
+		var any_ui_open = is_dashboard_open or is_action_menu_open or is_meditation_open or is_trade_open
 		
 		# 按 ESC 关闭当前所有激活的 UI
 		if event.is_action_pressed("ui_cancel") and any_ui_open:
@@ -136,6 +144,7 @@ func _input(event: InputEvent) -> void:
 				dashboard.hide()
 			if is_action_menu_open: action_menu.hide_ui()
 			if is_meditation_open: meditation.hide_ui()
+			if is_trade_open: trade_ui.close_trade()
 			
 			_update_mouse_state()
 			
@@ -188,18 +197,25 @@ func _update_mouse_state() -> void:
 	var action_menu = get_node_or_null("ActionMenuUI")
 	var meditation = get_node_or_null("MeditationUI")
 	var spell_wheel = get_node_or_null("SpellWheelUI")
+	var trade_ui = get_node_or_null("TradeUI")
 	
-	var is_ui_open = (dashboard and dashboard.visible) or \
-					 (action_menu and action_menu.visible) or \
-					 (meditation and meditation.visible) or \
-					 (spell_wheel and spell_wheel.get("is_open"))
-					 
-	if is_ui_open:
-		if Input.mouse_mode != Input.MOUSE_MODE_VISIBLE and Input.mouse_mode != Input.MOUSE_MODE_CONFINED_HIDDEN:
-			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-	else:
-		if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
-			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	if dashboard != null and dashboard.visible: UIFocusManager.open_ui("DashboardUI")
+	else: UIFocusManager.close_ui("DashboardUI")
+	
+	if action_menu != null and action_menu.visible: UIFocusManager.open_ui("ActionMenuUI")
+	else: UIFocusManager.close_ui("ActionMenuUI")
+		
+	if meditation != null and meditation.visible: UIFocusManager.open_ui("MeditationUI")
+	else: UIFocusManager.close_ui("MeditationUI")
+		
+	if trade_ui != null and trade_ui.visible: UIFocusManager.open_ui("TradeUI")
+	else: UIFocusManager.close_ui("TradeUI")
+		
+	if spell_wheel != null and spell_wheel.get("is_open"): UIFocusManager.open_ui("SpellWheelUI")
+	else: UIFocusManager.close_ui("SpellWheelUI")
+	
+	if inventory_panel != null and inventory_panel.visible: UIFocusManager.open_ui("InventoryUI")
+	else: UIFocusManager.close_ui("InventoryUI")
 
 func toggle_panel(panel: Control):
 	if panel:

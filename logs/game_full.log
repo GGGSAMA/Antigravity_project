@@ -1,20 +1,365 @@
-14:51:22 [INFO] [System] LogManager 初始化成功，开始分级记录日志。
-14:51:26 [DEBUG] [Input] 战斗点击捕获: btn=2 pressed=true
-14:51:26 [INFO] [Combat] 右键按下，空手状态，准备蓄力右手法术
-14:51:26 [DEBUG] [Combat] 尝试开始蓄力，is_left: false
-14:51:26 [DEBUG] [Combat] 选定法术: 火球术
-14:51:26 [INFO] [Combat] 开始蓄力法术：火球术 需要时间：1.0
-14:51:26 [DEBUG] [Input] 战斗点击捕获: btn=2 pressed=false
-14:51:26 [INFO] [Combat] 右键松开，判断是否结算施法
-14:51:26 [INFO] [Combat] 施法结算。已蓄力时间：0.11111111111111 / 1.0
-14:51:39 [DEBUG] [Input] 战斗点击捕获: btn=2 pressed=true
-14:51:39 [INFO] [Combat] 右键按下，空手状态，准备蓄力右手法术
-14:51:39 [DEBUG] [Combat] 尝试开始蓄力，is_left: false
-14:51:39 [DEBUG] [Combat] 选定法术: 火球术
-14:51:39 [INFO] [Combat] 开始蓄力法术：火球术 需要时间：1.0
-14:51:40 [DEBUG] [Combat] 【接口】播放蓄力完成音效：火球术
-14:51:40 [DEBUG] [Combat] 【接口】播放蓄力完成特效：火球术
-14:51:40 [DEBUG] [Input] 战斗点击捕获: btn=2 pressed=false
-14:51:40 [INFO] [Combat] 右键松开，判断是否结算施法
-14:51:40 [INFO] [Combat] 施法结算。已蓄力时间：1.42352 / 1.0
-14:51:58 [INFO] [System] 游戏关闭，停止记录日志。
+01:35:41 [INFO] [System] LogManager 初始化成功，开始分级记录日志。
+01:35:43 [INFO] [Genesis] 开始执行文明纪元地缘宗门生成流水线...
+01:35:43 [DEBUG] [Genesis] 孵化 [焚天谷]: 地形=volcano | 主属性=fire | 偏向=炼丹(5.0)/剑修(1.0) | 解锁建筑=["main_hall", "alchemy_lab"]
+01:35:43 [DEBUG] [Genesis] 孵化 [金光剑派]: 地形=mountain_vein | 主属性=metal | 偏向=炼丹(1.0)/剑修(5.0) | 解锁建筑=["main_hall", "sword_forge"]
+01:35:43 [DEBUG] [Genesis] 孵化 [毒沼水阁]: 地形=swamp | 主属性=water | 偏向=炼丹(1.0)/剑修(1.0) | 解锁建筑=["main_hall"]
+01:35:46 [INFO] [System] 游戏关闭，停止记录日志。
+==
+[01:35:43] [WorldSectSeeder] Target sects: 5 TestMode: true
+[01:35:43] [WorldSectSeeder] Skip: height difference too large: 75.8673095703125
+[01:35:43] [WorldSectSeeder] Skip: is_nan(h_center) at -710.644424625774, -145.810774653127
+[01:35:43] [WorldSectSeeder] Skip: flat check hit NaN
+[01:35:43] [WorldSectSeeder] Skip: is_nan(h_center) at 1057.36358835126, 66.4929392318916
+[01:35:43] [WorldSectSeeder] Skip: is_nan(h_center) at 1154.19120198229, -548.071264141733
+[01:35:43] [WorldSectSeeder] Skip: height difference too large: 84.5652160644531
+[01:35:43] [WorldSectSeeder] Skip: height difference too large: 42.1939769387245
+[01:35:43] [WorldSectSeeder] Skip: is_nan(h_center) at 877.65713146161, 1072.18678157976
+[01:35:43] [WorldSectSeeder] Skip: is_nan(h_center) at -1444.61246502958, -510.840703322186
+[01:35:43] [WorldSectSeeder] Skip: is_nan(h_center) at -192.022068551864, 237.263463897641
+[01:35:43] [WorldSectSeeder] Skip: is_nan(h_center) at 52.1899748465869, 1280.01010802926
+[01:35:43] [WorldSectSeeder] Skip: is_nan(h_center) at 1078.20118229156, -368.744503998885
+[01:35:43] [WorldSectSeeder] Skip: is_nan(h_center) at 1350.42671299143, -1033.97999219468
+[01:35:43] [WorldSectSeeder] Skip: height difference too large: 47.4034757614136
+[01:35:43] [WorldSectSeeder] Skip: is_nan(h_center) at 732.017591178165, 1301.42580223907
+[01:35:43] [WorldSectSeeder] Skip: is_nan(h_center) at -15.3111212240265, 1229.6045697094
+[01:35:43] [WorldSectSeeder] Skip: is_nan(h_center) at -1069.01655022807, 468.927029501553
+[01:35:43] [WorldSectSeeder] Skip: flat check hit NaN
+[01:35:43] [WorldSectSeeder] Spawning sect at: (63.44761, 0.0, -79.42035)
+[01:35:43] [SectGenerator] Creating sect at (63.44761, 0.0, -79.42035)
+[01:35:43] [SectGenerator] Pillar safe_pos.y set from data: 0.10000000149012
+[01:35:43] [SectGenerator] Pillar final global_position: (63.44761, 0.1, -79.42035)
+[01:35:43] [NPCSpawner] Instantiating NPC 叶辰 (掌门) at pos: (67.39454, 0.5, -76.72797)
+[01:35:43] [NPCSpawner] NPC pos set by terrain data: (67.39454, 0.2, -76.72797)
+[01:35:43] [NPCSpawner] Final NPC Position for 叶辰 (掌门): (67.39454, 0.2, -76.72797)
+[01:35:43] [NPCSpawner] Instantiating NPC 叶辰 (掌门) at pos: (67.39454, 0.5, -76.72797)
+[01:35:43] [NPCSpawner] NPC pos set by terrain data: (67.39454, 0.2, -76.72797)
+[01:35:43] [NPCSpawner] Final NPC Position for 叶辰 (掌门): (67.39454, 0.2, -76.72797)
+[01:35:43] [NPCSpawner] Instantiating NPC 南宫霸天 (长老) at pos: (64.94496, 0.5, -77.48283)
+[01:35:43] [NPCSpawner] NPC pos set by terrain data: (64.94496, 0.2, -77.48283)
+[01:35:43] [NPCSpawner] Final NPC Position for 南宫霸天 (长老): (64.94496, 0.2, -77.48283)
+[01:35:43] [NPCSpawner] Instantiating NPC 南宫霸天 (长老) at pos: (64.94496, 0.5, -77.48283)
+[01:35:43] [NPCSpawner] NPC pos set by terrain data: (64.94496, 0.2, -77.48283)
+[01:35:43] [NPCSpawner] Final NPC Position for 南宫霸天 (长老): (64.94496, 0.2, -77.48283)
+[01:35:43] [NPCSpawner] Instantiating NPC 端木千山 (长老) at pos: (64.57127, 0.5, -75.4496)
+[01:35:43] [NPCSpawner] NPC pos set by terrain data: (64.57127, 0.2, -75.4496)
+[01:35:43] [NPCSpawner] Final NPC Position for 端木千山 (长老): (64.57127, 0.2, -75.4496)
+[01:35:43] [NPCSpawner] Instantiating NPC 端木千山 (长老) at pos: (64.57127, 0.5, -75.4496)
+[01:35:43] [NPCSpawner] NPC pos set by terrain data: (64.57127, 0.2, -75.4496)
+[01:35:43] [NPCSpawner] Final NPC Position for 端木千山 (长老): (64.57127, 0.2, -75.4496)
+[01:35:43] [NPCSpawner] Instantiating NPC 林香 (外门弟子) at pos: (61.80965, 0.5, -76.96738)
+[01:35:43] [NPCSpawner] NPC pos set by terrain data: (61.80965, 0.2, -76.96738)
+[01:35:43] [NPCSpawner] Final NPC Position for 林香 (外门弟子): (61.80965, 0.2, -76.96738)
+[01:35:43] [NPCSpawner] Instantiating NPC 林香 (外门弟子) at pos: (61.80965, 0.5, -76.96738)
+[01:35:43] [NPCSpawner] NPC pos set by terrain data: (61.80965, 0.2, -76.96738)
+[01:35:43] [NPCSpawner] Final NPC Position for 林香 (外门弟子): (61.80965, 0.2, -76.96738)
+[01:35:43] [NPCSpawner] Instantiating NPC 吴渊 (外门弟子) at pos: (62.9072, 0.5, -75.16936)
+[01:35:43] [NPCSpawner] NPC pos set by terrain data: (62.9072, 0.2, -75.16936)
+[01:35:43] [NPCSpawner] Final NPC Position for 吴渊 (外门弟子): (62.9072, 0.2, -75.16936)
+[01:35:43] [NPCSpawner] Instantiating NPC 吴渊 (外门弟子) at pos: (62.9072, 0.5, -75.16936)
+[01:35:43] [NPCSpawner] NPC pos set by terrain data: (62.9072, 0.2, -75.16936)
+[01:35:43] [NPCSpawner] Final NPC Position for 吴渊 (外门弟子): (62.9072, 0.2, -75.16936)
+[01:35:43] [NPCSpawner] Instantiating NPC 赵破军 (外门弟子) at pos: (58.5966, 0.5, -82.70545)
+[01:35:43] [NPCSpawner] NPC pos set by terrain data: (58.5966, 0.2, -82.70545)
+[01:35:43] [NPCSpawner] Final NPC Position for 赵破军 (外门弟子): (58.5966, 0.2, -82.70545)
+[01:35:43] [NPCSpawner] Instantiating NPC 赵破军 (外门弟子) at pos: (58.5966, 0.5, -82.70545)
+[01:35:43] [NPCSpawner] NPC pos set by terrain data: (58.5966, 0.2, -82.70545)
+[01:35:44] [NPCSpawner] Final NPC Position for 赵破军 (外门弟子): (58.5966, 0.2, -82.70545)
+[01:35:44] [NPCSpawner] Instantiating NPC 皇甫云 (外门弟子) at pos: (60.05354, 0.5, -75.17026)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (60.05354, 0.2, -75.17026)
+[01:35:44] [NPCSpawner] Final NPC Position for 皇甫云 (外门弟子): (60.05354, 0.2, -75.17026)
+[01:35:44] [NPCSpawner] Instantiating NPC 皇甫云 (外门弟子) at pos: (60.05354, 0.5, -75.17026)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (60.05354, 0.2, -75.17026)
+[01:35:44] [NPCSpawner] Final NPC Position for 皇甫云 (外门弟子): (60.05354, 0.2, -75.17026)
+[01:35:44] [NPCSpawner] Instantiating NPC 周明月 (外门弟子) at pos: (67.22525, 0.5, -76.89619)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (67.22525, 0.2, -76.89619)
+[01:35:44] [NPCSpawner] Final NPC Position for 周明月 (外门弟子): (67.22525, 0.2, -76.89619)
+[01:35:44] [NPCSpawner] Instantiating NPC 周明月 (外门弟子) at pos: (67.22525, 0.5, -76.89619)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (67.22525, 0.2, -76.89619)
+[01:35:44] [NPCSpawner] Final NPC Position for 周明月 (外门弟子): (67.22525, 0.2, -76.89619)
+[01:35:44] [SectGenerator] Created token with teleport: [68.4476051330566, 0.0, -74.4203491210938]
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at 1067.85640214687, -463.442944724295
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at -989.303289635764, 444.775068440862
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at -88.3404739415196, 1489.72633784869
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at 1367.72300333856, 473.75473288488
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at 1024.12119778993, -1133.00168075712
+[01:35:44] [WorldSectSeeder] Skip: height difference too large: 13.888770699501
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at 1211.25928806418, -1134.82115989041
+[01:35:44] [WorldSectSeeder] Spawning sect at: (373.2511, -8.471098, -1473.05)
+[01:35:44] [SectGenerator] Creating sect at (373.2511, -8.471098, -1473.05)
+[01:35:44] [SectGenerator] Pillar safe_pos.y set from data: -8.37109756469727
+[01:35:44] [SectGenerator] Pillar final global_position: (373.2511, -8.371098, -1473.05)
+[01:35:44] [NPCSpawner] Instantiating NPC 刘云 (掌门) at pos: (375.1081, -7.971098, -1469.62)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (375.1081, -10.69282, -1469.62)
+[01:35:44] [NPCSpawner] Final NPC Position for 刘云 (掌门): (375.1081, -10.69282, -1469.62)
+[01:35:44] [NPCSpawner] Instantiating NPC 刘云 (掌门) at pos: (375.1081, -7.971098, -1469.62)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (375.1081, -10.69282, -1469.62)
+[01:35:44] [NPCSpawner] Final NPC Position for 刘云 (掌门): (375.1081, -10.69282, -1469.62)
+[01:35:44] [NPCSpawner] Instantiating NPC 李红 (长老) at pos: (376.2065, -7.971098, -1475.689)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (376.2065, -8.877754, -1475.689)
+[01:35:44] [NPCSpawner] Final NPC Position for 李红 (长老): (376.2065, -8.877754, -1475.689)
+[01:35:44] [NPCSpawner] Instantiating NPC 李红 (长老) at pos: (376.2065, -7.971098, -1475.689)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (376.2065, -8.877754, -1475.689)
+[01:35:44] [NPCSpawner] Final NPC Position for 李红 (长老): (376.2065, -8.877754, -1475.689)
+[01:35:44] [NPCSpawner] Instantiating NPC 皇甫明月 (长老) at pos: (375.7966, -7.971098, -1478.028)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (375.7966, -9.803128, -1478.028)
+[01:35:44] [NPCSpawner] Final NPC Position for 皇甫明月 (长老): (375.7966, -9.803128, -1478.028)
+[01:35:44] [NPCSpawner] Instantiating NPC 皇甫明月 (长老) at pos: (375.7966, -7.971098, -1478.028)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (375.7966, -9.803128, -1478.028)
+[01:35:44] [NPCSpawner] Final NPC Position for 皇甫明月 (长老): (375.7966, -9.803128, -1478.028)
+[01:35:44] [NPCSpawner] Instantiating NPC 宇文傲天 (外门弟子) at pos: (373.5399, -7.971098, -1476.74)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (373.5399, -9.516619, -1476.74)
+[01:35:44] [NPCSpawner] Final NPC Position for 宇文傲天 (外门弟子): (373.5399, -9.516619, -1476.74)
+[01:35:44] [NPCSpawner] Instantiating NPC 宇文傲天 (外门弟子) at pos: (373.5399, -7.971098, -1476.74)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (373.5399, -9.516619, -1476.74)
+[01:35:44] [NPCSpawner] Final NPC Position for 宇文傲天 (外门弟子): (373.5399, -9.516619, -1476.74)
+[01:35:44] [NPCSpawner] Instantiating NPC 林长生 (外门弟子) at pos: (368.3617, -7.971098, -1470.647)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (368.3617, -9.332648, -1470.647)
+[01:35:44] [NPCSpawner] Final NPC Position for 林长生 (外门弟子): (368.3617, -9.332648, -1470.647)
+[01:35:44] [NPCSpawner] Instantiating NPC 林长生 (外门弟子) at pos: (368.3617, -7.971098, -1470.647)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (368.3617, -9.332648, -1470.647)
+[01:35:44] [NPCSpawner] Final NPC Position for 林长生 (外门弟子): (368.3617, -9.332648, -1470.647)
+[01:35:44] [NPCSpawner] Instantiating NPC 长孙破天 (外门弟子) at pos: (373.4829, -7.971098, -1471.062)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (373.4829, -8.881957, -1471.062)
+[01:35:44] [NPCSpawner] Final NPC Position for 长孙破天 (外门弟子): (373.4829, -8.881957, -1471.062)
+[01:35:44] [NPCSpawner] Instantiating NPC 长孙破天 (外门弟子) at pos: (373.4829, -7.971098, -1471.062)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (373.4829, -8.881957, -1471.062)
+[01:35:44] [NPCSpawner] Final NPC Position for 长孙破天 (外门弟子): (373.4829, -8.881957, -1471.062)
+[01:35:44] [NPCSpawner] Instantiating NPC 萧逍遥 (外门弟子) at pos: (371.6265, -7.971098, -1469.352)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (371.6265, -9.27122, -1469.352)
+[01:35:44] [NPCSpawner] Final NPC Position for 萧逍遥 (外门弟子): (371.6265, -9.27122, -1469.352)
+[01:35:44] [NPCSpawner] Instantiating NPC 萧逍遥 (外门弟子) at pos: (371.6265, -7.971098, -1469.352)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (371.6265, -9.27122, -1469.352)
+[01:35:44] [NPCSpawner] Final NPC Position for 萧逍遥 (外门弟子): (371.6265, -9.27122, -1469.352)
+[01:35:44] [NPCSpawner] Instantiating NPC 慕容兰 (外门弟子) at pos: (375.9118, -7.971098, -1474.618)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (375.9118, -8.81172, -1474.618)
+[01:35:44] [NPCSpawner] Final NPC Position for 慕容兰 (外门弟子): (375.9118, -8.81172, -1474.618)
+[01:35:44] [NPCSpawner] Instantiating NPC 慕容兰 (外门弟子) at pos: (375.9118, -7.971098, -1474.618)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (375.9118, -8.81172, -1474.618)
+[01:35:44] [NPCSpawner] Final NPC Position for 慕容兰 (外门弟子): (375.9118, -8.81172, -1474.618)
+[01:35:44] [SectGenerator] Created token with teleport: [378.251129150391, -8.47109794616699, -1468.05017089844]
+[01:35:44] [WorldSectSeeder] Skip: height difference too large: 118.129103466868
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at -568.879745314934, 995.552131627245
+[01:35:44] [WorldSectSeeder] Skip: height difference too large: 25.5933380126953
+[01:35:44] [WorldSectSeeder] Skip: height difference too large: 51.3598581114784
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at -952.455412287817, -204.681629956115
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at 1236.15573574976, -385.798624605182
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at 1444.17916053998, 1331.25954410875
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at -478.733049259576, -120.660213260934
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at 1188.29621917436, -1311.42008366121
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at 1161.13828317174, 203.448021090831
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at -485.913407278964, -1488.47457051892
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at -1206.74523554017, -54.6715212073229
+[01:35:44] [WorldSectSeeder] Skip: height difference too large: 82.968994140625
+[01:35:44] [WorldSectSeeder] Skip: flat check hit NaN
+[01:35:44] [WorldSectSeeder] Skip: flat check hit NaN
+[01:35:44] [WorldSectSeeder] Skip: height difference too large: 70.9226837158203
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at -649.358155366244, -1174.49112172811
+[01:35:44] [WorldSectSeeder] Skip: height difference too large: 33.7967245578766
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at 686.474492588664, 1150.8485297033
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at -1049.25943610221, 1348.97091994055
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at -152.761202891155, -618.197646869716
+[01:35:44] [WorldSectSeeder] Skip: height difference too large: 21.0432534217834
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at 1490.77893403418, -1227.74633103748
+[01:35:44] [WorldSectSeeder] Skip: height difference too large: 64.9951448440552
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at -628.795308095689, 665.460292699226
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at 50.0540500677837, 1180.30538849666
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at -336.950619434012, 1441.68617438919
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at -759.226335617392, -242.071767613714
+[01:35:44] [WorldSectSeeder] Skip: height difference too large: 14.189769744873
+[01:35:44] [WorldSectSeeder] Skip: flat check hit NaN
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at 1257.44443394873, 834.927870630763
+[01:35:44] [WorldSectSeeder] Spawning sect at: (635.6735, -0.041936, 109.0106)
+[01:35:44] [SectGenerator] Creating sect at (635.6735, -0.041936, 109.0106)
+[01:35:44] [SectGenerator] Pillar safe_pos.y set from data: 0.05806441605091
+[01:35:44] [SectGenerator] Pillar final global_position: (635.6735, 0.058064, 109.0106)
+[01:35:44] [NPCSpawner] Instantiating NPC 云傲天 (掌门) at pos: (640.1892, 0.458064, 105.093)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (640.1892, 0.138321, 105.093)
+[01:35:44] [NPCSpawner] Final NPC Position for 云傲天 (掌门): (640.1892, 0.138321, 105.093)
+[01:35:44] [NPCSpawner] Instantiating NPC 云傲天 (掌门) at pos: (640.1892, 0.458064, 105.093)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (640.1892, 0.138321, 105.093)
+[01:35:44] [NPCSpawner] Final NPC Position for 云傲天 (掌门): (640.1892, 0.138321, 105.093)
+[01:35:44] [NPCSpawner] Instantiating NPC 楚凌风 (长老) at pos: (639.4218, 0.458064, 112.6732)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (639.4218, 0.162127, 112.6732)
+[01:35:44] [NPCSpawner] Final NPC Position for 楚凌风 (长老): (639.4218, 0.162127, 112.6732)
+[01:35:44] [NPCSpawner] Instantiating NPC 楚凌风 (长老) at pos: (639.4218, 0.458064, 112.6732)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (639.4218, 0.162127, 112.6732)
+[01:35:44] [NPCSpawner] Final NPC Position for 楚凌风 (长老): (639.4218, 0.162127, 112.6732)
+[01:35:44] [NPCSpawner] Instantiating NPC 吴阳 (长老) at pos: (638.4722, 0.458064, 106.1429)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (638.4722, 0.146274, 106.1429)
+[01:35:44] [NPCSpawner] Final NPC Position for 吴阳 (长老): (638.4722, 0.146274, 106.1429)
+[01:35:44] [NPCSpawner] Instantiating NPC 吴阳 (长老) at pos: (638.4722, 0.458064, 106.1429)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (638.4722, 0.146274, 106.1429)
+[01:35:44] [NPCSpawner] Final NPC Position for 吴阳 (长老): (638.4722, 0.146274, 106.1429)
+[01:35:44] [NPCSpawner] Instantiating NPC 秦霸天 (外门弟子) at pos: (636.113, 0.458064, 113.0901)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (636.113, 0.164559, 113.0901)
+[01:35:44] [NPCSpawner] Final NPC Position for 秦霸天 (外门弟子): (636.113, 0.164559, 113.0901)
+[01:35:44] [NPCSpawner] Instantiating NPC 秦霸天 (外门弟子) at pos: (636.113, 0.458064, 113.0901)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (636.113, 0.164559, 113.0901)
+[01:35:44] [NPCSpawner] Final NPC Position for 秦霸天 (外门弟子): (636.113, 0.164559, 113.0901)
+[01:35:44] [NPCSpawner] Instantiating NPC 林天 (外门弟子) at pos: (634.7313, 0.458064, 108.6268)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (634.7313, 0.158494, 108.6268)
+[01:35:44] [NPCSpawner] Final NPC Position for 林天 (外门弟子): (634.7313, 0.158494, 108.6268)
+[01:35:44] [NPCSpawner] Instantiating NPC 林天 (外门弟子) at pos: (634.7313, 0.458064, 108.6268)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (634.7313, 0.158494, 108.6268)
+[01:35:44] [NPCSpawner] Final NPC Position for 林天 (外门弟子): (634.7313, 0.158494, 108.6268)
+[01:35:44] [NPCSpawner] Instantiating NPC 陆羽 (外门弟子) at pos: (634.9353, 0.458064, 113.2485)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (634.9353, 0.166673, 113.2485)
+[01:35:44] [NPCSpawner] Final NPC Position for 陆羽 (外门弟子): (634.9353, 0.166673, 113.2485)
+[01:35:44] [NPCSpawner] Instantiating NPC 陆羽 (外门弟子) at pos: (634.9353, 0.458064, 113.2485)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (634.9353, 0.166673, 113.2485)
+[01:35:44] [NPCSpawner] Final NPC Position for 陆羽 (外门弟子): (634.9353, 0.166673, 113.2485)
+[01:35:44] [NPCSpawner] Instantiating NPC 刘傲 (外门弟子) at pos: (637.1895, 0.458064, 108.7214)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (637.1895, 0.154848, 108.7214)
+[01:35:44] [NPCSpawner] Final NPC Position for 刘傲 (外门弟子): (637.1895, 0.154848, 108.7214)
+[01:35:44] [NPCSpawner] Instantiating NPC 刘傲 (外门弟子) at pos: (637.1895, 0.458064, 108.7214)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (637.1895, 0.154848, 108.7214)
+[01:35:44] [NPCSpawner] Final NPC Position for 刘傲 (外门弟子): (637.1895, 0.154848, 108.7214)
+[01:35:44] [NPCSpawner] Instantiating NPC 东方星 (外门弟子) at pos: (639.2511, 0.458064, 104.5073)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (639.2511, 0.137823, 104.5073)
+[01:35:44] [NPCSpawner] Final NPC Position for 东方星 (外门弟子): (639.2511, 0.137823, 104.5073)
+[01:35:44] [NPCSpawner] Instantiating NPC 东方星 (外门弟子) at pos: (639.2511, 0.458064, 104.5073)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (639.2511, 0.137823, 104.5073)
+[01:35:44] [NPCSpawner] Final NPC Position for 东方星 (外门弟子): (639.2511, 0.137823, 104.5073)
+[01:35:44] [SectGenerator] Created token with teleport: [640.673522949219, -0.04193558543921, 114.010597229004]
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at -989.303792516186, 573.394086255407
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at -553.626214518929, -354.139880474346
+[01:35:44] [WorldSectSeeder] Skip: height difference too large: 50.5304651260376
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at -1213.90816687187, -897.744532878186
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at -1318.34722516528, 1303.05175583309
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at -648.286417456436, -1050.78237754275
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at -995.477470308449, -715.681936390076
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at -645.30095208592, 1369.79143463574
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at 1407.91839970407, 289.81905216597
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at -1208.61518764312, -573.86949271182
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at 1032.20729560001, -1472.44357236256
+[01:35:44] [WorldSectSeeder] Skip: height difference too large: 40.0824356079102
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at -1171.59256322225, -863.384133961849
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at -799.740600270148, 701.71072296067
+[01:35:44] [WorldSectSeeder] Skip: height difference too large: 77.8671646118164
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at -621.736271235952, 939.616242143275
+[01:35:44] [WorldSectSeeder] Spawning sect at: (96.01364, -12.29106, -878.9947)
+[01:35:44] [SectGenerator] Creating sect at (96.01364, -12.29106, -878.9947)
+[01:35:44] [SectGenerator] Pillar safe_pos.y set from data: -12.1910581588745
+[01:35:44] [SectGenerator] Pillar final global_position: (96.01364, -12.19106, -878.9947)
+[01:35:44] [NPCSpawner] Instantiating NPC 公孙夜 (掌门) at pos: (91.02763, -11.79106, -875.8488)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (91.02763, -11.4833, -875.8488)
+[01:35:44] [NPCSpawner] Final NPC Position for 公孙夜 (掌门): (91.02763, -11.4833, -875.8488)
+[01:35:44] [NPCSpawner] Instantiating NPC 公孙夜 (掌门) at pos: (91.02763, -11.79106, -875.8488)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (91.02763, -11.4833, -875.8488)
+[01:35:44] [NPCSpawner] Final NPC Position for 公孙夜 (掌门): (91.02763, -11.4833, -875.8488)
+[01:35:44] [NPCSpawner] Instantiating NPC 西门烈 (长老) at pos: (99.09949, -11.79106, -880.0676)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (99.09949, -12.55689, -880.0676)
+[01:35:44] [NPCSpawner] Final NPC Position for 西门烈 (长老): (99.09949, -12.55689, -880.0676)
+[01:35:44] [NPCSpawner] Instantiating NPC 西门烈 (长老) at pos: (99.09949, -11.79106, -880.0676)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (99.09949, -12.55689, -880.0676)
+[01:35:44] [NPCSpawner] Final NPC Position for 西门烈 (长老): (99.09949, -12.55689, -880.0676)
+[01:35:44] [NPCSpawner] Instantiating NPC 独孤碧落 (长老) at pos: (95.75893, -11.79106, -876.7536)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (95.75893, -11.32223, -876.7536)
+[01:35:44] [NPCSpawner] Final NPC Position for 独孤碧落 (长老): (95.75893, -11.32223, -876.7536)
+[01:35:44] [NPCSpawner] Instantiating NPC 独孤碧落 (长老) at pos: (95.75893, -11.79106, -876.7536)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (95.75893, -11.32223, -876.7536)
+[01:35:44] [NPCSpawner] Final NPC Position for 独孤碧落 (长老): (95.75893, -11.32223, -876.7536)
+[01:35:44] [NPCSpawner] Instantiating NPC 冷千山 (外门弟子) at pos: (93.50645, -11.79106, -882.1101)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (93.50645, -12.12151, -882.1101)
+[01:35:44] [NPCSpawner] Final NPC Position for 冷千山 (外门弟子): (93.50645, -12.12151, -882.1101)
+[01:35:44] [NPCSpawner] Instantiating NPC 冷千山 (外门弟子) at pos: (93.50645, -11.79106, -882.1101)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (93.50645, -12.12151, -882.1101)
+[01:35:44] [NPCSpawner] Final NPC Position for 冷千山 (外门弟子): (93.50645, -12.12151, -882.1101)
+[01:35:44] [NPCSpawner] Instantiating NPC 张辰 (外门弟子) at pos: (94.57765, -11.79106, -881.1925)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (94.57765, -12.06888, -881.1925)
+[01:35:44] [NPCSpawner] Final NPC Position for 张辰 (外门弟子): (94.57765, -12.06888, -881.1925)
+[01:35:44] [NPCSpawner] Instantiating NPC 张辰 (外门弟子) at pos: (94.57765, -11.79106, -881.1925)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (94.57765, -12.06888, -881.1925)
+[01:35:44] [NPCSpawner] Final NPC Position for 张辰 (外门弟子): (94.57765, -12.06888, -881.1925)
+[01:35:44] [NPCSpawner] Instantiating NPC 林琴 (外门弟子) at pos: (94.85699, -11.79106, -880.4922)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (94.85699, -12.14156, -880.4922)
+[01:35:44] [NPCSpawner] Final NPC Position for 林琴 (外门弟子): (94.85699, -12.14156, -880.4922)
+[01:35:44] [NPCSpawner] Instantiating NPC 林琴 (外门弟子) at pos: (94.85699, -11.79106, -880.4922)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (94.85699, -12.14156, -880.4922)
+[01:35:44] [NPCSpawner] Final NPC Position for 林琴 (外门弟子): (94.85699, -12.14156, -880.4922)
+[01:35:44] [NPCSpawner] Instantiating NPC 赵紫 (外门弟子) at pos: (93.56965, -11.79106, -882.4781)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (93.56965, -12.2291, -882.4781)
+[01:35:44] [NPCSpawner] Final NPC Position for 赵紫 (外门弟子): (93.56965, -12.2291, -882.4781)
+[01:35:44] [NPCSpawner] Instantiating NPC 赵紫 (外门弟子) at pos: (93.56965, -11.79106, -882.4781)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (93.56965, -12.2291, -882.4781)
+[01:35:44] [NPCSpawner] Final NPC Position for 赵紫 (外门弟子): (93.56965, -12.2291, -882.4781)
+[01:35:44] [NPCSpawner] Instantiating NPC 独孤辰 (外门弟子) at pos: (98.16283, -11.79106, -879.9568)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (98.16283, -12.39616, -879.9568)
+[01:35:44] [NPCSpawner] Final NPC Position for 独孤辰 (外门弟子): (98.16283, -12.39616, -879.9568)
+[01:35:44] [NPCSpawner] Instantiating NPC 独孤辰 (外门弟子) at pos: (98.16283, -11.79106, -879.9568)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (98.16283, -12.39616, -879.9568)
+[01:35:44] [NPCSpawner] Final NPC Position for 独孤辰 (外门弟子): (98.16283, -12.39616, -879.9568)
+[01:35:44] [SectGenerator] Created token with teleport: [101.013641357422, -12.2910585403442, -873.994689941406]
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at -777.81668675381, -1495.55790405159
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at -1378.0739891563, -599.033233114849
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at 1230.56635010343, -1275.10182921302
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at -720.199415205753, -944.169171270652
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at -739.757999352387, 623.435295383097
+[01:35:44] [WorldSectSeeder] Skip: height difference too large: 78.0805206298828
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at -687.392741810127, -1312.93697816337
+[01:35:44] [WorldSectSeeder] Skip: height difference too large: 38.9423205554485
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at -69.8792127462198, -608.805505076642
+[01:35:44] [WorldSectSeeder] Skip: height difference too large: 75.8454456329346
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at -819.203344299049, 1353.74167062312
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at 1124.05247104264, 267.49102603295
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at -423.321789763442, -831.949148271999
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at -465.448947182302, -1212.46182671061
+[01:35:44] [WorldSectSeeder] Skip: height difference too large: 74.0097808837891
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at 1173.9183068611, -1255.86620961808
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at -1131.97499925166, 988.766465590621
+[01:35:44] [WorldSectSeeder] Skip: height difference too large: 78.3544921875
+[01:35:44] [WorldSectSeeder] Skip: is_nan(h_center) at -610.262326658669, 525.36548360952
+[01:35:44] [WorldSectSeeder] Spawning sect at: (163.6323, -13.49378, -532.6244)
+[01:35:44] [SectGenerator] Creating sect at (163.6323, -13.49378, -532.6244)
+[01:35:44] [SectGenerator] Pillar safe_pos.y set from data: -13.3937788009644
+[01:35:44] [SectGenerator] Pillar final global_position: (163.6323, -13.39378, -532.6244)
+[01:35:44] [NPCSpawner] Instantiating NPC 南宫夜 (掌门) at pos: (163.1635, -12.99378, -529.2114)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (163.1635, -12.55515, -529.2114)
+[01:35:44] [NPCSpawner] Final NPC Position for 南宫夜 (掌门): (163.1635, -12.55515, -529.2114)
+[01:35:44] [NPCSpawner] Instantiating NPC 南宫夜 (掌门) at pos: (163.1635, -12.99378, -529.2114)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (163.1635, -12.55515, -529.2114)
+[01:35:44] [NPCSpawner] Final NPC Position for 南宫夜 (掌门): (163.1635, -12.55515, -529.2114)
+[01:35:44] [NPCSpawner] Instantiating NPC 秦无双 (长老) at pos: (164.6259, -12.99378, -533.7759)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (164.6259, -13.24472, -533.7759)
+[01:35:44] [NPCSpawner] Final NPC Position for 秦无双 (长老): (164.6259, -13.24472, -533.7759)
+[01:35:44] [NPCSpawner] Instantiating NPC 秦无双 (长老) at pos: (164.6259, -12.99378, -533.7759)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (164.6259, -13.24472, -533.7759)
+[01:35:44] [NPCSpawner] Final NPC Position for 秦无双 (长老): (164.6259, -13.24472, -533.7759)
+[01:35:44] [NPCSpawner] Instantiating NPC 刘星竹 (长老) at pos: (161.0053, -12.99378, -536.7133)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (161.0053, -15.21229, -536.7133)
+[01:35:44] [NPCSpawner] Final NPC Position for 刘星竹 (长老): (161.0053, -15.21229, -536.7133)
+[01:35:44] [NPCSpawner] Instantiating NPC 刘星竹 (长老) at pos: (161.0053, -12.99378, -536.7133)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (161.0053, -15.21229, -536.7133)
+[01:35:44] [NPCSpawner] Final NPC Position for 刘星竹 (长老): (161.0053, -15.21229, -536.7133)
+[01:35:44] [NPCSpawner] Instantiating NPC 秦羽 (外门弟子) at pos: (161.2157, -12.99378, -535.4337)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (161.2157, -14.70736, -535.4337)
+[01:35:44] [NPCSpawner] Final NPC Position for 秦羽 (外门弟子): (161.2157, -14.70736, -535.4337)
+[01:35:44] [NPCSpawner] Instantiating NPC 秦羽 (外门弟子) at pos: (161.2157, -12.99378, -535.4337)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (161.2157, -14.70736, -535.4337)
+[01:35:44] [NPCSpawner] Final NPC Position for 秦羽 (外门弟子): (161.2157, -14.70736, -535.4337)
+[01:35:44] [NPCSpawner] Instantiating NPC 上官画 (外门弟子) at pos: (160.0089, -12.99378, -531.9692)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (160.0089, -13.91803, -531.9692)
+[01:35:44] [NPCSpawner] Final NPC Position for 上官画 (外门弟子): (160.0089, -13.91803, -531.9692)
+[01:35:44] [NPCSpawner] Instantiating NPC 上官画 (外门弟子) at pos: (160.0089, -12.99378, -531.9692)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (160.0089, -13.91803, -531.9692)
+[01:35:44] [NPCSpawner] Final NPC Position for 上官画 (外门弟子): (160.0089, -13.91803, -531.9692)
+[01:35:44] [NPCSpawner] Instantiating NPC 冷双 (外门弟子) at pos: (163.6525, -12.99378, -527.7563)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (163.6525, -11.97774, -527.7563)
+[01:35:44] [NPCSpawner] Final NPC Position for 冷双 (外门弟子): (163.6525, -11.97774, -527.7563)
+[01:35:44] [NPCSpawner] Instantiating NPC 冷双 (外门弟子) at pos: (163.6525, -12.99378, -527.7563)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (163.6525, -11.97774, -527.7563)
+[01:35:44] [NPCSpawner] Final NPC Position for 冷双 (外门弟子): (163.6525, -11.97774, -527.7563)
+[01:35:44] [NPCSpawner] Instantiating NPC 白青 (外门弟子) at pos: (164.9721, -12.99378, -532.9128)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (164.9721, -12.91715, -532.9128)
+[01:35:44] [NPCSpawner] Final NPC Position for 白青 (外门弟子): (164.9721, -12.91715, -532.9128)
+[01:35:44] [NPCSpawner] Instantiating NPC 白青 (外门弟子) at pos: (164.9721, -12.99378, -532.9128)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (164.9721, -12.91715, -532.9128)
+[01:35:44] [NPCSpawner] Final NPC Position for 白青 (外门弟子): (164.9721, -12.91715, -532.9128)
+[01:35:44] [NPCSpawner] Instantiating NPC 冷冰 (外门弟子) at pos: (164.2682, -12.99378, -528.3367)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (164.2682, -12.01885, -528.3367)
+[01:35:44] [NPCSpawner] Final NPC Position for 冷冰 (外门弟子): (164.2682, -12.01885, -528.3367)
+[01:35:44] [NPCSpawner] Instantiating NPC 冷冰 (外门弟子) at pos: (164.2682, -12.99378, -528.3367)
+[01:35:44] [NPCSpawner] NPC pos set by terrain data: (164.2682, -12.01885, -528.3367)
+[01:35:44] [NPCSpawner] Final NPC Position for 冷冰 (外门弟子): (164.2682, -12.01885, -528.3367)
+[01:35:44] [SectGenerator] Created token with teleport: [168.632263183594, -13.4937791824341, -527.624389648438]
+[01:35:44] [WorldSectSeeder] === FINISHED SEEDING ===

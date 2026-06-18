@@ -20,18 +20,26 @@ config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
-WorldGridDebugger="*res://systems/world_grid/world_grid_debugger.gd"
-WorldGridManager="*res://systems/world_grid/world_grid_manager.gd"
 
+TransactionManager="*res://core/simulation/transactions/transaction_manager.gd"
+GlobalModifierDispatcher="*res://core/simulation/modifiers/global_modifier_dispatcher.gd"
+EventBus="*res://core/simulation/events/event_bus.gd"
 TimeManager="*res://globals/time_manager.gd"
-NPCSpawner="res://entities/npc/npc_spawner.gd"
+SocialManager="*res://core/simulation/social_manager.tscn"
+DeathManager="*res://core/simulation/death_manager.gd"
+MacroSimulator="*res://core/simulation/ai/macro_simulator.gd"
+UIFocusManager="*res://core/input/ui_focus_manager.gd"
+FactionManager="*res://core/simulation/factions/faction_manager.tscn"
+WorldGridManager="*res://systems/world_grid/world_grid_manager.gd"
+WorldGridDebugger="*res://systems/world_grid/world_grid_debugger.gd"
+NPCSpawner="*res://entities/npc/npc_spawner.gd"
 DialogueManager="*res://core/ui/dialogue_manager.gd"
 WorldState="*res://globals/world_state.gd"
-SocialManager="*res://core/simulation/social_manager.gd"
-DevConsole="*res://core/debug/dev_console.tscn"
 ItemEffectDispatcher="*res://core/simulation/item_effect_dispatcher.gd"
 EconomyManager="*res://globals/economy_manager.gd"
-MacroSimulator="*res://core/simulation/ai/macro_simulator.gd"
+TimeSkipPanel="*res://ui/time_skip_panel.gd"
+DevConsole="*res://core/debug/dev_console.tscn"
+MonsterManager="*res://core/simulation/monster_manager.gd"
 
 [dotnet]
 
@@ -90,6 +98,3 @@ freefly={
 [rendering]
 
 anti_aliasing/quality/msaa_3d=2
-
-
-

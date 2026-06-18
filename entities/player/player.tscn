@@ -124,70 +124,203 @@ unique_id=777777777
 [node name="SpellWheelUI" parent="HUD" instance=ExtResource("25_spell_wheel")]
 unique_name_in_owner = true
 
-[node name="TitleLabel" type="Label" parent="HUD/InventoryPanel" unique_id=1680527204]
+[node name="TopTabs" type="HBoxContainer" parent="HUD/InventoryPanel"]
 layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -150.0
+anchors_preset = 10
+anchor_right = 1.0
 offset_top = 10.0
-offset_right = 150.0
-offset_bottom = 35.0
+offset_bottom = 50.0
 grow_horizontal = 2
-theme_override_colors/font_color = Color(0.9, 0.7, 0.1, 1)
-theme_override_font_sizes/font_size = 18
-text = "乾 坤 袋 (物品包裹)"
-horizontal_alignment = 1
-vertical_alignment = 1
+theme_override_constants/separation = 20
+alignment = 1
 
-[node name="CharacterPanel" type="ColorRect" parent="HUD/InventoryPanel" unique_id=194755457]
-layout_mode = 1
-offset_left = 30.0
-offset_top = 45.0
-offset_right = 180.0
-offset_bottom = 175.0
-color = Color(0.04, 0.04, 0.06, 0.6)
+[node name="Tab1" type="Label" parent="HUD/InventoryPanel/TopTabs"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.5, 0.4, 1)
+theme_override_font_sizes/font_size = 20
+text = "属性"
 
-[node name="Silhouette" type="Label" parent="HUD/InventoryPanel/CharacterPanel" unique_id=773831111]
+[node name="Tab2" type="Label" parent="HUD/InventoryPanel/TopTabs"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.5, 0.4, 1)
+theme_override_font_sizes/font_size = 20
+text = "悟道"
+
+[node name="Tab3" type="Label" parent="HUD/InventoryPanel/TopTabs"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.5, 0.4, 1)
+theme_override_font_sizes/font_size = 20
+text = "功法"
+
+[node name="Tab4" type="Label" parent="HUD/InventoryPanel/TopTabs"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.5, 0.4, 1)
+theme_override_font_sizes/font_size = 20
+text = "神通"
+
+[node name="Tab5" type="ColorRect" parent="HUD/InventoryPanel/TopTabs"]
+custom_minimum_size = Vector2(80, 40)
+layout_mode = 2
+color = Color(0.2, 0.35, 0.3, 1)
+
+[node name="Label" type="Label" parent="HUD/InventoryPanel/TopTabs/Tab5"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(1, 1, 1, 0.3)
-theme_override_font_sizes/font_size = 13
-text = "👤
-角色镜面投影"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "物品"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="EquipmentGrid" type="GridContainer" parent="HUD/InventoryPanel" unique_id=204984205]
-layout_mode = 0
-offset_left = 210.0
-offset_top = 45.0
-offset_right = 490.0
-offset_bottom = 175.0
-theme_override_constants/h_separation = 10
-theme_override_constants/v_separation = 10
-columns = 2
+[node name="Tab6" type="Label" parent="HUD/InventoryPanel/TopTabs"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.5, 0.4, 1)
+theme_override_font_sizes/font_size = 20
+text = "声望"
 
-[node name="BagGrid" type="GridContainer" parent="HUD/InventoryPanel" unique_id=115394020]
+[node name="Tab7" type="Label" parent="HUD/InventoryPanel/TopTabs"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.5, 0.4, 1)
+theme_override_font_sizes/font_size = 20
+text = "系统"
+
+[node name="ContentContainer" type="HBoxContainer" parent="HUD/InventoryPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 60.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="LeftPanel" type="Control" parent="HUD/InventoryPanel/ContentContainer"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+
+[node name="Lanterns" type="VBoxContainer" parent="HUD/InventoryPanel/ContentContainer/LeftPanel"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 20.0
+offset_top = -150.0
+offset_right = 80.0
+offset_bottom = 150.0
+grow_vertical = 2
+theme_override_constants/separation = 40
+alignment = 1
+
+[node name="LifeLantern" type="ColorRect" parent="HUD/InventoryPanel/ContentContainer/LeftPanel/Lanterns"]
+custom_minimum_size = Vector2(60, 100)
+layout_mode = 2
+color = Color(0.8, 0.4, 0.1, 0.8)
+
+[node name="Label" type="Label" parent="HUD/InventoryPanel/ContentContainer/LeftPanel/Lanterns/LifeLantern"]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -230.0
-offset_top = -250.0
-offset_right = 230.0
-offset_bottom = -30.0
+offset_left = -30.0
+offset_top = 5.0
+offset_right = 30.0
+offset_bottom = 28.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_constants/h_separation = 15
-theme_override_constants/v_separation = 15
-columns = 5
+theme_override_colors/font_color = Color(0.9, 0.7, 0.4, 1)
+text = "生命"
+horizontal_alignment = 1
+
+[node name="ManaLantern" type="ColorRect" parent="HUD/InventoryPanel/ContentContainer/LeftPanel/Lanterns"]
+custom_minimum_size = Vector2(60, 100)
+layout_mode = 2
+color = Color(0.1, 0.5, 0.8, 0.8)
+
+[node name="Label" type="Label" parent="HUD/InventoryPanel/ContentContainer/LeftPanel/Lanterns/ManaLantern"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -30.0
+offset_top = 5.0
+offset_right = 30.0
+offset_bottom = 28.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.4, 0.7, 0.9, 1)
+text = "修为"
+horizontal_alignment = 1
+
+[node name="CharacterPanel" type="TextureRect" parent="HUD/InventoryPanel/ContentContainer/LeftPanel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -200.0
+offset_right = 100.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Silhouette" type="Label" parent="HUD/InventoryPanel/ContentContainer/LeftPanel/CharacterPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.1)
+theme_override_font_sizes/font_size = 150
+text = "👤"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="EquipmentGrid" type="Control" parent="HUD/InventoryPanel/ContentContainer/LeftPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="RightPanel" type="ColorRect" parent="HUD/InventoryPanel/ContentContainer"]
+custom_minimum_size = Vector2(440, 0)
+layout_mode = 2
+color = Color(0.15, 0.12, 0.1, 0.9)
+
+[node name="ScrollContainer" type="ScrollContainer" parent="HUD/InventoryPanel/ContentContainer/RightPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BagGrid" type="GridContainer" parent="HUD/InventoryPanel/ContentContainer/RightPanel/ScrollContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+columns = 6
 
 [node name="HealthBar" type="ProgressBar" parent="HUD" unique_id=2133494376]
 visible = false

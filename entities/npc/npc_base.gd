@@ -153,15 +153,17 @@ func _die() -> void:
 	if actual_mesh:
 		var mat = actual_mesh.material_override
 		if mat == null:
-			if actual_mesh.mesh and actual_mesh.mesh.get_material():
-				mat = actual_mesh.mesh.get_material().duplicate()
-				actual_mesh.material_override = mat
-			else:
+			if actual_mesh.mesh and actual_mesh.mesh.get_surface_count() > 0:
+				mat = actual_mesh.get_active_material(0)
+				if mat:
+					mat = mat.duplicate()
+					actual_mesh.material_override = mat
+			
+			if mat == null:
 				var new_mat = StandardMaterial3D.new()
 				new_mat.albedo_color = Color(0.8, 0.8, 0.8) # 默认灰色
 				actual_mesh.material_override = new_mat
 				mat = new_mat
-				
 		if mat is StandardMaterial3D:
 			mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 			mat.emission_enabled = true

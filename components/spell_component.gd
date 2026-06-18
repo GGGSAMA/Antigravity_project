@@ -62,6 +62,11 @@ func cycle_spell(is_left: bool) -> Dictionary:
 	return get_active_spell(is_left)
 
 func set_active_spell_id(is_left: bool, spell_id: String) -> void:
+	if spell_id == "CLEAR" or spell_id == "":
+		if is_left: left_spell_index = -1
+		else: right_spell_index = -1
+		return
+		
 	var arr = left_spells if is_left else right_spells
 	var idx = arr.find(spell_id)
 	if idx != -1:

@@ -13,8 +13,8 @@ class_name InventoryUI
 #    - 快捷键 1-9：悬停时按 1-9 快速绑定快捷栏。
 # ==============================================================================
 
-@onready var bag_grid: GridContainer = $BagGrid
-@onready var equip_grid: GridContainer = $EquipmentGrid
+@onready var bag_grid: GridContainer = $ContentContainer/RightPanel/ScrollContainer/BagGrid
+@onready var equip_grid: Control = $ContentContainer/LeftPanel/EquipmentGrid
 
 var inventory_comp
 var equipment_comp
@@ -75,8 +75,15 @@ func _build_bag_slots():
 func _build_equip_slots():
 	for child in equip_grid.get_children(): child.queue_free()
 	var names = ["⚔️ 武器", "🥋 法衣", "🛡️ 盾牌", "📿 法宝"]
+	var pos = [
+		Vector2(280, 260), # Weapon
+		Vector2(280, 50),  # Armor
+		Vector2(20, 50),   # Shield
+		Vector2(20, 260)   # Artifact
+	]
 	for i in range(4):
-		var btn = _create_slot_button(Vector2(130, 44), true, names[i])
+		var btn = _create_slot_button(Vector2(90, 90), true, names[i])
+		btn.position = pos[i]
 		
 		btn.gui_input.connect(_on_equip_gui_input.bind(i))
 		btn.mouse_entered.connect(_on_equip_hover.bind(i))
@@ -89,18 +96,25 @@ func _create_slot_button(size: Vector2, is_equip: bool, title_text: String = "")
 	btn.custom_minimum_size = size
 	btn.focus_mode = Control.FOCUS_NONE
 	btn.mouse_filter = Control.MOUSE_FILTER_STOP
-	# 使用 Flat 模式，让按钮透明，完全由我们自己控制颜色，或者通过 StyleBox 控制
-	btn.flat = true
 	
-	# 添加一个背景色块
-	var bg = ColorRect.new()
-	bg.name = "Background"
-	bg.color = Color(0.15, 0.15, 0.18, 0.8) if is_equip else Color(0.2, 0.2, 0.25, 0.6)
-	bg.anchors_preset = 15
-	bg.anchor_right = 1.0
-	bg.anchor_bottom = 1.0
-	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	btn.add_child(bg)
+	var style = StyleBoxFlat.new()
+	style.bg_color = Color(0.12, 0.1, 0.08, 0.95) if is_equip else Color(0.18, 0.15, 0.12, 0.8)
+	style.border_width_left = 2
+	style.border_width_top = 2
+	style.border_width_right = 2
+	style.border_width_bottom = 2
+	style.border_color = Color(0.35, 0.28, 0.2, 1) # Default wood border
+	style.corner_radius_top_left = 6
+	style.corner_radius_top_right = 6
+	style.corner_radius_bottom_right = 6
+	style.corner_radius_bottom_left = 6
+	style.shadow_color = Color(0, 0, 0, 0.4)
+	style.shadow_size = 3
+	
+	btn.add_theme_stylebox_override("normal", style)
+	btn.add_theme_stylebox_override("hover", style)
+	btn.add_theme_stylebox_override("pressed", style)
+	btn.add_theme_stylebox_override("disabled", style)
 	
 	if title_text != "":
 		var lbl = Label.new()
@@ -111,9 +125,9 @@ func _create_slot_button(size: Vector2, is_equip: bool, title_text: String = "")
 		lbl.anchor_right = 1.0
 		lbl.anchor_bottom = 1.0
 		lbl.horizontal_alignment = 1
-		lbl.vertical_alignment = 1
-		lbl.add_theme_font_size_override("font_size", 12)
-		lbl.add_theme_color_override("font_color", Color(1, 1, 1, 0.35))
+		lbl.vertical_alignment = 0 # Top aligned
+		lbl.add_theme_font_size_override("font_size", 14)
+		lbl.add_theme_color_override("font_color", Color(0.8, 0.7, 0.5, 0.8))
 		btn.add_child(lbl)
 		
 	var icon = Label.new()
@@ -124,7 +138,7 @@ func _create_slot_button(size: Vector2, is_equip: bool, title_text: String = "")
 	icon.anchor_bottom = 1.0
 	icon.horizontal_alignment = 1
 	icon.vertical_alignment = 1
-	icon.add_theme_font_size_override("font_size", 20)
+	icon.add_theme_font_size_override("font_size", 32 if is_equip else 24)
 	btn.add_child(icon)
 	
 	var qty = Label.new()
@@ -135,9 +149,12 @@ func _create_slot_button(size: Vector2, is_equip: bool, title_text: String = "")
 	qty.anchor_top = 1.0
 	qty.anchor_right = 1.0
 	qty.anchor_bottom = 1.0
+	qty.offset_right = -4
+	qty.offset_bottom = -2
 	qty.horizontal_alignment = 2
 	qty.vertical_alignment = 2
-	qty.add_theme_font_size_override("font_size", 11)
+	qty.add_theme_font_size_override("font_size", 14)
+	qty.add_theme_color_override("font_color", Color(1, 1, 1, 1))
 	btn.add_child(qty)
 	
 	return btn
@@ -159,18 +176,38 @@ func _update_slot_visuals(btn: Button, item: Variant, is_equip: bool):
 	var icon = btn.get_node("Icon")
 	var qty = btn.get_node("Qty")
 	var title = btn.get_node_or_null("Title")
+	var style = btn.get_theme_stylebox("normal") as StyleBoxFlat
 	
 	if item:
 		var meta = ItemDatabase.get_item(item.id)
 		icon.text = meta.get("icon", "📦")
 		qty.text = str(item.qty) if item.qty > 1 else ""
 		if title: title.text = ""
+		
+		# Update border color based on quality
+		var q = item.get("quality", 0)
+		if q == 1: style.border_color = Color(0.2, 0.8, 0.2, 1) # Green
+		elif q == 2: style.border_color = Color(0.2, 0.5, 0.9, 1) # Blue
+		elif q >= 3: style.border_color = Color(0.8, 0.2, 0.8, 1) # Purple
+		else: style.border_color = Color(0.6, 0.6, 0.6, 1) # White/Gray
+		
+		# Inner glow for artifacts
+		if meta.get("type", "") == "artifact":
+			style.bg_color = Color(0.3, 0.1, 0.1, 0.95)
+		else:
+			style.bg_color = Color(0.12, 0.1, 0.08, 0.95) if is_equip else Color(0.18, 0.15, 0.12, 0.8)
+			
 	else:
 		icon.text = ""
 		qty.text = ""
+		style.border_color = Color(0.35, 0.28, 0.2, 1)
+		style.bg_color = Color(0.12, 0.1, 0.08, 0.95) if is_equip else Color(0.18, 0.15, 0.12, 0.8)
 		if title and is_equip:
-			# Resets title text if it's an empty equip slot. handled in build logic
-			pass
+			# Resets handled by not changing title if empty. But wait, if they unequip, we need to restore title.
+			var names = ["⚔️ 武器", "🥋 法衣", "🛡️ 盾牌", "📿 法宝"]
+			var idx = btn.get_index()
+			if idx < names.size():
+				title.text = names[idx]
 
 # ==========================================
 # 交互事件：Tooltip 悬停
@@ -205,8 +242,8 @@ func _generate_tooltip(item: Dictionary) -> String:
 	elif quality == 2: prefix = "【上品】"; color_hex = "#5050F0"
 	elif quality >= 3: prefix = "【极品】"; color_hex = "#F050F0"
 	
-	var text = "[color=" + color_hex + "][b]" + prefix + meta.get("name", item_id) + "[/b][/color]\n"
-	text += "[color=#A0A0A0]" + meta.get("desc", "未知物品") + "[/color]\n"
+	var text = "[color=" + color_hex + "][b]" + prefix + str(meta.get("name", item_id)) + "[/b][/color]\n"
+	text += "[color=#A0A0A0]" + str(meta.get("desc", "未知物品")) + "[/color]\n"
 	
 	# 合并基础特效与动态词缀
 	var effects = meta.get("effects", {}).duplicate()
@@ -278,9 +315,14 @@ func _on_bag_gui_input(event: InputEvent, idx: int):
 			
 			if type == "weapon" or type == "armor":
 				print("[DEBUG InventoryUI] 右键装备: ", data.id)
-				var old_equip = equipment_comp.slots[0]
-				equipment_comp.set_slot(0, data.id, 1, {"affixes": data.get("affixes", {}), "quality": data.get("quality", 0)})
-				inventory_comp.set_slot(idx, null, 0)
+				var old_equip = null
+				if equipment_comp:
+					old_equip = equipment_comp.slots[0]
+					equipment_comp.set_slot(0, data.id, 1, {"affixes": data.get("affixes", {}), "quality": data.get("quality", 0)})
+					inventory_comp.set_slot(idx, null, 0)
+				else:
+					print("[DEBUG InventoryUI] 缺少 Equipment 组件，无法装备！")
+					
 				if old_equip:
 					inventory_comp.set_slot(idx, old_equip.id, 1, {"affixes": old_equip.get("affixes", {}), "quality": old_equip.get("quality", 0)})
 				update_ui()
@@ -289,7 +331,9 @@ func _on_bag_gui_input(event: InputEvent, idx: int):
 				var ItemEffectDispatcher = get_node_or_null("/root/ItemEffectDispatcher")
 				var player = get_tree().get_first_node_in_group("player")
 				if ItemEffectDispatcher and player and ItemEffectDispatcher.use_item(player, data):
-					if meta.get("uses", 1) != -1:
+					var ws = get_node_or_null("/root/WorldState")
+					var is_test = ws and ws.get("test_mode")
+					if not is_test and meta.get("uses", 1) != -1 and type != "artifact":
 						inventory_comp.remove_item(data.id, 1)
 						
 				update_ui()
@@ -302,7 +346,7 @@ func _on_bag_gui_input(event: InputEvent, idx: int):
 			if data != null and hotbar_comp:
 				var hotbar_idx = event.keycode - KEY_1
 				print("[DEBUG InventoryUI] 快捷键绑定: ", data.id, " -> 槽位 ", hotbar_idx)
-				hotbar_comp.set_slot(hotbar_idx, data.id, data.qty) # 镜像绑定到快捷栏
+				hotbar_comp.set_slot(hotbar_idx, data.id, data.qty, {"affixes": data.get("affixes", {}), "quality": data.get("quality", 0)})
 				manager.get_node("HotbarPanel").update_ui()
 				manager.show_notification("已绑定到快捷栏 " + str(hotbar_idx + 1))
 

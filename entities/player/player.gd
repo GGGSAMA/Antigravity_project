@@ -30,7 +30,7 @@ const SpellComponent = preload("res://components/spell_component.gd")
 # ==========================================
 # 数据与核心节点
 # ==========================================
-@onready var stats: CharacterStats = $Stats
+@onready var stats: Node = $Stats
 @onready var inventory_comp: InventoryComponent = $Inventory
 @onready var hotbar_comp: InventoryComponent = $Hotbar
 var equipment_comp: InventoryComponent
@@ -104,15 +104,47 @@ func _ready() -> void:
 		var scanner = ScannerComp.new()
 		scanner.name = "ScannerComponent"
 		add_child(scanner)
+		
+	var SectBuilderComp = load("res://entities/player/components/sect_builder_comp.gd")
+	if SectBuilderComp:
+		var builder = SectBuilderComp.new()
+		builder.name = "SectBuilderComp"
+		add_child(builder)
 
-	# 给玩家发放测试用的初始物品（放入大背包）
+	# --- 彻底废弃旧 Stats，注入新四层架构 ---
+	var old_stats = get_node_or_null("Stats")
+	if old_stats:
+		old_stats.name = "OldStats_Deprecated"
+		old_stats.queue_free()
+
+	var ActorDataTemplate = load("res://entities/components/stats/actor_data_template.tscn")
+	if ActorDataTemplate:
+		var template = ActorDataTemplate.instantiate()
+		template.name = "ActorDataTemplate"
+		add_child(template)
+		
+		var root_gen = template.get_node("RootGenAttr")
+		var combat_rt = template.get_node("CombatRuntimeAttr")
+		combat_rt.name = "Stats" # 伪装成 Stats 节点，无缝兼容老 UI
+		stats = combat_rt # 绑定成员变量
+		
+		# 玩家目前没有外部注入 data，自己new一个作为测试
+		var CharacterData = load("res://core/simulation/character_data.gd")
+		var p_data = CharacterData.new()
+		p_data.npc_name = "Player"
+		var elements: Array[String] = []
+		p_data.generate_roots_by_hierarchy(3, elements, false)
+		root_gen.sync_from_resource(p_data)
+
 	if inventory_comp:
+		inventory_comp.add_item("sect_foundation_token", 1)
 		inventory_comp.add_item("千里传送令", 1)
 		inventory_comp.add_item("青钢剑", 1)
 		inventory_comp.add_item("玄铁法剑", 1)
 		inventory_comp.add_item("小还丹", 5)
 		inventory_comp.add_item("五毒散", 2)
 	elif hotbar_comp:
+		hotbar_comp.add_item("sect_foundation_token", 1)
 		hotbar_comp.add_item("千里传送令", 1)
 		
 	# 监听快捷栏和装备栏变动以刷新手中模型
@@ -138,6 +170,17 @@ func _on_hotbar_changed(active_idx: int) -> void:
 			active_item_id = item.id
 			
 	viewmodel.update_hands(weapon_id, active_item_id)
+	
+	# 如果切换了快捷栏，且不再拿着建宗阵盘，自动收起建宗预览
+	var builder = get_node_or_null("SectBuilderComp")
+	if builder and builder.is_equipped and active_item_id != "sect_foundation_token":
+		builder.is_equipped = false
+		if builder.has_method("_clear_preview"):
+			builder._clear_preview()
+		if builder.prompt_label:
+			builder.prompt_label.text = "Sect Builder: [1] to Equip"
+		if builder.progress_bar:
+			builder.progress_bar.visible = false
 
 # ==========================================
 # 物品使用胶水层 (连接 UI 与 实际效果)
@@ -149,11 +192,16 @@ func use_active_hotbar_item() -> void:
 	
 	if item:
 		var ItemEffectDispatcher = get_node_or_null("/root/ItemEffectDispatcher")
-		if ItemEffectDispatcher and ItemEffectDispatcher.use_item(self, item.id):
-			var ItemDatabase = preload("res://components/item_database.gd")
-			var meta = ItemDatabase.get_item(item.id)
-			if meta.get("uses", 1) != -1:
-				hotbar_comp.remove_item(item.id, 1) # 成功使用则消耗1个
+		# 传完整的 slot_data 字典，而不是只传 item.id 字符串！
+		# 否则动态词缀（如宗门传送令的坐标）会丢失！
+		if ItemEffectDispatcher and ItemEffectDispatcher.use_item(self, item):
+			var ws = get_node_or_null("/root/WorldState")
+			var is_test = ws and ws.get("test_mode")
+			if not is_test:
+				var ItemDatabase = preload("res://components/item_database.gd")
+				var meta = ItemDatabase.get_item(item.id)
+				if meta.get("uses", 1) != -1 and meta.get("type", "") != "artifact":
+					hotbar_comp.remove_item(item.id, 1)
 
 			# 通知 UI 刷新
 			var hud = get_node_or_null("HUD")
@@ -180,12 +228,7 @@ func _spawn_spell_projectile(spell: Dictionary, is_left: bool) -> void:
 	
 	get_tree().current_scene.add_child(proj)
 
-func _input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed:
-		var pos = event.global_position
-		print("[DEBUG] _input 收到鼠标点击 btn=", event.button_index, " pos=", pos)
-		# 找出谁挡住了鼠标
-		_find_controls_under_mouse(get_tree().root, pos)
+
 
 func _physics_process(delta: float) -> void:
 	var player_model = get_node_or_null("PlayerModel")
@@ -221,22 +264,38 @@ func _find_controls_under_mouse(node: Node, pos: Vector2) -> void:
 		_find_controls_under_mouse(child, pos)
 
 func _unhandled_input(event: InputEvent) -> void:
-	# 只有在鼠标被捕获（非UI模式）时，才响应战斗点击
-	if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
-		if event is InputEventMouseButton and event.pressed:
-			print("[DEBUG Player] _unhandled_input 拦截到鼠标点击 (当前不是 CAPTURED 模式)，丢弃事件！")
-			if has_node("/root/Log"):
-				get_node("/root/Log").warn("Input", "鼠标未捕获(Mode=" + str(Input.mouse_mode) + ")，拦截丢弃战斗点击！")
+	# 【核心拦截网关】如果 UI 被打开，阻断一切按键、鼠标点击，绝对禁止触发游戏交互
+	if UIFocusManager.is_gameplay_blocked():
 		return
 		
+	# 此时确定是在纯游戏模式 (CAPTURED) 下，分发输入指令
 	if event is InputEventMouseButton:
-		print("[DEBUG Player] 触发鼠标事件，button: ", event.button_index, " pressed: ", event.pressed)
-		if has_node("/root/Log"):
-			get_node("/root/Log").debug("Input", "战斗点击捕获: btn=" + str(event.button_index) + " pressed=" + str(event.pressed))
+		var sect_builder = get_node_or_null("SectBuilderComponent")
+		# 优先级 1: 建造模式
+		if sect_builder and sect_builder.is_equipped:
+			sect_builder.handle_build_click(event)
+			return
 			
+		# 优先级 2: 战斗模式
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if combat_comp and combat_comp.has_method("handle_left_click"):
 				combat_comp.handle_left_click(event.pressed)
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
 			if combat_comp and combat_comp.has_method("handle_right_click"):
 				combat_comp.handle_right_click(event.pressed)
+				
+	elif event is InputEventKey:
+		var interact_comp = get_node_or_null("InteractComponent")
+		var sect_builder = get_node_or_null("SectBuilderComponent")
+		
+		if event.keycode == KEY_1 and event.pressed and not event.is_echo():
+			if sect_builder and sect_builder.has_method("toggle_equip"):
+				sect_builder.toggle_equip()
+		elif event.keycode == KEY_F and event.pressed:
+			if interact_comp and interact_comp.has_method("handle_interact"):
+				interact_comp.handle_interact()
+		elif event.keycode == KEY_V and event.pressed:
+			if interact_comp and interact_comp.has_method("execute_divine_scan"):
+				interact_comp.execute_divine_scan()
+				
+	# ... 其他的纯游戏按键输入 (如移动) 可以在这里继续，如果是使用 Input.is_action_pressed 就不需要写在这里

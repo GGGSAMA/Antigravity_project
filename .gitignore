@@ -1,4 +1,14 @@
-﻿.godot/
+.godot/
 *.import
 export_presets.cfg
 *.tmp
+
+# Ignore Large Assets
+*.fbx
+*.glb
+*.gltf
+*.blend
+*.blend1
+*.wav
+*.mp3
+*.ogg

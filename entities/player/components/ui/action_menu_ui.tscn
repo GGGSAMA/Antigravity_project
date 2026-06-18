@@ -63,3 +63,8 @@ text = "就地休息"
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 text = "神识传音"
+
+[node name="BtnTrade" type="Button" parent="PanelContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+text = "交易"

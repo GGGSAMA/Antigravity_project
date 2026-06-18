@@ -75,6 +75,11 @@ layout_mode = 2
 text = "> 物品后台数据库"
 alignment = 0
 
+[node name="BtnFactions" type="Button" parent="MainPanel/VBoxContainer/HBoxContainer/SideBar"]
+layout_mode = 2
+text = "> 宗门派系 (Factions)"
+alignment = 0
+
 [node name="BtnClear" type="Button" parent="MainPanel/VBoxContainer/HBoxContainer/SideBar"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.4, 0.4, 1)

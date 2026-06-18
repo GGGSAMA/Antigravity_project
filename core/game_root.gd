@@ -13,6 +13,8 @@ var player_world_position: Vector3 = Vector3.ZERO
 var player_world_rotation: Vector3 = Vector3.ZERO
 var in_mystic_realm: bool = false
 
+var npc_monitor: CanvasLayer = null
+
 func _ready() -> void:
 	# 自动向根节点注入全局日志系统，省去用户手动配置 Autoload
 	var root = get_tree().root
@@ -22,6 +24,13 @@ func _ready() -> void:
 			var log_node = log_script.new()
 			log_node.name = "Log"
 			root.call_deferred("add_child", log_node)
+			
+	# 初始化全局 NPC 监控面板
+	var monitor_script = load("res://ui/debug/npc_monitor.gd")
+	if monitor_script:
+		npc_monitor = monitor_script.new()
+		npc_monitor.name = "NPCMonitorUI"
+		add_child(npc_monitor)
 			
 	# On startup, load main.tscn as the default level
 	load_level("res://main.tscn")
@@ -37,6 +46,9 @@ func _unhandled_input(event: InputEvent) -> void:
 				exit_mystic_realm()
 			else:
 				enter_mystic_realm()
+		elif event.keycode == KEY_F4:
+			if npc_monitor and npc_monitor.has_method("toggle"):
+				npc_monitor.toggle()
 
 # Load level helper (similar to switch_level but returns node)
 func load_level(level_path: String, spawn_pos: Variant = null) -> void:

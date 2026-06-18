@@ -11,8 +11,15 @@ extends Control
 # 假设我们在场景树里能找到玩家的 stats 组件
 # 在实际架构中，最好通过 group 或者 globals/world_state.gd 来获取玩家节点
 var player_stats: Node
+var _has_printed_warning: bool = false
 
 func _ready() -> void:
+	# 允许拖拽 (只对具体的面板区域生效，防止全屏阻挡鼠标)
+	var dragger = Node.new()
+	dragger.set_script(load("res://core/ui/draggable_behavior.gd"))
+	$VBoxContainer.add_child(dragger)
+	$VBoxContainer.mouse_filter = Control.MOUSE_FILTER_PASS
+	
 	# 绑定按钮事件
 	btn_meditate_12h.pressed.connect(_on_meditate_12h)
 	btn_meditate_24h.pressed.connect(_on_meditate_24h)
@@ -40,7 +47,9 @@ func _find_player_stats() -> void:
 		_on_lifespan_changed(player_stats.age_days, player_stats.max_age_days)
 		_on_mana_changed(player_stats.current_mana, player_stats.max_mana)
 	else:
-		print("[TimeDebugUI] 警告：没有找到玩家的 Stats 组件。")
+		if not _has_printed_warning:
+			print("[TimeDebugUI] 警告：没有找到玩家的 Stats 组件。")
+			_has_printed_warning = true
 
 func _process(_delta: float) -> void:
 	# 如果一开始没找到，就不断尝试找一下（因为可能是按不同顺序实例化的）

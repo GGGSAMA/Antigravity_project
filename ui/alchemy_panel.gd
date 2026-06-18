@@ -7,6 +7,10 @@ signal on_refine_started
 @onready var btn_study = $MainLayout/RightAction/BtnStudy
 
 func _ready() -> void:
+	var dragger = Node.new()
+	dragger.set_script(load("res://core/ui/draggable_behavior.gd"))
+	add_child(dragger)
+	
 	if btn_close:
 		btn_close.pressed.connect(_on_close_pressed)
 	if btn_refine:
