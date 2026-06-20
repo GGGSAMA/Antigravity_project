@@ -26,7 +26,7 @@ var _selected_item := -1
 #	add_item("Second", load("res://addons/zylann.hterrain_demo/textures/ground/grass_albedo_bump.png"), 0)
 #	add_item("Third", load("res://addons/zylann.hterrain_demo/textures/ground/leaves_albedo_bump.png"), 0)
 #	add_item("Fourth", load("res://addons/zylann.hterrain_demo/textures/ground/sand_albedo_bump.png"), 0)
-#	var texture_array = load("res://tests/texarray/textures/array_albedo_atlas.png")
+#	var texture_array = load("res://00099tests/texarray/textures/array_albedo_atlas.png")
 #	add_item("Ninth", texture_array, 2)
 #	add_item("Sixth", texture_array, 3)
 

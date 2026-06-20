@@ -6,7 +6,7 @@ func _run():
     f.store_line("Starting anim dump...")
     
     # 1. A03 skeleton
-    var a03 = load("res://models/femWarrior/Characters/A03.FBX").instantiate()
+    var a03 = load("res://00083models/femWarrior/Characters/A03.FBX").instantiate()
     var skel = null
     for c in a03.get_children():
         if c is Skeleton3D:
@@ -23,7 +23,7 @@ func _run():
     a03.queue_free()
     
     # 2. Walk animation
-    var path = "res://models/femWarrior/RootAnimsFemale/BaseFemale@1HWalkF.fbx"
+    var path = "res://00083models/femWarrior/RootAnimsFemale/BaseFemale@1HWalkF.fbx"
     var base_scene = load(path)
     if base_scene:
         var inst = base_scene.instantiate()

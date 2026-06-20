@@ -3,8 +3,9 @@
 [ext_resource type="Script" path="res://demo/src/Player.gd" id="1_nm1yx"]
 [ext_resource type="Script" path="res://demo/src/CameraManager.gd" id="2_loos7"]
 
-[ext_resource type="PackedScene" path="res://models/Magic Locomotion Pack/arissa.tscn" id="3_fem"]
-[ext_resource type="Script" path="res://entities/player/components/sect_builder_comp.gd" id="4_sect"]
+[ext_resource type="PackedScene" path="res://00083models/Magic Locomotion Pack/arissa.tscn" id="3_fem"]
+[ext_resource type="Script" path="res://00010entities/player/components/sect_builder_comp.gd" id="4_sect"]
+[ext_resource type="Script" path="res://0000core/simulation/components/cultivation_component.gd" id="5_cult"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_smq6u"]
 
@@ -45,3 +46,6 @@ transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 
 
 [node name="SectBuilder" type="Node" parent="."]
 script = ExtResource("4_sect")
+
+[node name="CultivationComponent" type="Node" parent="."]
+script = ExtResource("5_cult")

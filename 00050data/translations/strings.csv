@@ -1,0 +1,16 @@
+keys,zh,en
+UI_ACTION_MEDITATE,闭关打坐,Meditate
+UI_ACTION_REST,就地休息,Rest
+UI_ACTION_TELEPATHY,神识传音,Telepathy
+UI_ACTION_TRADE,交易,Trade
+UI_STOP_MEDITATE,停止打坐,Stop Meditating
+SYS_MEDITATE_START,你席地而坐，稍作歇息...,You sit on the ground and rest...
+SYS_TELEPATHY_FAIL,神识未锁定目标，无法传音。,No target locked for telepathy.
+SYS_NOT_ENOUGH_MONEY,灵石不足！,Not enough Spirit Stones!
+SYS_TRADE_NPC_NO_MONEY,对方灵石不足！,NPC does not have enough Spirit Stones!
+SYS_HOTBAR_BIND,已绑定到 ,Bound to slot 
+SYS_EQUIP_FAIL,该物品无法装备到此部位,Item cannot be equipped here
+SYS_UNEQUIP_FAIL,无法卸下装备,Cannot unequip item
+SYS_MAX_HP_RESTORED,状态恢复了，可以继续行动了,Condition restored. You can move now.
+SYS_EARN_MONEY,赚取 ,Earned 
+SYS_SPIRIT_STONES, 灵石,  Spirit Stones

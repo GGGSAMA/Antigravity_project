@@ -4,7 +4,7 @@ extends EditorScript
 func _run():
     var f = FileAccess.open("res://bone_debug.txt", FileAccess.WRITE)
     f.store_line("=== A03 Bones ===")
-    var base_scene = load("res://models/femWarrior/Characters/A03.FBX").instantiate()
+    var base_scene = load("res://00083models/femWarrior/Characters/A03.FBX").instantiate()
     var skel = _find_skeleton(base_scene)
     if skel:
         for i in range(min(5, skel.get_bone_count())):
@@ -14,7 +14,7 @@ func _run():
     base_scene.queue_free()
     
     f.store_line("=== Anim Bones ===")
-    var anim_scene = load("res://models/femWarrior/RootAnimsFemale/BaseFemale@1HIdle.fbx").instantiate()
+    var anim_scene = load("res://00083models/femWarrior/RootAnimsFemale/BaseFemale@1HIdle.fbx").instantiate()
     var skel2 = _find_skeleton(anim_scene)
     if skel2:
         for i in range(min(5, skel2.get_bone_count())):

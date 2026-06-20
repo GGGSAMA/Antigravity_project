@@ -1,0 +1,21 @@
+[gd_resource type="Environment" format=3 uid="uid://qwq3p48v7ar7"]
+
+[ext_resource type="Texture2D" uid="uid://duddpbhgjituq" path="res://00042world/environments/skyboxes/rogland_clear_night_4k.exr" id="1_night_sky"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_night"]
+panorama = ExtResource("1_night_sky")
+
+[sub_resource type="Sky" id="Sky_night"]
+sky_material = SubResource("PanoramaSkyMaterial_night")
+
+[resource]
+background_mode = 2
+background_energy_multiplier = 0.1
+sky = SubResource("Sky_night")
+ambient_light_source = 3
+ambient_light_color = Color(0.25, 0.35, 0.55, 1)
+ambient_light_sky_contribution = 0.1
+ambient_light_energy = 0.8
+tonemap_mode = 3
+tonemap_exposure = 1.2
+tonemap_white = 6.0

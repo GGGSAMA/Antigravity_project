@@ -57,7 +57,7 @@ func _init():
         pillar.owner = root
 
     # 6. Add the grass village FBX as a placeholder structure
-    var house_scene = load("res://fbx/SM_ENV_PLANT_grass_village.fbx")
+    var house_scene = load("res://00042world/fbx/SM_ENV_PLANT_grass_village.fbx")
     if house_scene:
         var house = house_scene.instantiate()
         house.name = "GrassVillage"
@@ -67,19 +67,19 @@ func _init():
         house.owner = root
 
     # Save the scene
-    var dir = DirAccess.open("res://world/")
+    var dir = DirAccess.open("res://00042world/")
     if not dir.dir_exists("maps"):
         dir.make_dir("maps")
-    var dir_maps = DirAccess.open("res://world/maps/")
+    var dir_maps = DirAccess.open("res://00042world/maps/")
     if not dir_maps.dir_exists("mystic_realm"):
         dir_maps.make_dir("mystic_realm")
         
     var packed = PackedScene.new()
     packed.pack(root)
-    var err = ResourceSaver.save(packed, "res://world/maps/mystic_realm/mystic_realm_room.tscn")
+    var err = ResourceSaver.save(packed, "res://00042world/maps/mystic_realm/mystic_realm_room.tscn")
     
     if err == OK:
-        print("Successfully created res://world/maps/mystic_realm/mystic_realm_room.tscn")
+        print("Successfully created res://00042world/maps/mystic_realm/mystic_realm_room.tscn")
     else:
         print("Failed to create scene: ", err)
         

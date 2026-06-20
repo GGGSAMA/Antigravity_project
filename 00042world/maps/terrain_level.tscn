@@ -1,0 +1,49 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" uid="uid://c1aho28p283y6" path="res://00081assets/environment/autumn_field_puresky_4k.hdr" id="1_q2qao"]
+
+[sub_resource type="Gradient" id="Gradient_ltkgm"]
+offsets = PackedFloat32Array(0, 0.141176, 0.884706, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0.156225, 0.154686, 0.156976, 1, 0.921744, 0.879743, 0.811774, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_74d3q"]
+gradient = SubResource("Gradient_ltkgm")
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_lstia"]
+panorama = ExtResource("1_q2qao")
+
+[sub_resource type="Sky" id="Sky_qenc5"]
+sky_material = SubResource("PanoramaSkyMaterial_lstia")
+
+[sub_resource type="Environment" id="Environment_3pj4d"]
+background_mode = 2
+background_energy_multiplier = 0.4
+sky = SubResource("Sky_qenc5")
+ambient_light_sky_contribution = 0.7
+tonemap_mode = 3
+tonemap_exposure = 1.2
+tonemap_white = 6.0
+ssao_enabled = true
+glow_enabled = true
+adjustment_enabled = true
+adjustment_color_correction = SubResource("GradientTexture1D_74d3q")
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_8de07"]
+auto_exposure_speed = 5.0
+
+[node name="TerrainLevel" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_3pj4d")
+camera_attributes = SubResource("CameraAttributesPractical_8de07")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.740436, 0.541474, -0.398197, 0.0661721, 0.530838, 0.844886, 0.668862, -0.651933, 0.357221, 0, 25.2, 0)
+light_color = Color(1, 1, 0.94902, 1)
+shadow_enabled = true
+
+[node name="PlayerSpawn" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
+
+[node name="Terrain3D" type="Terrain3D" parent="."]
+data_directory = "res://terrain_data"

@@ -2,12 +2,12 @@
 extends EditorScript
 
 func _run():
-    var base_scene = load("res://models/femWarrior/Characters/A03.FBX").instantiate()
+    var base_scene = load("res://00083models/femWarrior/Characters/A03.FBX").instantiate()
     print("A03 Hierarchy:")
     _print_tree(base_scene, "")
     base_scene.queue_free()
     
-    var anim_scene = load("res://models/femWarrior/RootAnimsFemale/BaseFemale@1HIdle.fbx").instantiate()
+    var anim_scene = load("res://00083models/femWarrior/RootAnimsFemale/BaseFemale@1HIdle.fbx").instantiate()
     var ap = anim_scene.get_node("AnimationPlayer")
     var lib = ap.get_animation_library("")
     var anim_name = lib.get_animation_list()[0]

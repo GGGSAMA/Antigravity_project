@@ -1,52 +1,51 @@
 ![Terrain3D Logo](/doc/docs/images/terrain3d.jpg)
 
-# Terrain3D
-A high performance, editable terrain system for Godot 4.
+# Terrain3D (3D地形)
+一款为 Godot 4 打造的高性能、可编辑地形系统。
 
 
-## Features
-* Written in C++ as a GDExtension addon, which works with official builds of Godot Engine
-* [Can be accessed](https://terrain3d.readthedocs.io/en/stable/docs/programming_languages.html) by GDScript, C#, and any language Godot supports
-* Terrains as small as 64x64m up to 65.5x65.5km (4295km^2) in non-contiguous and variable sized regions
-* Up to 32 textures
-* Up to 10 levels of detail for the terrain mesh
-* Foliage instancing, with up to 10 levels of detail, and a shadow impostor
-* Sculpting, holes, texture painting, texture detiling, painting colors and wetness
-* Imports heightmaps from [HTerrain](https://github.com/Zylann/godot_heightmap_plugin/), Gaea, World Creator, World Machine, Unity, Unreal and any tool that can export a heightmap. See [heightmaps](https://terrain3d.readthedocs.io/en/stable/docs/heightmaps.html)
+## 核心特性 (Features)
+* 以 C++ 编写的 GDExtension 插件，完美兼容 Godot 引擎官方构建版本。
+* [可被多种语言调用](https://terrain3d.readthedocs.io/en/stable/docs/programming_languages.html)，包括 GDScript、C#，以及 Godot 支持的任何编程语言。
+* 地形尺寸高度灵活：小至 64x64米，大至 65.5x65.5公里 (4295平方公里)，支持非连续及大小可变的区域划分。
+* 支持多达 32 种混合纹理。
+* 地形网格支持多达 10 级的多级细节 (LOD) 优化。
+* 植被实例化系统 (Foliage instancing)：支持高达 10 级的 LOD 细节，并带有远景阴影贴图 (Shadow Impostor) 技术。
+* 丰富的地形编辑工具：支持雕刻、挖洞、纹理涂抹、去瓷砖化 (Detiling) 涂抹、颜色涂抹以及湿度/反光度涂抹。
+* 强大的高度图导入功能：支持从 [HTerrain](https://github.com/Zylann/godot_heightmap_plugin/)、Gaea、World Creator、World Machine、Unity、Unreal 以及任何能导出高度图的工具导入。详情请参阅 [高度图(Heightmaps)](https://terrain3d.readthedocs.io/en/stable/docs/heightmaps.html)。
 
 
-## Games Using Terrain3D
-
-Please see the [featured games using Terrain3D](https://terrain3d.readthedocs.io/en/latest/docs/games.html) for examples of what it can do.
-
-
-## Getting Started
-
-1. Read the [Introduction](https://terrain3d.readthedocs.io/en/stable/docs/introduction.html) to understand how this terrain system works.
-
-2. Read the [Installation & Upgrade](https://terrain3d.readthedocs.io/en/stable/docs/installation.html) instructions.
-
-3. Watch the [tutorial videos](https://terrain3d.readthedocs.io/en/stable/docs/tutorial_videos.html) and read through the documentation.
-
-4. For support, read [Getting Help](https://terrain3d.readthedocs.io/en/stable/docs/getting_help.html) and join our [Discord server](https://tokisan.com/discord).
+## 使用 Terrain3D 制作的游戏
+请查看 [使用 Terrain3D 的精选游戏](https://terrain3d.readthedocs.io/en/latest/docs/games.html) 页面，了解该插件能达到怎样的惊艳效果。
 
 
-## Credit
-Developed for the Godot community by:
+## 新手入门 (Getting Started)
+
+1. 阅读 [简介 (Introduction)](https://terrain3d.readthedocs.io/en/stable/docs/introduction.html) 来理解这套地形系统是如何运作的。
+
+2. 阅读 [安装与升级 (Installation & Upgrade)](https://terrain3d.readthedocs.io/en/stable/docs/installation.html) 指南。
+
+3. 观看 [视频教程 (Tutorial videos)](https://terrain3d.readthedocs.io/en/stable/docs/tutorial_videos.html) 并通读官方文档。
+
+4. 如需技术支持，请阅读 [获取帮助 (Getting Help)](https://terrain3d.readthedocs.io/en/stable/docs/getting_help.html) 并加入我们的 [Discord 服务器](https://tokisan.com/discord)。
+
+
+## 鸣谢 (Credit)
+本项目由以下核心成员为 Godot 社区开发：
 
 |||
 |--|--|
 | **Cory Petkovsek, Tokisan Games** | [<img src="https://github.com/dmhendricks/signature-social-icons/blob/master/icons/round-flat-filled/35px/twitter.png?raw=true" width="24"/>](https://twitter.com/TokisanGames) [<img src="https://github.com/dmhendricks/signature-social-icons/blob/master/icons/round-flat-filled/35px/github.png?raw=true" width="24"/>](https://github.com/TokisanGames) [<img src="https://github.com/dmhendricks/signature-social-icons/blob/master/icons/round-flat-filled/35px/www.png?raw=true" width="24"/>](https://tokisan.com/) [<img src="https://github.com/dmhendricks/signature-social-icons/blob/master/icons/round-flat-filled/35px/discord.png?raw=true" width="24"/>](https://tokisan.com/discord) [<img src="https://github.com/dmhendricks/signature-social-icons/blob/master/icons/round-flat-filled/35px/youtube.png?raw=true" width="24"/>](https://www.youtube.com/@TokisanGames)|
 | **Roope Palmroos, Outobugi Games** | [<img src="https://github.com/dmhendricks/signature-social-icons/blob/master/icons/round-flat-filled/35px/twitter.png?raw=true" width="24"/>](https://twitter.com/outobugi) [<img src="https://github.com/dmhendricks/signature-social-icons/blob/master/icons/round-flat-filled/35px/github.png?raw=true" width="24"/>](https://github.com/outobugi) [<img src="https://github.com/dmhendricks/signature-social-icons/blob/master/icons/round-flat-filled/35px/www.png?raw=true" width="24"/>](https://outobugi.com/) [<img src="https://github.com/dmhendricks/signature-social-icons/blob/master/icons/round-flat-filled/35px/youtube.png?raw=true" width="24"/>](https://www.youtube.com/@outobugi)|
 
-And the contribution team in [AUTHORS.md](https://terrain3d.readthedocs.io/en/stable/docs/authors.html) and on the right of the github page.
+以及 [AUTHORS.md](https://terrain3d.readthedocs.io/en/stable/docs/authors.html) 及 Github 页面右侧列出的全体贡献者。
 
 
-## Contributing
+## 参与贡献 (Contributing)
 
-Please see [CONTRIBUTING.md](https://github.com/TokisanGames/Terrain3D/blob/main/CONTRIBUTING.md) if you would like to help make Terrain3D the best terrain system for Godot.
+如果您想帮忙让 Terrain3D 成为 Godot 上最强的地形系统，请参阅 [CONTRIBUTING.md](https://github.com/TokisanGames/Terrain3D/blob/main/CONTRIBUTING.md)。
 
 
-## License
+## 开源许可 (License)
 
-This addon has been released under the [MIT License](https://github.com/TokisanGames/Terrain3D/blob/main/LICENSE.txt).
+本插件采用 [MIT License](https://github.com/TokisanGames/Terrain3D/blob/main/LICENSE.txt) 开源协议发布。

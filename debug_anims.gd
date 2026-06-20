@@ -3,7 +3,7 @@ extends EditorScript
 
 func _run():
     var f = FileAccess.open("res://anim_debug.txt", FileAccess.WRITE)
-    var base_scene = load("res://models/femWarrior/Characters/A03.FBX").instantiate()
+    var base_scene = load("res://00083models/femWarrior/Characters/A03.FBX").instantiate()
     var anim_player = base_scene.get_node_or_null("AnimationPlayer")
     if anim_player:
         var libs = anim_player.get_animation_library_list()

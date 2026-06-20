@@ -6,7 +6,7 @@ func _run():
     var root = scene.instantiate()
     var spawner = Node3D.new()
     spawner.name = "NPCSpawner"
-    spawner.set_script(load("res://entities/npc/npc_spawner.gd"))
+    spawner.set_script(load("res://00010entities/npc/npc_spawner.gd"))
     root.add_child(spawner)
     spawner.owner = root
     var packed = PackedScene.new()

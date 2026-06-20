@@ -3,7 +3,7 @@ extends EditorScript
 
 func _run():
 	print("Starting rig...")
-	var base_scene = load("res://models/femWarrior/Characters/A03.FBX")
+	var base_scene = load("res://00083models/femWarrior/Characters/A03.FBX")
 	if not base_scene:
 		print("Failed to load base scene A03.FBX")
 		return
@@ -18,10 +18,10 @@ func _run():
 	
 	var anim_lib = AnimationLibrary.new()
 	var anim_files = {
-		"idle": "res://models/femWarrior/RootAnimsFemale/BaseFemale@1HIdle.fbx",
-		"walk": "res://models/femWarrior/RootAnimsFemale/BaseFemale@1HWalkF.fbx",
-		"run": "res://models/femWarrior/RootAnimsFemale/BaseFemale@1HCombatRunF.fbx",
-		"attack": "res://models/femWarrior/RootAnimsFemale/BaseFemale@1HAttack.fbx"
+		"idle": "res://00083models/femWarrior/RootAnimsFemale/BaseFemale@1HIdle.fbx",
+		"walk": "res://00083models/femWarrior/RootAnimsFemale/BaseFemale@1HWalkF.fbx",
+		"run": "res://00083models/femWarrior/RootAnimsFemale/BaseFemale@1HCombatRunF.fbx",
+		"attack": "res://00083models/femWarrior/RootAnimsFemale/BaseFemale@1HAttack.fbx"
 	}
 	for anim_name in anim_files:
 		var path = anim_files[anim_name]
@@ -74,8 +74,8 @@ func _run():
 	var packed_scene = PackedScene.new()
 	packed_scene.pack(root)
 	
-	DirAccess.make_dir_recursive_absolute("res://entities/player/models/")
-	var err = ResourceSaver.save(packed_scene, "res://entities/player/models/fem_warrior.tscn")
+	DirAccess.make_dir_recursive_absolute("res://00010entities/player/models/")
+	var err = ResourceSaver.save(packed_scene, "res://00010entities/player/models/fem_warrior.tscn")
 	if err == OK:
 		print("Successfully saved fem_warrior.tscn")
 	else:

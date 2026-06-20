@@ -1,0 +1,22 @@
+[gd_scene load_steps=5 format=3 uid="uid://faction_manager_001"]
+
+[ext_resource type="Script" path="res://0000core/simulation/factions/faction_manager.gd" id="1_script"]
+[ext_resource type="Script" path="res://0000core/simulation/factions/components/sect_generator.gd" id="2_script"]
+[ext_resource type="Script" path="res://0000core/simulation/factions/components/population_spawner.gd" id="3_script"]
+[ext_resource type="Script" path="res://0000core/simulation/factions/components/sect_brain_ai.gd" id="4_script"]
+[ext_resource type="Script" path="res://0000core/simulation/factions/components/world_sect_seeder.gd" id="5_script"]
+
+[node name="FactionManager" type="Node"]
+script = ExtResource("1_script")
+
+[node name="WorldSectSeeder" type="Node" parent="."]
+script = ExtResource("5_script")
+
+[node name="SectGenerator" type="Node" parent="."]
+script = ExtResource("2_script")
+
+[node name="PopulationSpawner" type="Node" parent="."]
+script = ExtResource("3_script")
+
+[node name="SectBrainAI" type="Node" parent="."]
+script = ExtResource("4_script")

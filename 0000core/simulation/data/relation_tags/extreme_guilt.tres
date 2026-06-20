@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="RelationTagData" format=3]
+
+[ext_resource type="Script" uid="uid://bgvrgc6dk6rpf" path="res://0000core/simulation/factions/relation_tag_data.gd" id="1_xxx"]
+
+[resource]
+script = ExtResource("1_xxx")
+tag_id = "extreme_guilt"
+tag_name = "极度内疚"
+min_stance = 3
+max_stance = 4

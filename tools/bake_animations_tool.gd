@@ -3,7 +3,7 @@ extends EditorScript
 
 func _run() -> void:
 	print("开始烘焙动画库...")
-	var glb_scene = load("res://models/Lite Magic Pack/Arissa.fbx")
+	var glb_scene = load("res://00083models/Lite Magic Pack/Arissa.fbx")
 	if not glb_scene:
 		print("未找到 Arissa.fbx!")
 		return
@@ -21,7 +21,7 @@ func _run() -> void:
 		return
 		
 	var new_lib = AnimationLibrary.new()
-	var dir = DirAccess.open("res://models/Lite Magic Pack/")
+	var dir = DirAccess.open("res://00083models/Lite Magic Pack/")
 	if dir:
 		dir.list_dir_begin()
 		var file_name = dir.get_next()
@@ -31,11 +31,11 @@ func _run() -> void:
 				if file_name.ends_with(".import"):
 					clean_name = file_name.replace(".import", "")
 				if clean_name.ends_with(".fbx"):
-					_extract_animation("res://models/Lite Magic Pack/" + clean_name, new_lib)
+					_extract_animation("res://00083models/Lite Magic Pack/" + clean_name, new_lib)
 			file_name = dir.get_next()
 	
 	# 保存资源
-	var save_path = "res://models/Lite Magic Pack/magic_library.res"
+	var save_path = "res://00083models/Lite Magic Pack/magic_library.res"
 	var err = ResourceSaver.save(new_lib, save_path)
 	if err == OK:
 		print("动画库烘焙成功: ", save_path)

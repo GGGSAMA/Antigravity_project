@@ -1,6 +1,6 @@
-[gd_scene load_steps=10 format=3 uid="uid://b3bostcslstem"]
+[gd_scene format=3 uid="uid://b3bostcslstem"]
 
-[ext_resource type="Script" path="res://addons/gut/gui/GutBottomPanel.gd" id="1"]
+[ext_resource type="Script" uid="uid://dn7xgrpbdttpa" path="res://addons/gut/gui/GutBottomPanel.gd" id="1"]
 [ext_resource type="PackedScene" uid="uid://bsk32dh41b4gs" path="res://addons/gut/gui/BottomPanelShortcuts.tscn" id="2"]
 [ext_resource type="PackedScene" uid="uid://0yunjxtaa8iw" path="res://addons/gut/gui/RunAtCursor.tscn" id="3"]
 [ext_resource type="Texture2D" uid="uid://cr6tvdv0ve6cv" path="res://addons/gut/gui/play.png" id="4"]

@@ -2,7 +2,7 @@
 extends EditorScript
 
 func _run():
-    var path = "res://models/femWarrior/RootAnimsFemale/BaseFemale@1HWalkF.fbx"
+    var path = "res://00083models/femWarrior/RootAnimsFemale/BaseFemale@1HWalkF.fbx"
     var base_scene = load(path)
     if not base_scene:
         print("Failed to load FBX: ", path)

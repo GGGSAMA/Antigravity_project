@@ -1,0 +1,18 @@
+[gd_resource type="Environment" format=3 uid="uid://b7qufd8r1naha"]
+
+[ext_resource type="Texture2D" uid="uid://bjngic5lvu12" path="res://00042world/environments/skyboxes/qwantani_night_puresky_4k.exr" id="1_skybox"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_x"]
+panorama = ExtResource("1_skybox")
+
+[sub_resource type="Sky" id="Sky_x"]
+sky_material = SubResource("PanoramaSkyMaterial_x")
+
+[resource]
+background_mode = 2
+sky = SubResource("Sky_x")
+tonemap_mode = 3
+tonemap_exposure = 0.8
+tonemap_white = 6.0
+ssao_enabled = true
+glow_enabled = true

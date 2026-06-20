@@ -1,0 +1,13 @@
+[World Generator] Started.
+[World Generator] Starting procedural generation of Xianxia world...
+[World Generator] Baked region -1, -1
+[World Generator] Baked region -1, 0
+[World Generator] Baked region -1, 1
+[World Generator] Baked region 0, -1
+[World Generator] Baked region 0, 0
+[World Generator] Baked region 0, 1
+[World Generator] Baked region 1, -1
+[World Generator] Baked region 1, 0
+[World Generator] Baked region 1, 1
+[World Generator] Saved to: res://demo/data
+[World Generator] World Generation Complete! Regions saved to Terrain3D Data.

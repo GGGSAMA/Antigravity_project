@@ -2,8 +2,8 @@
 extends EditorScript
 
 func _run() -> void:
-	var fbx_path = "res://models/building/3d-model.fbx"
-	var save_path = "res://models/building/building_processed.tscn"
+	var fbx_path = "res://00083models/building/3d-model.fbx"
+	var save_path = "res://00083models/building/building_processed.tscn"
 	
 	var packed_scene = load(fbx_path) as PackedScene
 	if not packed_scene:

@@ -1,0 +1,96 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://cs20x34m5excs" path="res://0000core/debug/dev_console.gd" id="1_script"]
+
+[node name="DevConsole" type="CanvasLayer"]
+process_mode = 3
+layer = 128
+script = ExtResource("1_script")
+
+[node name="MainPanel" type="ColorRect" parent="."]
+anchors_preset = 10
+anchor_right = 1.0
+anchor_bottom = 0.5
+grow_horizontal = 2
+color = Color(0.02, 0.02, 0.02, 0.9)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Header" type="ColorRect" parent="MainPanel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+color = Color(0.1, 0.3, 0.1, 0.8)
+
+[node name="Label" type="Label" parent="MainPanel/VBoxContainer/Header"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 10.0
+offset_top = -11.5
+offset_right = 200.0
+offset_bottom = 11.5
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.6, 1, 0.6, 1)
+text = "[ DEV CONSOLE - GOD MODE ]"
+vertical_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="SideBar" type="VBoxContainer" parent="MainPanel/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="BtnLogs" type="Button" parent="MainPanel/VBoxContainer/HBoxContainer/SideBar"]
+layout_mode = 2
+text = "> 实时运行日志"
+alignment = 0
+
+[node name="BtnSocial" type="Button" parent="MainPanel/VBoxContainer/HBoxContainer/SideBar"]
+layout_mode = 2
+text = "> 社会网络库"
+alignment = 0
+
+[node name="BtnTime" type="Button" parent="MainPanel/VBoxContainer/HBoxContainer/SideBar"]
+layout_mode = 2
+text = "> 时间流逝引擎"
+alignment = 0
+
+[node name="BtnEntities" type="Button" parent="MainPanel/VBoxContainer/HBoxContainer/SideBar"]
+layout_mode = 2
+text = "> 实体属性状态"
+alignment = 0
+
+[node name="BtnItems" type="Button" parent="MainPanel/VBoxContainer/HBoxContainer/SideBar"]
+layout_mode = 2
+text = "> 物品后台数据库"
+alignment = 0
+
+[node name="BtnFactions" type="Button" parent="MainPanel/VBoxContainer/HBoxContainer/SideBar"]
+layout_mode = 2
+text = "> 宗门派系 (Factions)"
+alignment = 0
+
+[node name="BtnClear" type="Button" parent="MainPanel/VBoxContainer/HBoxContainer/SideBar"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.4, 0.4, 1)
+text = "[ 清空控制台 ]"
+alignment = 0
+
+[node name="LogOutput" type="RichTextLabel" parent="MainPanel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/default_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/normal_font_size = 14
+bbcode_enabled = true
+scroll_following = true
+selection_enabled = true

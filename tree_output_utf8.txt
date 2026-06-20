@@ -1,4 +1,4 @@
-﻿卷 cs 的文件夹 PATH 列表
+卷 cs 的文件夹 PATH 列表
 卷序列号为 00000022 37E1:1114
 E:\0GD\3D-GAME-IN-GODOT-MAIN\3D_GAME
 |   .gitattributes
@@ -5707,60 +5707,60 @@ E:\0GD\3D-GAME-IN-GODOT-MAIN\3D_GAME
 |   |       
 |   \---panels
 \---world
-    +---architecture
-    |       building_auto_setup.gd
-    |       building_auto_setup.gd.uid
-    |       ceiling.tscn
-    |       floor_stone.tscn
-    |       floor_wood.tscn
-    |       pillar.tscn
-    |       sect_core_pillar.tscn
-    |       wall.tscn
-    |       wall_arched.tscn
-    |       wall_arched_window_gated.tscn
-    |       wall_corner.tscn
-    |       wall_cracked.tscn
-    |       wall_doorway.tscn
-    |       wall_half_endcap.tscn
-    |       wall_shelved.tscn
-    |       wall_t_split.tscn
-    |       wall_window_closed.tscn
-    |       
-    +---facilities
-    |       alchemy_furnace.gd
-    |       alchemy_furnace.gd.uid
-    |       alchemy_furnace.tscn
-    |       spirit_farm.gd
-    |       spirit_farm.gd.uid
-    |       spirit_farm.tscn
-    |       
-    +---maps
-    |   |   terrain_initializer.gd
-    |   |   terrain_initializer.gd.uid
-    |   |   terrain_level.tscn
-    |   |   trigger_seeder.gd
-    |   |   trigger_seeder.gd.uid
-    |   |   
-    |   +---battle
-    |   |   \---b1
-    |   \---mystic_realm
-    |           mystic_realm_room.gd
-    |           mystic_realm_room.gd.uid
-    |           mystic_realm_room.tscn
-    |           
-    \---props
-            banner_mounted.tscn
-            barrel.tscn
-            candles.tscn
-            chair.tscn
-            chest.tscn
-            coin_stack.tscn
-            crates_stacked.tscn
-            keg_decorated.tscn
-            key_ring.tscn
-            plate_food.tscn
-            sword_shield.tscn
-            table_medium.tscn
-            table_small.tscn
-            torch_mounted.tscn
-            
+	+---architecture
+	|       building_auto_setup.gd
+	|       building_auto_setup.gd.uid
+	|       ceiling.tscn
+	|       floor_stone.tscn
+	|       floor_wood.tscn
+	|       pillar.tscn
+	|       sect_core_pillar.tscn
+	|       wall.tscn
+	|       wall_arched.tscn
+	|       wall_arched_window_gated.tscn
+	|       wall_corner.tscn
+	|       wall_cracked.tscn
+	|       wall_doorway.tscn
+	|       wall_half_endcap.tscn
+	|       wall_shelved.tscn
+	|       wall_t_split.tscn
+	|       wall_window_closed.tscn
+	|       
+	+---facilities
+	|       alchemy_furnace.gd
+	|       alchemy_furnace.gd.uid
+	|       alchemy_furnace.tscn
+	|       spirit_farm.gd
+	|       spirit_farm.gd.uid
+	|       spirit_farm.tscn
+	|       
+	+---maps
+	|   |   terrain_initializer.gd
+	|   |   terrain_initializer.gd.uid
+	|   |   terrain_level.tscn
+	|   |   trigger_seeder.gd
+	|   |   trigger_seeder.gd.uid
+	|   |   
+	|   +---battle
+	|   |   \---b1
+	|   \---mystic_realm
+	|           mystic_realm_room.gd
+	|           mystic_realm_room.gd.uid
+	|           mystic_realm_room.tscn
+	|           
+	\---props
+			banner_mounted.tscn
+			barrel.tscn
+			candles.tscn
+			chair.tscn
+			chest.tscn
+			coin_stack.tscn
+			crates_stacked.tscn
+			keg_decorated.tscn
+			key_ring.tscn
+			plate_food.tscn
+			sword_shield.tscn
+			table_medium.tscn
+			table_small.tscn
+			torch_mounted.tscn
+			

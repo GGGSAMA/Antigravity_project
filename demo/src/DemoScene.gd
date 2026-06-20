@@ -10,7 +10,7 @@ func _ready():
 
 	# Load Sky3D into the demo environment if enabled
 	if Engine.is_editor_hint() and has_node("Environment") and \
-		Engine.get_singleton(&"EditorInterface").is_plugin_enabled("sky_3d"):
+		Engine.get_main_loop().root.get_node(&"EditorInterface").is_plugin_enabled("sky_3d"):
 			$Environment.queue_free()
 			var sky3d = load("res://addons/sky_3d/src/Sky3D.gd").new()
 			sky3d.name = "Sky3D"

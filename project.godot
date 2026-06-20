@@ -15,31 +15,32 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="3d_game"
-run/main_scene="res://core/game_root.tscn"
+run/main_scene="res://0000core/game_root.tscn"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
 
-TransactionManager="*res://core/simulation/transactions/transaction_manager.gd"
-GlobalModifierDispatcher="*res://core/simulation/modifiers/global_modifier_dispatcher.gd"
-EventBus="*res://core/simulation/events/event_bus.gd"
-TimeManager="*res://globals/time_manager.gd"
-SocialManager="*res://core/simulation/social_manager.tscn"
-DeathManager="*res://core/simulation/death_manager.gd"
-MacroSimulator="*res://core/simulation/ai/macro_simulator.gd"
-UIFocusManager="*res://core/input/ui_focus_manager.gd"
-FactionManager="*res://core/simulation/factions/faction_manager.tscn"
+InputDebugger="*res://00030ui/debug/input_debugger.gd"
+TransactionManager="*res://0000core/simulation/transactions/transaction_manager.gd"
+GlobalModifierDispatcher="*res://0000core/simulation/modifiers/global_modifier_dispatcher.gd"
+EventBus="*res://0000core/simulation/events/event_bus.gd"
+TimeManager="*res://0001globals/time_manager.gd"
+SocialManager="*res://0000core/simulation/social_manager.tscn"
+DeathManager="*res://0000core/simulation/death_manager.gd"
+MacroSimulator="*res://0000core/simulation/ai/macro_simulator.gd"
+UIFocusManager="*res://0000core/input/ui_focus_manager.gd"
+FactionManager="*res://0000core/simulation/factions/faction_manager.tscn"
 WorldGridManager="*res://systems/world_grid/world_grid_manager.gd"
 WorldGridDebugger="*res://systems/world_grid/world_grid_debugger.gd"
 NPCSpawner="*res://entities/npc/npc_spawner.gd"
-DialogueManager="*res://core/ui/dialogue_manager.gd"
-WorldState="*res://globals/world_state.gd"
-ItemEffectDispatcher="*res://core/simulation/item_effect_dispatcher.gd"
-EconomyManager="*res://globals/economy_manager.gd"
-TimeSkipPanel="*res://ui/time_skip_panel.gd"
-DevConsole="*res://core/debug/dev_console.tscn"
-MonsterManager="*res://core/simulation/monster_manager.gd"
+DialogueManager="*res://0000core/ui/dialogue_manager.gd"
+WorldState="*res://0001globals/world_state.gd"
+ItemEffectDispatcher="*res://0000core/simulation/item_effect_dispatcher.gd"
+EconomyManager="*res://0001globals/economy_manager.gd"
+TimeSkipPanel="*res://00030ui/time_skip_panel.gd"
+DevConsole="*res://0000core/debug/dev_console.tscn"
+MonsterManager="*res://0000core/simulation/monster_manager.gd"
 
 [dotnet]
 

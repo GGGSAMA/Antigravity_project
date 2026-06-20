@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3 uid="uid://b1m2n3p4q5r6s"]
+
+[ext_resource type="Script" path="res://00010entities/monsters/spawner/monster_spawner.gd" id="1_spawner"]
+
+[node name="MonsterSpawner3D" type="Node3D" groups=["monster_spawner"]]
+script = ExtResource("1_spawner")
+
+[node name="EditorMarker" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+billboard = 1
+text = "Monster Spawner"
+font_size = 64
+outline_size = 16
