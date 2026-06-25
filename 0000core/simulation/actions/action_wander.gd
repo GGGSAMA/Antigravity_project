@@ -13,11 +13,11 @@ func evaluate_utility(actor: ActorProxy) -> float:
 
 func settle_time_chunk(actor: ActorProxy, hours_passed: float) -> void:
 	var days = hours_passed / 24.0
-	
+
 	# 以天为单位触发随机事件
 	for i in range(int(days)):
 		_roll_daily_event(actor)
-		
+
 	# 满足了一定的需求 (作为兜底行为，略微降低资源需求)
 	actor.add_stat("need_resource", -days * 0.2)
 	actor.add_stat("need_status", -days * 0.1)

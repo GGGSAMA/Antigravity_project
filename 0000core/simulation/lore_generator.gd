@@ -23,7 +23,7 @@ static func _load_json(path: String) -> Dictionary:
 static func generate_sect_name() -> String:
 	if sect_names_data.is_empty():
 		sect_names_data = _load_json("res://00050data/lore/sect_names.json")
-	
+
 	if not sect_names_data.is_empty():
 		var prefixes = sect_names_data.get("prefixes", ["太玄", "青云"])
 		var suffixes = sect_names_data.get("suffixes", ["宗", "门"])
@@ -33,7 +33,7 @@ static func generate_sect_name() -> String:
 static func generate_npc_name() -> String:
 	if npc_names_data.is_empty():
 		npc_names_data = _load_json("res://00050data/lore/npc_names.json")
-		
+
 	if not npc_names_data.is_empty():
 		var surnames = npc_names_data.get("surnames", ["李", "王"])
 		var males = npc_names_data.get("male_given_names", ["凡", "天"])

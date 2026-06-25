@@ -45,7 +45,7 @@ func log_event(actor: ActorProxy, msg: String) -> void:
 		var time = 0.0
 		if Engine.get_main_loop().root.has_node("TimeManager"):
 			time = Engine.get_main_loop().root.get_node("TimeManager").absolute_time_hours
-		
+
 		# 暂不细分 region_id
 		Engine.get_main_loop().root.get_node("ChronosEventLogManager").add_event(time, "global", actor.get_name(), msg)
 	else:

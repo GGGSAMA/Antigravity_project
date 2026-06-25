@@ -23,7 +23,13 @@ const EVENTS = {
 		"level": 2, "type": "routine",
 		"template": "不知遭遇何等变故，身受重创，气血大亏！"
 	},
-	
+
+	# -------------------- AI 行为改变 --------------------
+	"action_changed": {
+		"level": 2, "type": "routine",
+		"template": "静极思动，决定开始【{action_name}】。"
+	},
+
 	# -------------------- 业务抛出产生 (EventBus) --------------------
 	"encounter_treasure": {
 		"level": 2, "type": "routine",

@@ -109,7 +109,7 @@ func populate_dropdown() -> void:
 		if data is CharacterData:
 			n_name = data.npc_name
 		elif typeof(data) == TYPE_DICTIONARY:
-			n_name = data.get("name", "未知")
+			n_name = data.name
 			
 		dropdown.add_item(n_name + " [" + npc_id + "]")
 		dropdown.set_item_metadata(idx, npc_id)
@@ -203,13 +203,13 @@ func refresh_ui() -> void:
 			if typeof(entry) == TYPE_DICTIONARY:
 				# 过滤：非调试模式下，只显示 milestone 或 2星(IMPORTANT) 及以上的事件
 				if not show_all_diary:
-					if entry.get("type", "") != "milestone" and entry.get("level", 1) < 2:
+					if entry.type != "milestone" and entry.get("level", 1) < 2:
 						continue
 				
 				var age_str = "[骨龄%d岁]" % entry.get("age", data.age)
 				var text_str = entry.get("text", "")
 				var lvl = entry.get("level", 1)
-				var typ = entry.get("type", "routine")
+				var typ = entry.type
 				
 				if typ == "milestone" or lvl >= 3:
 					t += "[color=red]- %s %s[/color]\n" % [age_str, text_str]

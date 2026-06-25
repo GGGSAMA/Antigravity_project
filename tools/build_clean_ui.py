@@ -358,7 +358,7 @@ func _on_bag_clicked(idx: int):
 		update_ui()
 		var manager = get_parent()
 		if manager.has_method("show_notification"):
-			manager.show_notification("装备了: " + meta.get("name", item.id))
+			manager.show_notification("装备了: " + str(meta.name if meta.name else item.id))
 	else:
 		# Consume potion
 		if inventory_comp.remove_item(item.id, 1):

@@ -1,3 +1,16 @@
-16:01:58 [INFO] [System] LogManager 初始化成功，开始分级记录日志。
-16:02:01 [INFO] [Genesis] 开始执行文明纪元地缘宗门生成流水线...
-16:03:12 [INFO] [System] 游戏关闭，停止记录日志。
+02:19:30 [INFO] [System] LogManager 初始化成功，开始分级记录日志。
+02:19:30 [INFO] [ShadowStriker] Instantiated successfully.
+02:19:30 [INFO] [ShadowStriker] Scaled by: 0.93658925817724 original height: 1.9218670129776
+02:19:30 [INFO] [ShadowStriker] Found animations: ["1h_Sword_combo", "Climb", "Climb_Ladder", "Die", "Dying_Backward", "Falling", "Flip_kick", "Idle", "Jump", "Jump_from_wall", "Left_shimmy", "Locomotion pose", "Mma_kick", "Mma_kick_2", "Run", "Run_to_flip", "Running", "Running_forward_flip", "Sneak_walk", "T-pose", "Wall_run"]
+02:19:35 [INFO] [Genesis] 开始执行文明纪元地缘宗门生成流水线...
+02:19:46 [INFO] [Combat] 右键按下，尝试使用特殊物品或施展法术
+02:19:46 [INFO] [Combat] 开始蓄力法术：火球术 需要时间：1.0
+02:19:48 [INFO] [Combat] 右键松开，取消特殊物品使用或判断法术释放
+02:19:48 [INFO] [Combat] 施法结算。已蓄力时间：1.44852 / 1.0
+02:19:51 [INFO] [Combat] 左键：没有装备武器，执行空手攻击
+02:19:59 [INFO] [Combat] 右键按下，尝试使用特殊物品或施展法术
+02:19:59 [INFO] [Combat] 开始蓄力法术：火球术 需要时间：1.0
+02:20:00 [INFO] [Combat] 右键松开，取消特殊物品使用或判断法术释放
+02:20:00 [INFO] [Combat] 施法结算。已蓄力时间：1.09081861904762 / 1.0
+02:20:01 [INFO] [Scanner] 神识横扫！范围 50.0 米，共发现 8 个目标。
+02:20:08 [INFO] [System] 游戏关闭，停止记录日志。

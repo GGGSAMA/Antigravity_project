@@ -8,10 +8,10 @@ func _ready():
 	if not glb_scene:
 		push_error("Arissa.fbx not found!")
 		return
-		
+
 	var model = glb_scene.instantiate()
 	add_child(model)
-	
+
 	var bodies = model.find_children("*", "PhysicsBody3D", true, false)
 	for b in bodies:
 		b.process_mode = Node.PROCESS_MODE_DISABLED
@@ -20,9 +20,9 @@ func _ready():
 		if b is CollisionObject3D:
 			b.collision_layer = 0
 			b.collision_mask = 0
-			
+
 	model.scale = Vector3(1.0, 1.0, 1.0)
-		
+
 	# 获取 AnimationPlayer
 	anim_player = model.get_node_or_null("AnimationPlayer")
 	if not anim_player:
@@ -33,10 +33,10 @@ func _ready():
 	if not anim_player:
 		anim_player = AnimationPlayer.new()
 		model.add_child(anim_player)
-	
+
 	var lib_path = "res://00083models/Lite Magic Pack/magic_library.res"
 	var magic_lib = null
-	
+
 	if ResourceLoader.exists(lib_path):
 		magic_lib = load(lib_path)
 		print("Loaded cached magic_library.res!")
@@ -60,9 +60,9 @@ func _ready():
 			print("Auto-baked and saved magic_library.res successfully!")
 		else:
 			push_error("Failed to save magic_library.res! Error: " + str(err))
-			
+
 	anim_player.add_animation_library("magic", magic_lib)
-	
+
 	var anims = magic_lib.get_animation_list()
 	for a in anims:
 		var lower_a = a.to_lower()
@@ -71,10 +71,10 @@ func _ready():
 		elif "run" in lower_a and not anim_map.has("run"): anim_map["run"] = a
 		elif ("attack" in lower_a or "slash" in lower_a) and not anim_map.has("attack"): anim_map["attack"] = a
 		elif "jump" in lower_a and not anim_map.has("jump"): anim_map["jump"] = a
-		
+
 	if not anim_map.has("walk") and anim_map.has("run"): anim_map["walk"] = anim_map["run"]
 	if not anim_map.has("run") and anim_map.has("walk"): anim_map["run"] = anim_map["walk"]
-	
+
 	if anim_map.has("idle"):
 		anim_player.play("magic/" + anim_map["idle"])
 
@@ -90,14 +90,14 @@ func _extract_animation(path: String, new_lib: AnimationLibrary):
 	if not ap:
 		instance.queue_free()
 		return
-		
+
 	for anim_name in ap.get_animation_list():
 		var anim = ap.get_animation(anim_name).duplicate()
 		var track_count = anim.get_track_count()
 		for i in range(track_count):
 			var track_path = anim.track_get_path(i)
 			var path_str = str(track_path)
-			
+
 			if "Hips" in path_str or "Root" in path_str:
 				if anim.track_get_type(i) == Animation.TYPE_POSITION_3D:
 					var key_count = anim.track_get_key_count(i)
@@ -107,14 +107,14 @@ func _extract_animation(path: String, new_lib: AnimationLibrary):
 							val.x = 0
 							val.z = 0
 							anim.track_set_key_value(i, k, val)
-		
+
 		var lower_name = path.get_file().get_basename().to_lower()
 		if "idle" in lower_name or "walk" in lower_name or "run" in lower_name:
 			anim.loop_mode = Animation.LOOP_LINEAR
-			
+
 		var save_name = path.get_file().get_basename()
 		new_lib.add_animation(save_name, anim)
-		
+
 	instance.queue_free()
 
 func set_animation_state(state: String):
@@ -123,6 +123,6 @@ func set_animation_state(state: String):
 	if anim_map.has(state): target_anim = "magic/" + anim_map[state]
 	elif state == "attack" and anim_map.has("attack"): target_anim = "magic/" + anim_map["attack"]
 	elif anim_map.has("idle"): target_anim = "magic/" + anim_map["idle"]
-		
+
 	if target_anim != "" and anim_player.current_animation != target_anim:
 		anim_player.play(target_anim, 0.2)

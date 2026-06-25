@@ -7,7 +7,13 @@ extends Node
 
 signal npc_event_occurred(npc: CharacterData, event_id: String, ctx: Dictionary)
 signal narrative_event(type: String, initiator: CharacterData, target: CharacterData, context: Variant)
+signal level_changing
+signal npc_died(npc_data, cause)
 
+# UI 交互系统总线信号
+signal request_open_ui(ui_name: String)
+signal ui_state_changed(is_in_ui: bool)
+signal show_notification(msg: String)
 func _ready() -> void:
 	npc_event_occurred.connect(_on_npc_event_occurred)
 

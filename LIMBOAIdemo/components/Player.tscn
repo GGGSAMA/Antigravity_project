@@ -1,0 +1,57 @@
+[gd_scene format=3 uid="uid://domhm87hbhbg1"]
+
+[ext_resource type="Script" uid="uid://dajlr3n5wjwmb" path="res://LIMBOAIdemo/src/Player.gd" id="1_nm1yx"]
+[ext_resource type="Script" uid="uid://b62ppvc03a6b1" path="res://LIMBOAIdemo/src/CameraManager.gd" id="2_loos7"]
+[ext_resource type="Script" uid="uid://c247wbmdoc3dv" path="res://00030entities/player/components/target_lock_comp.gd" id="TargetLockScript"]
+[ext_resource type="PackedScene" path="res://00083models/Magic Locomotion Pack/arissa.tscn" id="3_fem"]
+[ext_resource type="Script" uid="uid://dg4ex4uqxaf8e" path="res://00030entities/player/components/sect_builder_comp.gd" id="4_sect"]
+[ext_resource type="Script" uid="uid://biix2tjxy54ey" path="res://0000core/simulation/components/cultivation_component.gd" id="5_cult"]
+[ext_resource type="Script" uid="uid://c247wbmdoc3dv" path="res://00030entities/player/components/target_lock_comp.gd" id="TargetLockScript"]
+
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_smq6u"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_lwhhq"]
+height = 1.5
+
+[sub_resource type="SeparationRayShape3D" id="SeparationRayShape3D_twc2s"]
+
+[node name="Player" type="CharacterBody3D"]
+collision_layer = 2
+script = ExtResource("1_nm1yx")
+
+[node name="CameraManager" type="Node3D" parent="."]
+script = ExtResource("2_loos7")
+
+[node name="Arm" type="SpringArm3D" parent="CameraManager"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 0.906308, 0.422618, 0, -0.422618, 0.906308, 0, 2.32515, -0.0321627)
+shape = SubResource("SphereShape3D_smq6u")
+spring_length = 6.0
+margin = 0.5
+
+[node name="Camera3D" type="Camera3D" parent="CameraManager/Arm"]
+unique_name_in_owner = true
+near = 0.25
+far = 16384.0
+
+[node name="CollisionShapeBody" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0)
+shape = SubResource("CapsuleShape3D_lwhhq")
+
+[node name="CollisionShapeRay" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 1, 0)
+shape = SubResource("SeparationRayShape3D_twc2s")
+
+[node name="Body" parent="." instance=ExtResource("3_fem")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
+
+[node name="SectBuilder" type="Node" parent="."]
+script = ExtResource("4_sect")
+
+[node name="CultivationComponent" type="Node" parent="."]
+script = ExtResource("5_cult")
+
+[node name="TargetLockComp" type="Node" parent="."]
+script = ExtResource("TargetLockScript")
+

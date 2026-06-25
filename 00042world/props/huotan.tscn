@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://4xvbbc4hcfnl"]
+
+[ext_resource type="PackedScene" uid="uid://dbj7435hgvk3p" path="res://00083models/building/GLB/props_lamppost_01.glb" id="1_gq133"]
+[ext_resource type="PackedScene" uid="uid://xjk15fhlgmvk" path="res://00083models/building/GLB/props_cart_01.glb" id="2_ly8cx"]
+
+[node name="huotan" type="Node3D" unique_id=905865776]
+
+[node name="props_lamppost_012" parent="." unique_id=2147043233 instance=ExtResource("1_gq133")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8.701637)
+
+[node name="props_cart_012" parent="." unique_id=524266337 instance=ExtResource("2_ly8cx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.820618, 0, -2.2583313)

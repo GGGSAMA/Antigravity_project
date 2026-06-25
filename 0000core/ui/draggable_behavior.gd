@@ -20,13 +20,13 @@ func _ready() -> void:
 
 func _on_gui_input(event: InputEvent) -> void:
 	if not target: return
-	
+
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if event.pressed:
 				var local_pos = target.get_local_mouse_position()
 				var title_bar_rect = Rect2(0, 0, target.size.x, 30)
-				
+
 				# 判断是否在顶部标题栏，或者四周边缘区域
 				if title_bar_rect.has_point(local_pos) or (
 					local_pos.x < drag_margin or local_pos.x > target.size.x - drag_margin or
@@ -40,7 +40,7 @@ func _on_gui_input(event: InputEvent) -> void:
 					target.accept_event()
 			else:
 				is_dragging = false
-				
+
 	elif event is InputEventMouseMotion:
 		if is_dragging:
 			target.global_position = target.get_global_mouse_position() - drag_offset

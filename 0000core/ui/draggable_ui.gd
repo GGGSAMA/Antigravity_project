@@ -19,10 +19,10 @@ func _gui_input(event: InputEvent) -> void:
 				# 这里简化为：只要点击在整个 Control 的上半部分 30 像素内，或者边缘 drag_margin 内，都可以拖拽
 				var local_pos = get_local_mouse_position()
 				var rect = Rect2(Vector2.ZERO, size)
-				
+
 				# 定义一个“可拖拽区域”：顶部 30 像素
 				var title_bar_rect = Rect2(0, 0, size.x, 30)
-				
+
 				# 检查是否在标题栏，或者在整个界面的边缘
 				if title_bar_rect.has_point(local_pos) or (
 					local_pos.x < drag_margin or local_pos.x > size.x - drag_margin or
@@ -35,7 +35,7 @@ func _gui_input(event: InputEvent) -> void:
 					accept_event()
 			else:
 				is_dragging = false
-				
+
 	elif event is InputEventMouseMotion:
 		if is_dragging:
 			global_position = get_global_mouse_position() - drag_offset

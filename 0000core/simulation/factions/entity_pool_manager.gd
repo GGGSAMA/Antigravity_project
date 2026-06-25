@@ -14,13 +14,13 @@ func _ready() -> void:
 func get_entity(scene_path: String) -> Node:
 	if not _pool.has(scene_path):
 		_pool[scene_path] = []
-		
+
 	var pool_array = _pool[scene_path]
 	if pool_array.size() > 0:
 		var node = pool_array.pop_back()
 		if is_instance_valid(node):
 			return node
-			
+
 	# 如果池子为空，则真正实例化
 	var packed_scene = load(scene_path)
 	if packed_scene:
@@ -30,15 +30,15 @@ func get_entity(scene_path: String) -> Node:
 # 将实体归还给池子，替代 queue_free()
 func recycle_entity(scene_path: String, node: Node) -> void:
 	if not is_instance_valid(node): return
-	
+
 	if node.get_parent():
 		node.get_parent().remove_child(node)
-		
+
 	if not _pool.has(scene_path):
 		_pool[scene_path] = []
-		
+
 	_pool[scene_path].append(node)
-	
+
 	# 如果池子太大，强制缩容
 	if _pool[scene_path].size() > 100:
 		var overflow = _pool[scene_path].pop_front()

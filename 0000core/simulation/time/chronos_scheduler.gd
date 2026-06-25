@@ -19,6 +19,13 @@ signal macro_skip_ended
 
 func _ready() -> void:
 	print("[ChronosScheduler] 万物时序驱动引擎启动。正在倾听天道脉动...")
+	if EventBus and EventBus.has_signal("level_changing"):
+		EventBus.level_changing.connect(reset_state)
+
+func reset_state() -> void:
+	is_macro_skipping = false
+	_priority_queues = [[], [], [], [], []]
+	print("[ChronosScheduler] 状态已重置")
 
 # 注册一个岁月节点
 func register_node(node: TimeNode) -> void:
@@ -52,7 +59,7 @@ func process_time_chunk(chunk_hours_passed: float) -> void:
 	# 严格按照优先级链条进行结算
 	for p_level in range(_priority_queues.size()):
 		var queue = _priority_queues[p_level]
-		
+
 		# 倒序遍历防止在推演过程中有节点自我销毁导致迭代器失效
 		for i in range(queue.size() - 1, -1, -1):
 			var node = queue[i]

@@ -13,25 +13,25 @@ func evaluate_utility(actor: ActorProxy) -> float:
 
 func settle_time_chunk(actor: ActorProxy, hours_passed: float) -> void:
 	var days = hours_passed / 24.0
-	
+
 	# 资质越高，修炼越快。基础系数可根据游戏平衡调整。
 	var aptitude = actor.data.aptitude
 	var env_multiplier = 1.0 # 如果在洞府/宗门灵脉，可以 > 1.0
-	
+
 	# 公式：每次闭关获得的修为 = 天数 * (基础5 + 资质 * 0.5) * 环境倍率
 	var qi_gained = days * (5.0 + aptitude * 0.5) * env_multiplier
-	
+
 	var comp = actor.data.cultivation_comp
 	var old_qi = comp.current_qi
 	comp.add_qi(qi_gained)
-	
+
 	# 降低修炼需求
 	actor.add_stat("need_cultivation", -days * 3.0)
-	
+
 	# 扣除少许资源（如果有灵石辅助，可以扣灵石换更多修为，暂略）
 	# 扣除少许体力/增加饥饿感等
 	actor.data.stamina -= int(days * 2)
-	
+
 	# 如果灵气已经满了，强制转化为“需要突破”的状态
 	if comp.current_qi >= comp.max_qi_cache:
 		actor.data.need_cultivation = 0.0

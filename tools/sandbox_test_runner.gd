@@ -1,6 +1,8 @@
 @tool
 extends EditorScript
 
+const LODManager = preload("res://0000core/simulation/lod_manager.gd")
+
 # 纯数据模拟器，不启动整个游戏循环，直接在编辑器中按 Ctrl+Shift+X 运行
 func _run():
 	print("========================================")

@@ -1,8 +1,8 @@
-[gd_scene format=3 uid="uid://bhip3sv1dpiyv"]
+[gd_scene format=3 uid="uid://uyh78o624qmt"]
 
-[ext_resource type="Script" uid="uid://ciexct406ciad" path="res://0000core/game_root.gd" id="1_root_script"]
-[ext_resource type="PackedScene" uid="uid://c1yv4yexs2rgy" path="res://00010entities/player/player.tscn" id="2_player_scene"]
-[ext_resource type="PackedScene" uid="uid://time_debug_ui_xxx" path="res://0000core/ui/time_debug_ui.tscn" id="3_time_ui"]
+[ext_resource type="Script" path="res://0000core/game_root.gd" id="1_root_script"]
+[ext_resource type="PackedScene" uid="uid://c1yv4yexs2rgy" path="res://00030entities/player/player.tscn" id="2_player_scene"]
+[ext_resource type="PackedScene" path="res://0000core/ui/time_debug_ui.tscn" id="3_time_ui"]
 
 [node name="GameRoot" type="Node3D" unique_id=1184932381]
 script = ExtResource("1_root_script")
@@ -14,4 +14,3 @@ script = ExtResource("1_root_script")
 [node name="UILayer" type="CanvasLayer" parent="." unique_id=1408775492]
 
 [node name="TimeDebugUI" parent="UILayer" unique_id=760224278 instance=ExtResource("3_time_ui")]
-script = null

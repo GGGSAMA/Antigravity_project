@@ -24,3 +24,20 @@
 - 具体的**核心接口描述**及其被谁调用、调用谁。
 
 此规则确保每一份代码在未来回头翻阅时，只需看头部一眼便能完全掌控其生命周期。
+
+**【函数级出入参注释与神识锚点】**
+- **所有核心业务函数**必须在声明上方添加注释，明确其设计约束、输入输出以及隐藏的副作用。
+- **抗遗忘机制 (Anti-Amnesia)**：注释不仅是给人类开发者看的，更是给大模型打下的“神识锚点”。它能强制大语言模型在读取上下文时“回忆”起当时的架构初衷，大幅降低幻觉（Hallucination）和代码退化的几率。**不要舍不得写注释，注释完全不会浪费大模型的 Token 限额。**
+
+## 3. AI 原生遥测与测试体系 (AI-Native Telemetry & Testing)
+
+**【机器可读的遥测倾倒 (JSONL Dump)】**
+- 项目已经彻底抛弃了纯文本报错的原始时代。对于深度业务流转，**严禁使用单纯的 `print()` 输出极简错误**。
+- 必须调用底层 `LogManager.ai_trace(category, action, context_dict)` 接口。
+- 该接口会将所有上下文变量（如坐标、灵力值、物品字典）打包为一整行纯粹的 JSON（JSON Lines 格式）并写入 `logs/game_ai_trace.jsonl`。
+- 发生复杂 Bug 时，人类开发者不需要自己去排查，直接将该 JSONL 文件发给 AI 助手，它能瞬间在脑海中反序列化并重建故障瞬间的“犯罪现场”。
+
+**【高语境断言系统 (High-Context Assertions)】**
+- 所有的自动化单元测试必须继承自 `00099tests/ai_test_case.gd` (AITestCase)。
+- **严禁**仅仅返回 `true/false`。必须使用基类提供的 `assert_eq(actual, expected, context_msg)` 等高阶宏指令。
+- 断言失败时，测试运行器会拦截并将 Expected、Actual 和上下文组装成完整的 `[AI TELEMETRY DUMP]` JSON 快照输出在控制台。AI 读取后无需追问即可直达病灶。

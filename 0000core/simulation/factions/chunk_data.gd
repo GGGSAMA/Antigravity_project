@@ -22,10 +22,10 @@ func _init(id: String, pop_density: float = 0.1):
 func roll_discovery_probability(gossip_id: String, time_elapsed_days: int) -> bool:
 	if not active_gossips.has(gossip_id):
 		return false
-		
+
 	var base_prob = active_gossips[gossip_id]["discovery_prob"]
 	# 发酵算法：基础概率 + (人口密度 * 时间发酵常数)
 	var final_prob = base_prob + (population_density * 0.05 * time_elapsed_days)
-	
+
 	# 掷骰子
 	return randf() < final_prob

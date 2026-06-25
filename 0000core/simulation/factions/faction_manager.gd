@@ -8,7 +8,7 @@ func _ready() -> void:
 	brain_timer.autostart = true
 	brain_timer.timeout.connect(_on_sect_brain_tick)
 	add_child(brain_timer)
-	
+
 	# 自动延迟2秒后生成宗门（等场景和玩家完全加载好）
 	var auto_seed_timer = Timer.new()
 	auto_seed_timer.wait_time = 2.0
@@ -28,19 +28,19 @@ func _ready() -> void:
 func simulate_genesis() -> void:
 	if has_node("/root/Log"):
 		get_node("/root/Log").info("Genesis", "开始执行文明纪元地缘宗门生成流水线...")
-		
+
 	# 1. Fake Terrain Data (模拟 Terrain3D 传来的地块参数)
 	var terrain_spots = [
 		{"type": "volcano", "coord": Vector3(100, 0, 100)},
 		{"type": "mountain_vein", "coord": Vector3(-200, 0, -50)},
 		{"type": "swamp", "coord": Vector3(0, 0, 300)}
 	]
-	
+
 	for i in range(terrain_spots.size()):
 		var spot = terrain_spots[i]
 		var sect = preload("res://0000core/simulation/factions/faction_data.gd").new()
 		sect.faction_id = "sect_gen_" + str(i)
-		
+
 		# [阶段 A]: GeoAttr (地缘决定主属性)
 		sect.geo.origin_terrain_type = spot["type"]
 		if spot["type"] == "volcano":
@@ -52,7 +52,7 @@ func simulate_genesis() -> void:
 		elif spot["type"] == "swamp":
 			sect.faction_name = "毒沼水阁"
 			sect.geo.main_element = "water"
-			
+
 		# [阶段 B]: CultureAttr (主属性决定文化路线偏好)
 		if sect.geo.main_element == "fire":
 			sect.culture.alchemy_weight = 5.0
@@ -60,7 +60,7 @@ func simulate_genesis() -> void:
 		elif sect.geo.main_element == "metal":
 			sect.culture.sword_weight = 5.0
 			sect.culture.global_buffs["sword_dmg_mult"] = 1.2
-			
+
 		# [阶段 C]: BuildingAttr (文化路线解锁宗门基建)
 		sect.building.buildings["main_hall"] = 1
 		if sect.culture.alchemy_weight >= 3.0:
@@ -69,14 +69,14 @@ func simulate_genesis() -> void:
 		if sect.culture.sword_weight >= 3.0:
 			sect.building.buildings["sword_forge"] = 1
 			sect.building.spawn_rules["require_element"] = "metal"
-			
+
 		# [阶段 D]: PowerAttr (注入国力池，准备推演)
 		sect.power.resource_reserves = 5000
 		sect.power.max_population = 100
-		
+
 		# 存入全局字典
 		active_factions[sect.faction_id] = sect
-		
+
 		# 打印管线日志验证
 		var log_msg = "孵化 [%s]: 地形=%s | 主属性=%s | 偏向=炼丹(%.1f)/剑修(%.1f) | 解锁建筑=%s" % [
 			sect.faction_name, sect.geo.origin_terrain_type, sect.geo.main_element,

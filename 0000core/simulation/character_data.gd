@@ -68,10 +68,10 @@ class_name CharacterData
 func generate_roots_by_hierarchy(target_realm: int, faction_elements: Array[String], is_rogue: bool = false) -> void:
 	var elements = ["metal", "wood", "water", "fire", "earth"]
 	for el in elements: spiritual_roots[el] = 0
-	
+
 	var root_count = 5
 	var r = randf()
-	
+
 	# 根据境界分配灵根数量概率
 	if target_realm >= 4: # 元婴及以上 (宗主/老怪)
 		if r < 0.7: root_count = 1
@@ -90,32 +90,32 @@ func generate_roots_by_hierarchy(target_realm: int, faction_elements: Array[Stri
 		elif r < 0.2: root_count = 3
 		elif r < 0.6: root_count = 4
 		else: root_count = 5
-		
+
 	# 散修很容易是五灵根
 	if is_rogue and target_realm <= 2 and randf() < 0.8:
 		root_count = 5
-		
+
 	elements.shuffle()
 	var active_roots = []
-	
+
 	# 强制宗门五行倾斜
 	var guaranteed_element = ""
 	if faction_elements.size() > 0 and not is_rogue:
 		guaranteed_element = faction_elements[randi() % faction_elements.size()]
 		active_roots.append(guaranteed_element)
 		elements.erase(guaranteed_element)
-		
+
 	while active_roots.size() < root_count:
 		var el = elements.pop_back()
 		active_roots.append(el)
-		
+
 	# 均分 100，余数分配给前几个灵根（如果是宗门倾斜，必定分配给 guaranteed_element）
 	var base_val = int(100 / root_count)
 	var remainder = 100 % root_count
-	
+
 	for i in range(active_roots.size()):
 		spiritual_roots[active_roots[i]] = base_val + (1 if i < remainder else 0)
-			
+
 	# 天灵根 100，五灵根 20。直接把单项最高纯度作为资质。
 	var highest_purity = 0
 	for val in spiritual_roots.values():
@@ -184,7 +184,7 @@ var cultivation_comp: CultivationComponent
 func _init() -> void:
 	cultivation_comp = CultivationComponent.new()
 	cultivation_comp._refresh_max_qi() # 强制初始化，因为不加入树无法调用 _ready
-	
+
 	# 连接修为组件的信号
 	cultivation_comp.breakthrough_failed.connect(func(penalty): process_life_event("breakthrough_failed", {"penalty": penalty}))
 	cultivation_comp.realm_advanced.connect(func(r, s): process_life_event("breakthrough_success", {}))
@@ -210,7 +210,7 @@ func process_life_event(event_type: String, params: Dictionary) -> void:
 				history_trajectory.append({"age": age, "text": "天道不公！我命由我不由天，强行运转残破经脉继续修炼！", "level": 2})
 			else:
 				need_healing += 40.0
-				
+
 		"partner_died":
 			if trait_morality > 70 and trait_sociability > 50:
 				# 斩断常规需求，强制生成最高优先级复仇执念
@@ -220,7 +220,7 @@ func process_life_event(event_type: String, params: Dictionary) -> void:
 			elif trait_ambition > 80:
 				cultivation_comp.add_qi(5000.0) 
 				history_trajectory.append({"age": age, "text": "亲手斩断红尘羁绊，心境大圆满，修为暴涨。", "level": 3})
-				
+
 		"breakthrough_success":
 			if trait_ambition > 60:
 				need_cultivation += 20.0 # 继续疯狂修炼
@@ -253,7 +253,7 @@ func _recalculate_combat_power() -> void:
 	elif realm == 2: base_power = 200 + stage * 100
 	elif realm == 3: base_power = 1000 + stage * 500
 	elif realm == 4: base_power = 5000 + stage * 2000
-	
+
 	# 属性加成占比
 	var attr_bonus = (stamina + mana + speed + divine_sense) / 4.0
 	combat_power = int(base_power + attr_bonus)
@@ -261,16 +261,16 @@ func _recalculate_combat_power() -> void:
 # 增加副职业经验
 func add_life_skill_xp(skill_name: String, amount: float) -> void:
 	if not life_skills.has(skill_name): return
-	
+
 	var data = life_skills[skill_name]
 	if data["level"] >= 5: return # 已是大师
-	
+
 	data["xp"] += amount
-	
+
 	var thresholds = [0, 1000, 3000, 6000, 10000, 15000]
 	var current_level = data["level"]
 	var max_xp = thresholds[current_level]
-	
+
 	while data["xp"] >= max_xp and data["level"] < 5:
 		data["xp"] -= max_xp
 		data["level"] += 1
@@ -280,7 +280,7 @@ func add_life_skill_xp(skill_name: String, amount: float) -> void:
 		else:
 			data["xp"] = 0 # 满级锁定
 			break
-		
+
 		# 记录历史
 		var level_names = ["初窥门径", "登堂入室", "融会贯通", "炉火纯青", "一代宗师"]
 		var s_names = {"alchemy": "丹道", "smithing": "炼器", "talisman": "符箓"}

@@ -12,9 +12,9 @@ func _init():
 	print("===================================")
 	print("Starting TDD Test Suite...")
 	print("===================================")
-	
+
 	run_test_suite("res://00099tests/test_cultivation.gd")
-	
+
 	print("===================================")
 	if failed > 0:
 		print("[FAILED] Tests Passed: %d | Tests Failed: %d" % [passed, failed])
@@ -29,16 +29,27 @@ func run_test_suite(path: String):
 		print("❌ Could not load test suite: ", path)
 		failed += 1
 		return
-		
+
 	var instance = script.new()
 	var methods = instance.get_method_list()
-	
+
 	for method in methods:
 		if method.name.begins_with("test_"):
+			if instance.has_method("setup"):
+				instance.setup()
+				
 			var result = instance.call(method.name)
-			if result == false: # Treat false as explicit failure
+			
+			if instance.has_method("teardown"):
+				instance.teardown()
+			
+			if instance.get("failure_reports") != null and instance.has_failures():
 				failed += 1
 				print("❌ FAIL: ", method.name)
+				print("--- [AI TELEMETRY DUMP] ---")
+				print(instance.get_json_telemetry())
+				print("---------------------------")
+				instance.failure_reports.clear() # clear for next test
 			else:
 				passed += 1
 				print("✅ PASS: ", method.name)

@@ -17,14 +17,14 @@ func evaluate_utility(actor: ActorProxy) -> float:
 
 func settle_time_chunk(actor: ActorProxy, hours_passed: float) -> void:
 	var days = hours_passed / 24.0
-	
+
 	# 获取基础属性
 	var aptitude = actor.get_stat("aptitude")
 	if aptitude == null: aptitude = 10
-	
+
 	var base_qi_regen = 100.0
 	var qi_amount = int(base_qi_regen * days * (1.0 + float(aptitude) * 0.05))
-	
+
 	# 判断是否瓶颈
 	var is_bottlenecked = actor.get_stat("is_bottlenecked")
 	if is_bottlenecked:
@@ -39,7 +39,7 @@ func settle_time_chunk(actor: ActorProxy, hours_passed: float) -> void:
 	else:
 		# 增加修为
 		actor.add_stat("current_qi", float(qi_amount))
-		
+
 		# 记入史书或履历
 		var msg = "闭关苦修 %.1f 天，修为精进了 %d 点。" % [days, qi_amount]
 		if actor.is_player:

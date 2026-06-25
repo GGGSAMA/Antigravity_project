@@ -24,7 +24,7 @@ static func process_life_event(npc: CharacterData, event_type: String, data: Dic
 static func _on_breakthrough_failed(npc: CharacterData, data: Dictionary) -> void:
 	# 突破失败：必定受伤，根据性格决定反应
 	npc.stamina = max(10, npc.stamina - 50)
-	
+
 	if npc.trait_cautious > 70:
 		# 极其谨慎：吓破胆了，疯狂想疗伤，不想修炼了
 		npc.need_healing += 80.0
@@ -41,7 +41,7 @@ static func _on_breakthrough_failed(npc: CharacterData, data: Dictionary) -> voi
 static func _on_injured(npc: CharacterData, data: Dictionary) -> void:
 	var severity = data.get("severity", 30.0)
 	npc.need_healing += severity
-	
+
 	if npc.trait_cautious > 60:
 		npc.need_healing += severity * 0.5 # 更加怕死
 

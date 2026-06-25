@@ -1,5 +1,4 @@
 extends Node
-class_name LODManager
 
 # 活跃池：存储在玩家附近的 NPC ID
 var active_pool: Array[String] = []

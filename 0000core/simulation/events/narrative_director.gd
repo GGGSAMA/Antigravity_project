@@ -34,7 +34,7 @@ func _handle_tragic_accident(victim: CharacterData, attacker: CharacterData):
 	# 注意：这里的 victim 是受伤者，attacker 是感到内疚的误伤者（比如大师姐）
 	var text_victim = "【角色残卷日记】“为什么... %s... 为什么会是你？罢了，这就是命吗...”" % attacker.npc_name
 	_print_and_log(victim, text_victim, "DESPAIR")
-	
+
 	var text_attacker = "【%s的凄楚独白】“不！我究竟做了什么... 就算寻遍天涯海角，我也一定要找到九转还魂丹救你！”" % attacker.npc_name
 	_print_and_log(attacker, text_attacker, "EXTREME_GUILT")
 
@@ -47,11 +47,11 @@ func _print_and_log(npc: CharacterData, text: String, emotion_tag: String):
 	print("\n>>> 角色演绎系统触发 [" + emotion_tag + "] <<<")
 	print(text)
 	print("------------------------------------------------")
-	
+
 	# 追加写入人生履历 (Level 3 代表改变人生的极高亮事件)
 	if npc.get("history_trajectory") != null:
 		npc.history_trajectory.append({"age": npc.age, "text": text, "level": 3, "type": emotion_tag})
-	
+
 	# 如果有宏观事件广播器，将其推送到游戏内 UI 上
 	var ms = Engine.get_main_loop().root.get_node_or_null("MacroSimulator")
 	if ms and ms.has_signal("macro_event_logged"):

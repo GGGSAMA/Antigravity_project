@@ -188,7 +188,7 @@ func _on_command_submitted(cmd: String) -> void:
 		"god":
 			var player = get_tree().get_first_node_in_group("player")
 			if player:
-				var stats = player.get_node_or_null("Stats")
+				var stats = player.get_node_or_null("ActorDataTemplate/CombatRuntimeAttr")
 				if stats:
 					stats.current_health = stats.max_health
 					stats.current_mana = stats.max_mana
@@ -381,7 +381,7 @@ func _dump_entities() -> void:
 	var player = get_tree().get_first_node_in_group("player")
 	if player:
 		log_text("--- 玩家 (Player) ---", "green")
-		var stats = player.get_node_or_null("Stats")
+		var stats = player.get_node_or_null("ActorDataTemplate/CombatRuntimeAttr")
 		if stats:
 			var headers = ["生命值", "法力值", "境界层级", "修为点数", "灵石储备"]
 			var rows = [[
@@ -412,15 +412,15 @@ func _dump_items() -> void:
 	var rows = []
 	for id in ItemDatabase.ITEMS:
 		var meta = ItemDatabase.ITEMS[id]
-		var uses = meta.get("uses", 1)
+		var uses = meta.uses
 		var uses_str = "无限" if uses == -1 else str(uses)
 		rows.append([
 			id,
-			meta.get("icon", ""),
-			meta.get("type", ""),
+			meta.icon,
+			meta.type,
 			uses_str,
-			str(meta.get("is_catalyst", false)),
-			str(meta.get("effects", {}))
+			str(meta.is_catalyst),
+			str(meta.get_effects())
 		])
 	log_table(6, headers, rows)
 
@@ -436,7 +436,7 @@ func _dump_factions() -> void:
 		log_text("当前世界暂无任何宗门诞生。")
 		return
 		
-	var headers = ["宗门ID", "名称", "阵营", "等级", "资源储备", "威望", "门徒数", "任务数"]
+	var headers = ["宗门ID", "名称", "阵营", "等级", "资源储备", "总战力", "门徒数", "任务数"]
 	var rows = []
 	for sect_id in FactionManager.active_factions:
 		var faction: FactionData = FactionManager.active_factions[sect_id]
@@ -447,7 +447,7 @@ func _dump_factions() -> void:
 			align_str,
 			str(faction.level),
 			str(faction.power.resource_reserves),
-			str(faction.prestige),
+			str(faction.power.total_combat_power),
 			str(faction.members.size()),
 			str(faction.task_pool.size())
 		])

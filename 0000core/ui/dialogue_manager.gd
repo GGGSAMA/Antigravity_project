@@ -2,7 +2,7 @@ extends Node
 # DialogueManager
 
 var ui_instance: DialogueUI = null
-var ui_scene = preload("res://00030ui/dialogue/dialogue_ui.tscn")
+var ui_scene = preload("res://00070ui/dialogue/dialogue_ui.tscn")
 
 func _ready() -> void:
 	# 确保UI层级最高

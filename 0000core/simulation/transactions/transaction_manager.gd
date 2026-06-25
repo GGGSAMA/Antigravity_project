@@ -8,6 +8,15 @@ extends Node
 var active_tickets: Array[TransactionTicket] = []
 var suspended_tickets: Array[TransactionTicket] = []
 
+func _ready() -> void:
+	if EventBus and EventBus.has_signal("level_changing"):
+		EventBus.level_changing.connect(reset_state)
+
+func reset_state() -> void:
+	active_tickets.clear()
+	suspended_tickets.clear()
+	print("[TransactionManager] 状态已重置")
+
 func submit_ticket(ticket: TransactionTicket) -> void:
 	active_tickets.append(ticket)
 
@@ -22,43 +31,43 @@ func process_time_slice(time_skipped: float) -> void:
 			# 简单唤醒逻辑：只要到了新的大时间切片，就给它一次重新 evaluate 的机会
 			t.change_status(TransactionTicket.Status.PENDING, "闭关推演中...")
 			newly_awaken.append(t)
-		
+
 		active_tickets.append_array(newly_awaken)
 		suspended_tickets.clear()
-	
+
 	if active_tickets.is_empty():
 		return
-		
+
 	# 2. 为了防止在遍历时修改数组，使用一个备份
 	var current_batch = active_tickets.duplicate()
 	active_tickets.clear()
-	
+
 	for ticket in current_batch:
 		var time_left = time_skipped
 		var finished = false
-		
+
 		while time_left > 0.05 and not finished:
 			if ticket.current_step_index >= ticket.processors.size():
 				# 所有处理层全数通过，落地生效
 				_finalize_ticket(ticket, true)
 				finished = true
 				break
-				
+
 			var processor = ticket.processors[ticket.current_step_index]
 			var result = processor.process(ticket, time_left)
-			
+
 			match result:
 				StepProcessor.Result.PASS:
 					ticket.current_step_index += 1
 					# time_left 应当由 processor 内部去减，这里为了简化，我们假设 processor 瞬间通过或者扣除一部分
 					# 真正的架构里，processor 应该返回消费的时间
-				
+
 				StepProcessor.Result.REJECT:
 					# 中途否决，回滚并触发回执
 					_finalize_ticket(ticket, false)
 					finished = true
 					break
-					
+
 				StepProcessor.Result.SUSPEND:
 					# 搁置，放入休眠队列
 					ticket.change_status(TransactionTicket.Status.SUSPENDED, "事务搁置")
@@ -71,12 +80,12 @@ func _finalize_ticket(ticket: TransactionTicket, is_success: bool) -> void:
 		ticket.change_status(TransactionTicket.Status.COMPLETED, "圆满出关")
 	else:
 		ticket.change_status(TransactionTicket.Status.REJECTED, "重伤调息")
-	
+
 	# 反向回传触发回执 (从后往前调用 on_callback)
 	for i in range(ticket.current_step_index - 1, -1, -1):
 		var p = ticket.processors[i]
 		p.on_callback(ticket, is_success)
-		
+
 	# TODO: 如果有对象池，在此处回收 ticket
 
 # ==========================================
@@ -87,7 +96,7 @@ func serialize() -> Dictionary:
 	for t in active_tickets: active.append(t.serialize())
 	var suspended = []
 	for t in suspended_tickets: suspended.append(t.serialize())
-	
+
 	return {
 		"active_tickets": active,
 		"suspended_tickets": suspended

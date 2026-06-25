@@ -17,6 +17,7 @@ func _ready() -> void:
 	_register_action(preload("res://0000core/simulation/actions/action_gather.gd").new())
 	_register_action(preload("res://0000core/simulation/actions/action_trade.gd").new())
 	_register_action(preload("res://0000core/simulation/actions/action_seek_life.gd").new())
+	_register_action(preload("res://0000core/simulation/actions/action_comprehend.gd").new())
 	# 未来可注册炼丹、双修、宗门战等行为
 
 func _register_action(action: ChronosAction) -> void:
@@ -32,7 +33,7 @@ func get_action(action_id: String) -> ChronosAction:
 func get_action_name(action_id: String) -> String:
 	if _actions.has(action_id):
 		return _actions[action_id].action_name
-	
+
 	# 硬编码一些系统状态的回退翻译
 	match action_id:
 		"dead": return "身死道消"
@@ -46,12 +47,12 @@ func get_action_name(action_id: String) -> String:
 func evaluate_best_action_for(actor: ActorProxy) -> ChronosAction:
 	var best_action: ChronosAction = null
 	var highest_score: float = -1.0
-	
+
 	for action in _actions.values():
 		if action.can_execute(actor):
 			var score = action.evaluate_utility(actor)
 			if score > highest_score:
 				highest_score = score
 				best_action = action
-				
+
 	return best_action

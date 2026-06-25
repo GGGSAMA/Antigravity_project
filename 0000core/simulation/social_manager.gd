@@ -24,16 +24,23 @@ var relationships: Dictionary = {}
 
 func _ready() -> void:
 	print("[", Time.get_ticks_msec(), " ms] [SocialManager] 启动修仙界羁绊引擎...")
-	
+	if EventBus and EventBus.has_signal("level_changing"):
+		EventBus.level_changing.connect(reset_state)
+
+func reset_state() -> void:
+	npc_attributes.clear()
+	relationships.clear()
+	print("[SocialManager] 状态已重置")
+
 	# 控制层调度 (Dispatch)
 	var npc_gen = get_node_or_null("NPCGenerator")
 	if npc_gen and npc_gen.has_method("generate_test_data"):
 		npc_gen.generate_test_data()
-		
+
 	var relation_engine = get_node_or_null("RelationEngine")
 	if relation_engine and relation_engine.has_method("build_initial_relations"):
 		relation_engine.build_initial_relations()
-		
+
 	print("[", Time.get_ticks_msec(), " ms] [SocialManager] 数据图谱调度与初始化完成")
 
 # ==============================================================================
@@ -65,7 +72,7 @@ func get_relationship(source_id: String, target_id: String) -> Dictionary:
 func get_entities_in_radius(pos: Vector3, radius: float, filter_type: String = "npc") -> Array:
 	var results = []
 	var sq_radius = radius * radius
-	
+
 	if filter_type == "npc":
 		for id in npc_attributes:
 			var data = npc_attributes[id]
@@ -73,7 +80,7 @@ func get_entities_in_radius(pos: Vector3, radius: float, filter_type: String = "
 				var dist_sq = pos.distance_squared_to(data.current_world_pos)
 				if dist_sq <= sq_radius:
 					results.append(data)
-					
+
 	elif filter_type == "sect":
 		var fm = get_node_or_null("/root/FactionManager")
 		if fm and "active_factions" in fm:
@@ -83,5 +90,5 @@ func get_entities_in_radius(pos: Vector3, radius: float, filter_type: String = "
 					var dist_sq = pos.distance_squared_to(f_data.core_world_pos)
 					if dist_sq <= sq_radius:
 						results.append(f_data)
-						
+
 	return results

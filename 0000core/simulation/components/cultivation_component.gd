@@ -52,7 +52,7 @@ func add_qi(amount: float) -> void:
 func add_qi_with_leftover(amount: float) -> float:
 	if is_bottlenecked:
 		return amount
-		
+
 	var space = max_qi_cache - current_qi
 	if amount >= space:
 		current_qi = max_qi_cache
@@ -70,13 +70,13 @@ func attempt_breakthrough(is_player: bool = false, bonus_chance: float = 0.0) ->
 	if not is_bottlenecked:
 		push_warning("未达到瓶颈，无法强行突破！")
 		return false
-		
+
 	var data = RealmDatabase.get_realm_data(cultivation_realm, cultivation_stage)
 	if data.is_empty():
 		return false
-		
+
 	var base_chance = data["chance"]
-	
+
 	# ========================================================
 	# 核心分流：玩家由操作小游戏决定生死，NPC 由数值与概率决定生死
 	# ========================================================
@@ -85,10 +85,10 @@ func attempt_breakthrough(is_player: bool = false, bonus_chance: float = 0.0) ->
 		request_player_minigame.emit(cultivation_realm, cultivation_stage, base_chance, bonus_chance)
 		# 暂时挂起，等待小游戏回调调用 force_breakthrough_resolve
 		return false
-		
+
 	var final_chance = clamp(base_chance + bonus_chance, 0.0, 1.0)
 	var roll = randf()
-	
+
 	if roll <= final_chance:
 		return force_breakthrough_resolve(true)
 	else:
@@ -118,6 +118,6 @@ func force_breakthrough_resolve(is_success: bool) -> bool:
 		print("[天道法则] 突破失败！根基受损，散去修为 %d 点，且已走火入魔！" % penalty)
 		breakthrough_failed.emit(penalty)
 		return false
-		
+
 func get_realm_name() -> String:
 	return RealmDatabase.get_realm_name(cultivation_realm, cultivation_stage)

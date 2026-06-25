@@ -1,0 +1,67 @@
+[gd_scene load_steps=2 format=3 uid="uid://loot_container_ui"]
+
+[ext_resource type="Script" path="res://00070ui/player_hud/loot_container_ui.gd" id="1_loot_ui"]
+
+[node name="LootContainerUI" type="ColorRect"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.8)
+script = ExtResource("1_loot_ui")
+
+[node name="HBox" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="PlayerPanel" type="VBoxContainer" parent="HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="HBox/PlayerPanel"]
+layout_mode = 2
+text = "玩家背包"
+horizontal_alignment = 1
+
+[node name="Scroll" type="ScrollContainer" parent="HBox/PlayerPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="PlayerGrid" type="GridContainer" parent="HBox/PlayerPanel/Scroll"]
+layout_mode = 2
+columns = 6
+
+[node name="ContainerPanel" type="VBoxContainer" parent="HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Header" type="HBoxContainer" parent="HBox/ContainerPanel"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBox/ContainerPanel/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "搜刮容器"
+
+[node name="BtnTakeAll" type="Button" parent="HBox/ContainerPanel/Header"]
+layout_mode = 2
+text = "全部拿走 (Take All)"
+
+[node name="BtnClose" type="Button" parent="HBox/ContainerPanel/Header"]
+layout_mode = 2
+text = "X"
+
+[node name="Scroll" type="ScrollContainer" parent="HBox/ContainerPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ContainerGrid" type="GridContainer" parent="HBox/ContainerPanel/Scroll"]
+layout_mode = 2
+columns = 6

@@ -27,7 +27,7 @@ var context: Dictionary = {}    # 变更缓存与上下文记录，脏数据存�
 var time_spent_so_far: float = 0.0
 var max_time_allowance: float = 0.0
 
-func _init(_initiator_id: String, _type: String, _processors: Array[StepProcessor] = []):
+func _init(_initiator_id: String = "", _type: String = "", _processors: Array[StepProcessor] = []):
 	ticket_id = str(hash(Time.get_ticks_usec())) + "_" + _type
 	initiator_id = _initiator_id
 	transaction_type = _type

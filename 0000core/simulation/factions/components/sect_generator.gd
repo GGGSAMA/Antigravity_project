@@ -13,7 +13,7 @@ func _log_trace(msg: String) -> void:
 		f.seek_end()
 		f.store_line("[%s] [SectGenerator] %s" % [Time.get_time_string_from_system(), msg])
 		f.close()
-		
+
 func create_sect_at_location(world_pos: Vector3, creator_npc_id: String = "") -> String:
 	_log_trace("Creating sect at " + str(world_pos))
 	var fm = get_parent()
@@ -25,38 +25,38 @@ func create_sect_at_location(world_pos: Vector3, creator_npc_id: String = "") ->
 	faction.level = 1
 	faction.core_world_pos = world_pos
 	faction.territory_radius = 128.0 
-	
+
 	faction.culture.traits.append(SECT_TRAITS.pick_random())
-	
+
 	faction.building.buildings["main_hall"] = 1
 	faction.building.building_nodes.append({
 		"type": "main_hall",
 		"pos": world_pos,
 		"rotation": randf() * TAU
 	})
-	
+
 	fm.active_factions[new_sect_id] = faction
-	
+
 	print("[FactionManager] ⛩️ 惊天动地！【", faction.faction_name, "】在坐标 ", world_pos, " 正式开宗立派！")
-	
+
 	# ==========================================
 	# 在3D世界中放置阵眼柱子实体
 	# ==========================================
 	_spawn_sect_core_pillar(world_pos, faction.faction_name)
-	
+
 	var wgm = get_node_or_null("/root/WorldGridManager")
 	if wgm:
 		wgm.claim_territory_radius(world_pos, 4, new_sect_id) 
-		
+
 	var pop_spawner = fm.get_node_or_null("PopulationSpawner")
 	if pop_spawner:
 		pop_spawner.generate_initial_population(faction, creator_npc_id)
-		
+
 	# 【造物主特权】派发宗门专属传送令
 	var player = get_tree().get_first_node_in_group("player")
 	if player == null:
 		player = get_node_or_null("/root/GameRoot/Player")
-	
+
 	if player:
 		var inventory = player.get_node_or_null("Inventory")
 		if inventory and inventory.has_method("add_item"):
@@ -70,7 +70,7 @@ func create_sect_at_location(world_pos: Vector3, creator_npc_id: String = "") ->
 			inventory.add_item("宗门传送令", 1, token_data)
 			_log_trace("Created token with teleport: " + str(token_data.affixes.teleport))
 			print("[SectGenerator] 🎟️ 已将【", faction.faction_name, "】的宗门传送令发放至造物主背包！")
-			
+
 	return new_sect_id
 
 # ==========================================
@@ -81,13 +81,13 @@ func _spawn_sect_core_pillar(world_pos: Vector3, sect_name: String) -> void:
 	var scene_root = get_tree().current_scene
 	if scene_root:
 		scene_root.add_child(pillar)
-		
+
 	# 安全落地：优先使用真实地形高度 (避开物理碰撞未加载问题)
 	var safe_pos = world_pos
 	var terrain = null
 	if Engine.get_main_loop().root:
 		terrain = Engine.get_main_loop().root.find_child("Terrain3D", true, false)
-		
+
 	if terrain and "data" in terrain and terrain.data:
 		var h = terrain.data.get_height(Vector3(world_pos.x, 0, world_pos.z))
 		if not is_nan(h):
@@ -115,16 +115,16 @@ func _spawn_sect_core_pillar(world_pos: Vector3, sect_name: String) -> void:
 					_log_trace("Pillar raycast hit: " + str(safe_pos.y))
 				else:
 					_log_trace("Pillar raycast missed. Kept safe_pos: " + str(safe_pos.y))
-					
+
 	if scene_root:
 		pillar.global_position = safe_pos
 		_log_trace("Pillar final global_position: " + str(safe_pos))
-		
+
 		# 设置宗门名称标签
 		var label = pillar.get_node_or_null("SectNameLabel")
 		if label:
 			label.text = "⛩ " + sect_name + " ⛩"
-		
+
 		print("[SectGenerator] 🏛️ 阵眼柱已矗立于 ", safe_pos, " — ", sect_name)
 	else:
 		print("[SectGenerator] ⚠️ 未找到场景根节点，阵眼柱无法放置！")

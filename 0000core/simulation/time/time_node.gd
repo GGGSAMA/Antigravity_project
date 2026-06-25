@@ -66,16 +66,16 @@ func process_time_chunk(chunk_hours_passed: float) -> void:
 			var pos = Vector3.ZERO
 			if get_parent() is Node3D:
 				pos = get_parent().global_position
-				
+
 			if pos != Vector3.ZERO:
 				var tile = wgm.get_tile_at_world_pos(pos)
 				if tile and "time_zone_scale" in tile:
 					zone_scale = tile.time_zone_scale
-					
+
 	# 2. 局部流速叠加
 	var scaled_hours = chunk_hours_passed * local_time_scale * zone_scale
 	_accumulated_hours += scaled_hours
-	
+
 	# 过滤逻辑：是否满足粒度要求？
 	var threshold = 0.0
 	match granularity:
@@ -83,7 +83,7 @@ func process_time_chunk(chunk_hours_passed: float) -> void:
 		TimeGranularity.HOUR: threshold = 1.0
 		TimeGranularity.MONTH: threshold = 720.0
 		TimeGranularity.YEAR: threshold = 8640.0
-		
+
 	if _accumulated_hours >= threshold:
 		_on_time_advanced(_accumulated_hours)
 		_accumulated_hours = 0.0

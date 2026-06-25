@@ -59,7 +59,7 @@ static func get_realm_name(realm: int, stage: int) -> String:
 		5: realm_str = "化神"
 		6: realm_str = "炼虚"
 		_: realm_str = "未知"
-		
+
 	var stage_str = ""
 	if realm == 1:
 		var chinese_nums = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九"]
@@ -74,5 +74,5 @@ static func get_realm_name(realm: int, stage: int) -> String:
 			3: stage_str = "后期"
 			4: stage_str = "大圆满"
 			_: stage_str = "未知"
-		
+
 	return realm_str + stage_str

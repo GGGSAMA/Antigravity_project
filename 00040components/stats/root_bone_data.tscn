@@ -1,0 +1,18 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://00040components/stats/root_bone_data.gd" id="1_root"]
+[ext_resource type="Script" path="res://00040components/stats/five_element_root.gd" id="2_five"]
+[ext_resource type="Script" path="res://00040components/stats/cultivate_data.gd" id="3_cult"]
+[ext_resource type="Script" path="res://00040components/stats/social_data.gd" id="4_soc"]
+
+[node name="RootBoneData" type="Node"]
+script = ExtResource("1_root")
+
+[node name="FiveElementRoot" type="Node" parent="."]
+script = ExtResource("2_five")
+
+[node name="CultivateData" type="Node" parent="."]
+script = ExtResource("3_cult")
+
+[node name="SocialData" type="Node" parent="."]
+script = ExtResource("4_soc")

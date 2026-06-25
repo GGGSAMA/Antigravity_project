@@ -10,9 +10,11 @@ class_name ActorProxy
 var _source: Variant
 var is_player: bool = false
 var id: String = ""
+var current_context: Dictionary = {}
 
-func _init(source: Variant):
+func _init(source: Variant, context: Dictionary = {}):
 	_source = source
+	current_context = context
 	if source is Node:
 		is_player = true
 		id = "player"
@@ -30,8 +32,19 @@ func get_name() -> String:
 
 # ------------------ 通用属性读写 ------------------
 func get_stat(stat_name: String) -> Variant:
+	# 特殊处理 CultivationComponent 的变量
+	if stat_name == "is_bottlenecked" or stat_name == "current_qi" or stat_name == "aptitude":
+		if is_player:
+			var cult = _source.get_node_or_null("ActorDataTemplate/RootGenAttr")
+			if cult and stat_name in cult:
+				return cult.get(stat_name)
+		else:
+			if _source and "cultivation_comp" in _source and _source.cultivation_comp and stat_name in _source.cultivation_comp:
+				return _source.cultivation_comp.get(stat_name)
+		return null
+
 	if is_player:
-		var stats = _source.get_node_or_null("Stats")
+		var stats = _source.get_node_or_null("ActorDataTemplate/CombatRuntimeAttr")
 		if stats and stat_name in stats:
 			return stats.get(stat_name)
 	else:
@@ -41,7 +54,7 @@ func get_stat(stat_name: String) -> Variant:
 
 func set_stat(stat_name: String, value: Variant) -> void:
 	if is_player:
-		var stats = _source.get_node_or_null("Stats")
+		var stats = _source.get_node_or_null("ActorDataTemplate/CombatRuntimeAttr")
 		if stats and stat_name in stats:
 			stats.set(stat_name, value)
 	else:
@@ -51,14 +64,14 @@ func set_stat(stat_name: String, value: Variant) -> void:
 func add_stat(stat_name: String, amount: float) -> void:
 	if stat_name == "current_qi":
 		if is_player:
-			var cult = _source.get_node_or_null("CultivationComponent")
+			var cult = _source.get_node_or_null("ActorDataTemplate/RootGenAttr")
 			if cult and cult.has_method("add_qi"):
 				cult.add_qi(amount)
 		else:
 			if _source and "cultivation_comp" in _source and _source.cultivation_comp:
 				_source.cultivation_comp.add_qi(amount)
 		return
-		
+
 	var current = get_stat(stat_name)
 	if current != null:
 		set_stat(stat_name, current + amount)
@@ -71,7 +84,7 @@ func add_item(item_id: String, amount: int) -> void:
 func remove_item(item_id: String, amount: int) -> bool:
 	# TODO: 接入真实的库存系统
 	return true
-	
+
 func die(reason: String = "") -> void:
 	if not is_player:
 		if _source and "is_alive" in _source:
@@ -92,7 +105,7 @@ func add_history_log(msg: String, level: int = 2) -> void:
 
 func attempt_breakthrough() -> bool:
 	if is_player:
-		var cult = _source.get_node_or_null("CultivationComponent")
+		var cult = _source.get_node_or_null("ActorDataTemplate/RootGenAttr")
 		if cult and cult.has_method("attempt_breakthrough"):
 			return cult.attempt_breakthrough(true)
 	else:
@@ -103,7 +116,7 @@ func attempt_breakthrough() -> bool:
 # ------------------ 泛用标签系统 (组合架构核心) ------------------
 func has_tag(tag: String) -> bool:
 	if is_player:
-		var stats = _source.get_node_or_null("Stats")
+		var stats = _source.get_node_or_null("ActorDataTemplate/CombatRuntimeAttr")
 		if stats and "tags" in stats:
 			return stats.tags.has(tag)
 	else:
@@ -113,7 +126,7 @@ func has_tag(tag: String) -> bool:
 
 func add_tag(tag: String) -> void:
 	if is_player:
-		var stats = _source.get_node_or_null("Stats")
+		var stats = _source.get_node_or_null("ActorDataTemplate/CombatRuntimeAttr")
 		if stats and "tags" in stats:
 			if not stats.tags.has(tag): stats.tags.append(tag)
 	else:
@@ -122,7 +135,7 @@ func add_tag(tag: String) -> void:
 
 func remove_tag(tag: String) -> void:
 	if is_player:
-		var stats = _source.get_node_or_null("Stats")
+		var stats = _source.get_node_or_null("ActorDataTemplate/CombatRuntimeAttr")
 		if stats and "tags" in stats:
 			stats.tags.erase(tag)
 	else:

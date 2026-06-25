@@ -19,7 +19,7 @@ var player: Node3D = null
 
 func _ready() -> void:
 	print("[MonsterManager] 全局妖兽管理器已启动。")
-	
+
 func register_spawner(spawner: Node3D) -> void:
 	if not spawners.has(spawner):
 		spawners.append(spawner)
@@ -41,9 +41,9 @@ func _update_spawners() -> void:
 			player = players[0]
 		else:
 			return
-			
+
 	var p_pos = player.global_position
-	
+
 	for spawner in spawners:
 		var dist = spawner.global_position.distance_to(p_pos)
 		if dist <= active_distance:

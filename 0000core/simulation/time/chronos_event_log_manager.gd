@@ -28,7 +28,7 @@ func add_event(time_stamp: float, region_id: String, entity_name: String, messag
 		"message": message
 	}
 	_event_logs.append(event)
-	
+
 	if _event_logs.size() > MAX_EVENT_COUNT:
 		_event_logs.pop_front() # 内存保护机制
 
@@ -53,7 +53,7 @@ func get_formatted_log_string(start_time: float, end_time: float) -> String:
 	var events = get_events_in_range(start_time, end_time)
 	if events.is_empty():
 		return "这段岁月，大千世界风平浪静，古井无波。"
-		
+
 	var sb = ""
 	for e in events:
 		var days = int(e["time_stamp"] / 24.0)

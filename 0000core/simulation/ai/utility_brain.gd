@@ -23,7 +23,7 @@ static func get_highest_need(npc: CharacterData) -> Dictionary:
 		"resource": npc.need_resource,
 		"status": npc.need_status
 	}
-	
+
 	# Goal 加权
 	match npc.life_goal:
 		"ASCEND":
@@ -35,14 +35,14 @@ static func get_highest_need(npc: CharacterData) -> Dictionary:
 			needs["resource"] += 10.0
 		"CONQUER":
 			needs["status"] += 30.0
-			
+
 	var max_need_name = "cultivation"
 	var max_val = -999.0
 	for k in needs.keys():
 		if needs[k] > max_val:
 			max_val = needs[k]
 			max_need_name = k
-			
+
 	return {"name": max_need_name, "value": max_val}
 
 # ------------------------------------------------------------------------------
@@ -51,7 +51,7 @@ static func get_highest_need(npc: CharacterData) -> Dictionary:
 static func determine_action(npc: CharacterData, top_need: Dictionary) -> Dictionary:
 	var need_name = top_need.name
 	var action_id = "meditate"
-	
+
 	match need_name:
 		"healing":
 			action_id = "heal"
@@ -75,7 +75,7 @@ static func determine_action(npc: CharacterData, top_need: Dictionary) -> Dictio
 				action_id = "gather"
 			else:
 				action_id = "trade"
-				
+
 	return {"id": action_id, "need": need_name}
 
 # ------------------------------------------------------------------------------
