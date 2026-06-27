@@ -9,6 +9,7 @@ signal npc_event_occurred(npc: CharacterData, event_id: String, ctx: Dictionary)
 signal narrative_event(type: String, initiator: CharacterData, target: CharacterData, context: Variant)
 signal level_changing
 signal npc_died(npc_data, cause)
+signal npc_status_changed(npc_id: String, tag: String, is_added: bool)
 
 # UI 交互系统总线信号
 signal request_open_ui(ui_name: String)

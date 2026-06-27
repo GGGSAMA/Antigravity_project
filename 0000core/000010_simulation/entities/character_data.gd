@@ -13,6 +13,28 @@ class_name CharacterData
 @export var current_world_pos: Vector3 = Vector3.ZERO # 宏观空间坐标
 
 # ================================
+# 动态状态标签 (Dynamic Status Tags)
+# ================================
+@export var status_tags: Array[String] = []
+
+func add_status_tag(tag: String) -> void:
+	if not tag in status_tags:
+		status_tags.append(tag)
+		var eb = Engine.get_main_loop().root.get_node_or_null("EventBus")
+		if eb and eb.has_signal("npc_status_changed"):
+			eb.npc_status_changed.emit(npc_id, tag, true)
+
+func remove_status_tag(tag: String) -> void:
+	if tag in status_tags:
+		status_tags.erase(tag)
+		var eb = Engine.get_main_loop().root.get_node_or_null("EventBus")
+		if eb and eb.has_signal("npc_status_changed"):
+			eb.npc_status_changed.emit(npc_id, tag, false)
+
+func has_status_tag(tag: String) -> bool:
+	return tag in status_tags
+
+# ================================
 # 声望、业力与人际关系 (Reputation, Karma & Relationships)
 # ================================
 @export var fame: int = 0  # 名望 (正为正派大侠，负为魔道妖人)

@@ -8877,3 +8877,429 @@
 [14:17:49] [WorldSectSeeder] Fallback generation triggered. Needed 1 more.
 [14:17:49] [WorldSectSeeder] Fallback failed to find valid height inside bounds! Skipping this sect.
 [14:17:49] [WorldSectSeeder] === FINISHED SEEDING ===
+[14:26:39] [WorldSectSeeder] === STARTING SEED INITIAL SECTS ===
+[14:26:39] [WorldSectSeeder] Target sects: 5 TestMode: true
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: h_center < -100.0 (Out of bounds)
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:39] [WorldSectSeeder] Fallback generation triggered. Needed 5 more.
+[14:26:39] [WorldSectSeeder] Fallback failed to find valid height inside bounds! Skipping this sect.
+[14:26:39] [WorldSectSeeder] Fallback failed to find valid height inside bounds! Skipping this sect.
+[14:26:39] [WorldSectSeeder] Fallback failed to find valid height inside bounds! Skipping this sect.
+[14:26:39] [WorldSectSeeder] Fallback failed to find valid height inside bounds! Skipping this sect.
+[14:26:39] [WorldSectSeeder] Fallback failed to find valid height inside bounds! Skipping this sect.
+[14:26:39] [WorldSectSeeder] === FINISHED SEEDING ===
+[14:26:42] [WorldSectSeeder] === STARTING SEED INITIAL SECTS ===
+[14:26:42] [WorldSectSeeder] Target sects: 5 TestMode: true
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Terrain too steep in 10x10 area.
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Terrain too steep in 10x10 area.
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Terrain too steep in 10x10 area.
+[14:26:42] [WorldSectSeeder] Skip: Terrain too steep in 10x10 area.
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Terrain too steep in 10x10 area.
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Terrain too steep in 10x10 area.
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Terrain too steep in 10x10 area.
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Terrain too steep in 10x10 area.
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Terrain too steep in 10x10 area.
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Spawning sect at: (97.59364, 69.9868, -700.668)
+[14:26:42] [SectGenerator] Creating sect at (97.59364, 69.9868, -700.668)
+[14:26:42] [SectGenerator] Pillar safe_pos.y set from data: 70.086799621582
+[14:26:42] [SectGenerator] Pillar final global_position: (97.59364, 70.0868, -700.668)
+[14:26:42] [SectGenerator] Created token with teleport: [102.593635559082, 69.9868011474609, -695.66796875]
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Terrain too steep in 10x10 area.
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Terrain too steep in 10x10 area.
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Spawning sect at: (-345.4987, 8.818631, 438.5492)
+[14:26:42] [SectGenerator] Creating sect at (-345.4987, 8.818631, 438.5492)
+[14:26:42] [SectGenerator] Pillar safe_pos.y set from data: 8.9186315536499
+[14:26:42] [SectGenerator] Pillar final global_position: (-345.4987, 8.918632, 438.5492)
+[14:26:42] [SectGenerator] Created token with teleport: [-340.498748779297, 8.81863117218018, 443.549224853516]
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Terrain too steep in 10x10 area.
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Terrain too steep in 10x10 area.
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Spawning sect at: (-344.8092, 17.67207, 769.9249)
+[14:26:42] [SectGenerator] Creating sect at (-344.8092, 17.67207, 769.9249)
+[14:26:42] [SectGenerator] Pillar safe_pos.y set from data: 17.7720737457275
+[14:26:42] [SectGenerator] Pillar final global_position: (-344.8092, 17.77207, 769.9249)
+[14:26:42] [SectGenerator] Created token with teleport: [-339.809173583984, 17.6720733642578, 774.924926757813]
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Terrain too steep in 10x10 area.
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Terrain too steep in 10x10 area.
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: h_center < -100.0 (Out of bounds)
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Terrain too steep in 10x10 area.
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: h_center < -100.0 (Out of bounds)
+[14:26:42] [WorldSectSeeder] Skip: h_center < -100.0 (Out of bounds)
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Terrain too steep in 10x10 area.
+[14:26:42] [WorldSectSeeder] Skip: Terrain too steep in 10x10 area.
+[14:26:42] [WorldSectSeeder] Skip: Terrain too steep in 10x10 area.
+[14:26:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:26:42] [WorldSectSeeder] Skip: Terrain too steep in 10x10 area.
+[14:26:42] [WorldSectSeeder] Fallback generation triggered. Needed 2 more.
+[14:26:42] [WorldSectSeeder] Fallback failed to find valid height inside bounds! Skipping this sect.
+[14:26:42] [WorldSectSeeder] Fallback failed to find valid height inside bounds! Skipping this sect.
+[14:26:42] [WorldSectSeeder] === FINISHED SEEDING ===
+[14:50:40] [WorldSectSeeder] === STARTING SEED INITIAL SECTS ===
+[14:50:40] [WorldSectSeeder] Target sects: 5 TestMode: true
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: h_center < -100.0 (Out of bounds)
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: h_center < -100.0 (Out of bounds)
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: h_center < -100.0 (Out of bounds)
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: h_center < -100.0 (Out of bounds)
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: h_center < -100.0 (Out of bounds)
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: h_center < -100.0 (Out of bounds)
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: h_center < -100.0 (Out of bounds)
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: h_center < -100.0 (Out of bounds)
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:40] [WorldSectSeeder] Fallback generation triggered. Needed 5 more.
+[14:50:40] [WorldSectSeeder] Fallback failed to find valid height inside bounds! Skipping this sect.
+[14:50:40] [WorldSectSeeder] Fallback failed to find valid height inside bounds! Skipping this sect.
+[14:50:40] [WorldSectSeeder] Fallback failed to find valid height inside bounds! Skipping this sect.
+[14:50:40] [WorldSectSeeder] Fallback failed to find valid height inside bounds! Skipping this sect.
+[14:50:40] [WorldSectSeeder] Fallback failed to find valid height inside bounds! Skipping this sect.
+[14:50:40] [WorldSectSeeder] === FINISHED SEEDING ===
+[14:50:42] [WorldSectSeeder] === STARTING SEED INITIAL SECTS ===
+[14:50:42] [WorldSectSeeder] Target sects: 5 TestMode: true
+[14:50:42] [WorldSectSeeder] Skip: Terrain too steep in 10x10 area.
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Terrain too steep in 10x10 area.
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Terrain too steep in 10x10 area.
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Spawning sect at: (324.007, 285.3662, 545.9724)
+[14:50:42] [SectGenerator] Creating sect at (324.007, 285.3662, 545.9724)
+[14:50:42] [SectGenerator] Pillar safe_pos.y set from data: 285.466217041016
+[14:50:42] [SectGenerator] Pillar final global_position: (324.007, 285.4662, 545.9724)
+[14:50:42] [SectGenerator] Created token with teleport: [329.007019042969, 285.3662109375, 550.972412109375]
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Terrain too steep in 10x10 area.
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Terrain too steep in 10x10 area.
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Terrain too steep in 10x10 area.
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Terrain too steep in 10x10 area.
+[14:50:42] [WorldSectSeeder] Spawning sect at: (420.5817, 103.1533, -651.5479)
+[14:50:42] [SectGenerator] Creating sect at (420.5817, 103.1533, -651.5479)
+[14:50:42] [SectGenerator] Pillar safe_pos.y set from data: 103.253341674805
+[14:50:42] [SectGenerator] Pillar final global_position: (420.5817, 103.2533, -651.5479)
+[14:50:42] [SectGenerator] Created token with teleport: [425.581665039063, 103.153343200684, -646.5478515625]
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Terrain too steep in 10x10 area.
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Spawning sect at: (31.89767, 63.3484, -46.30531)
+[14:50:42] [SectGenerator] Creating sect at (31.89767, 63.3484, -46.30531)
+[14:50:42] [SectGenerator] Pillar safe_pos.y set from data: 63.4483985900879
+[14:50:42] [SectGenerator] Pillar final global_position: (31.89767, 63.4484, -46.30531)
+[14:50:42] [SectGenerator] Created token with teleport: [36.897668838501, 63.3484001159668, -41.3053131103516]
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Terrain too steep in 10x10 area.
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Spawning sect at: (-887.9238, 0.0, -918.5667)
+[14:50:42] [SectGenerator] Creating sect at (-887.9238, 0.0, -918.5667)
+[14:50:42] [SectGenerator] Pillar safe_pos.y set from data: 0.10000000149012
+[14:50:42] [SectGenerator] Pillar final global_position: (-887.9238, 0.1, -918.5667)
+[14:50:42] [SectGenerator] Created token with teleport: [-882.923828125, 0.0, -913.566650390625]
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Terrain too steep in 10x10 area.
+[14:50:42] [WorldSectSeeder] Skip: Terrain too steep in 10x10 area.
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Terrain too steep in 10x10 area.
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: h_center < -100.0 (Out of bounds)
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Skip: Bad FengShui Biome: water
+[14:50:42] [WorldSectSeeder] Spawning sect at: (-764.3171, 0.0, 207.797)
+[14:50:42] [SectGenerator] Creating sect at (-764.3171, 0.0, 207.797)
+[14:50:42] [SectGenerator] Pillar safe_pos.y set from data: 0.10000000149012
+[14:50:42] [SectGenerator] Pillar final global_position: (-764.3171, 0.1, 207.797)
+[14:50:42] [SectGenerator] Created token with teleport: [-759.317077636719, 0.0, 212.796951293945]
+[14:50:42] [WorldSectSeeder] === FINISHED SEEDING ===

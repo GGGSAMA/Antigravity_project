@@ -22,6 +22,15 @@ func _ready() -> void:
 	timer.autostart = true
 	timer.timeout.connect(_on_check_lod)
 	add_child(timer)
+	
+	var eb = Engine.get_main_loop().root.get_node_or_null("EventBus")
+	if eb and eb.has_signal("npc_status_changed"):
+		eb.npc_status_changed.connect(_on_npc_status_changed)
+
+func _on_npc_status_changed(npc_id: String, tag: String, is_added: bool) -> void:
+	if tag == "secluded" and is_added:
+		# 强制降级并回收 3D 模型
+		demote_to_background(npc_id)
 
 # 注册一个新生成的 NPC 到全局注册表
 func register_npc(data: CharacterData) -> void:
@@ -72,6 +81,11 @@ func _check_single_npc_lod(npc_id: String) -> void:
 # 将 NPC 从背景池提升到活跃池 (波函数坍缩为物理)
 func promote_to_active(npc_id: String) -> void:
 	if background_pool.has(npc_id):
+		if global_npc_registry.has(npc_id):
+			var data = global_npc_registry[npc_id]
+			if data.has_method("has_status_tag") and data.has_status_tag("secluded"):
+				return # 拒绝波函数坍缩（闭关中）
+				
 		background_pool.erase(npc_id)
 		active_pool.append(npc_id)
 		if global_npc_registry.has(npc_id):
