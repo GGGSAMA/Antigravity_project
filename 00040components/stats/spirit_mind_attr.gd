@@ -1,7 +1,7 @@
 extends Node
 class_name SpiritMindAttr
 
-const CharacterData = preload("res://0000core/simulation/character_data.gd")
+const CharacterData = preload("res://0000core/000010_simulation/entities/character_data.gd")
 
 var divine_sense: int = 10
 var scan_radius: float = 10.0

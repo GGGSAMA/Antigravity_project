@@ -1,6 +1,6 @@
 extends "res://addons/gut/test.gd"
 
-const CultivationComponent = preload("res://0000core/simulation/components/cultivation_component.gd")
+const CultivationComponent = preload("res://0000core/000010_simulation/components/cultivation_component.gd")
 
 func test_add_qi_below_max():
 	var comp = CultivationComponent.new()

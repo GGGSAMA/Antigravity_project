@@ -1,7 +1,7 @@
 extends Node
 class_name FiveElementRoot
 
-const CharacterData = preload("res://0000core/simulation/character_data.gd")
+const CharacterData = preload("res://0000core/000010_simulation/entities/character_data.gd")
 
 var spiritual_roots: Dictionary = {}
 

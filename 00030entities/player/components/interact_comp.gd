@@ -100,9 +100,16 @@ func _physics_process(delta: float) -> void:
 		if interaction_ray.is_colliding():
 			var collider = interaction_ray.get_collider()
 			if collider.has_method("pick_up") or collider.has_method("interact"):
-				var prompt_text = "[E] 互动"
+				var key_str = "F"
+				if InputMap.has_action("sys_interact"):
+					var evs = InputMap.action_get_events("sys_interact")
+					if evs.size() > 0 and evs[0] is InputEventKey:
+						var kc = evs[0].physical_keycode if evs[0].physical_keycode != 0 else evs[0].keycode
+						key_str = OS.get_keycode_string(kc)
+				
+				var prompt_text = "[%s] 互动" % key_str
 				if collider.has_method("get_interaction_prompt"):
-					prompt_text = "[E] " + collider.get_interaction_prompt()
+					prompt_text = "[%s] " % key_str + collider.get_interaction_prompt()
 				main_hud.set_interaction_prompt(prompt_text, true)
 			else:
 				main_hud.set_interaction_prompt("", false)

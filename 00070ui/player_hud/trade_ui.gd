@@ -1,4 +1,4 @@
-extends "res://0000core/ui/base_menu_ui.gd"
+extends "res://00070ui/core_ui/base_menu_ui.gd"
 class_name TradeUI
 
 var player_comp
@@ -18,7 +18,7 @@ var staged_buy = [] # items npc gives
 var player_money_ref
 var npc_money_ref
 
-const ItemDatabase = preload("res://0000core/data/item_database.gd")
+const ItemDatabase = preload("res://0000core/000040_data/item_database.gd")
 
 func _ready():
 	super._ready()

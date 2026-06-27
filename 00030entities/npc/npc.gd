@@ -1,6 +1,7 @@
 extends CharacterBody3D
 
 @export var data: CharacterData
+var is_passive: bool = true
 
 @onready var name_tag = $NameTag
 @onready var stats = $ActorDataTemplate/CombatRuntimeAttr

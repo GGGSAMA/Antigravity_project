@@ -6,7 +6,7 @@ class_name SocialData
 # 记录角色的名声、业力以及核心性格底色，为社交推演提供数据源。
 # ==============================================================================
 
-const CharacterData = preload("res://0000core/simulation/character_data.gd")
+const CharacterData = preload("res://0000core/000010_simulation/entities/character_data.gd")
 
 @export_group("Reputation & Karma")
 @export var fame: int = 0

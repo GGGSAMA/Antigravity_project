@@ -13,7 +13,7 @@ var carried_icon: Label
 var tooltip_panel: PanelContainer
 var tooltip_label: RichTextLabel
 
-const ItemDatabase = preload("res://0000core/data/item_database.gd")
+const ItemDatabase = preload("res://0000core/000040_data/item_database.gd")
 
 func _ready():
 	UIStyles.init_styles()

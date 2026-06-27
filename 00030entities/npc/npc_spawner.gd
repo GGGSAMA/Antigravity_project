@@ -1,8 +1,8 @@
 extends Node3D
 
 const NPC_SCENE = preload("res://00030entities/npc/npc.tscn")
-const FactionData = preload("res://0000core/simulation/factions/faction_data.gd")
-const CharacterData = preload("res://0000core/simulation/character_data.gd")
+const FactionData = preload("res://0000core/000010_simulation/factions/faction_data.gd")
+const CharacterData = preload("res://0000core/000010_simulation/entities/character_data.gd")
 
 func _ready() -> void:
 	add_to_group("npc_spawner")

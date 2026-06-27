@@ -8,7 +8,7 @@ signal on_refine_started
 
 func _ready() -> void:
 	var dragger = Node.new()
-	dragger.set_script(load("res://0000core/ui/draggable_behavior.gd"))
+	dragger.set_script(load("res://00070ui/core_ui/draggable_behavior.gd"))
 	add_child(dragger)
 
 	if btn_close:

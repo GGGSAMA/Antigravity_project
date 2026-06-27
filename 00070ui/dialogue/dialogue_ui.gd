@@ -55,6 +55,12 @@ func show_dialogue(npc: Node, speaker_name: String, text: String, options: Array
 	if options_container.get_child_count() > 0:
 		options_container.get_child(0).grab_focus()
 
+func _unhandled_input(event: InputEvent) -> void:
+	if visible and is_active:
+		if event.is_action_pressed("ui_cancel") and not event.is_echo():
+			hide_dialogue()
+			get_viewport().set_input_as_handled()
+
 func hide_dialogue() -> void:
 	visible = false
 	is_active = false

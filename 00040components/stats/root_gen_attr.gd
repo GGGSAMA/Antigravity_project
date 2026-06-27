@@ -3,7 +3,7 @@ class_name RootGenAttr
 
 signal genetics_changed(cache: Dictionary)
 
-const CharacterData = preload("res://0000core/simulation/character_data.gd")
+const CharacterData = preload("res://0000core/000010_simulation/entities/character_data.gd")
 var spiritual_roots: Dictionary = {"metal": 20, "wood": 20, "water": 20, "fire": 20, "earth": 20}
 var cultivation_realm: int = 1
 var current_qi: float = 0.0

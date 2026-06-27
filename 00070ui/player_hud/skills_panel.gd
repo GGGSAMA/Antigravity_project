@@ -4,7 +4,7 @@ var list_container: VBoxContainer
 var right_slots_container: VBoxContainer
 var selected_spell_id: String = ""
 
-const SpellDatabase = preload("res://0000core/data/spell_database.gd")
+const SpellDatabase = preload("res://0000core/000040_data/spell_database.gd")
 
 func _init():
 	set_anchors_preset(PRESET_FULL_RECT)

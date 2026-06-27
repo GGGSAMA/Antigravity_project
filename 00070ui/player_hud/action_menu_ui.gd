@@ -1,4 +1,4 @@
-extends "res://0000core/ui/base_menu_ui.gd"
+extends "res://00070ui/core_ui/base_menu_ui.gd"
 class_name ActionMenuUI
 
 @onready var btn_meditate = $PanelContainer/VBoxContainer/BtnMeditate
@@ -25,7 +25,7 @@ func close_ui() -> void:
 	super.close_ui()
 
 func _input(event: InputEvent) -> void:
-	if visible and event.is_action_pressed("sys_interact") and not event.is_echo():
+	if visible and event.is_action_pressed("open_functional_menu") and not event.is_echo():
 		close_ui()
 		get_viewport().set_input_as_handled()
 

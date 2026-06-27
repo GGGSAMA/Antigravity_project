@@ -21,7 +21,7 @@ var equipment_comp
 var hotbar_comp
 var manager # 指向 HUDManager 以获取全局 carried_item
 
-const ItemDatabase = preload("res://0000core/data/item_database.gd")
+const ItemDatabase = preload("res://0000core/000040_data/item_database.gd")
 
 func _ready():
 	var old_tabs = get_node_or_null("TopTabs")

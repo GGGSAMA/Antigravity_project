@@ -1,7 +1,7 @@
 extends SceneTree
 
-const CharacterData = preload("res://0000core/simulation/character_data.gd")
-const CultivationComponent = preload("res://0000core/simulation/components/cultivation_component.gd")
+const CharacterData = preload("res://0000core/000010_simulation/entities/character_data.gd")
+const CultivationComponent = preload("res://0000core/000010_simulation/components/cultivation_component.gd")
 
 func _init():
 	print("\n=== 启动狩猎流水线独立测试 ===")

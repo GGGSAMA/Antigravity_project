@@ -1,4 +1,4 @@
-extends "res://0000core/ui/base_menu_ui.gd"
+extends "res://00070ui/core_ui/base_menu_ui.gd"
 class_name MeditationUI
 
 @onready var mode_option = $Panel/VBoxContainer/ModeHBox/ModeOption
@@ -13,7 +13,7 @@ class_name MeditationUI
 
 var player_stats: Node
 var is_meditating: bool = false
-const SpellDatabase = preload("res://0000core/data/spell_database.gd")
+const SpellDatabase = preload("res://0000core/000040_data/spell_database.gd")
 var  layer
 func _ready() -> void:
 	super._ready()

@@ -1,16 +1,16 @@
 [gd_scene format=3 uid="uid://bhip3sv1dpiyv"]
 
-[ext_resource type="Script" path="res://game_root.gd" id="1_root_script"]
+[ext_resource type="Script" uid="uid://cav20ep7kafvq" path="res://game_root.gd" id="1_root_script"]
 [ext_resource type="PackedScene" uid="uid://c1yv4yexs2rgy" path="res://00030entities/player/player.tscn" id="2_player_scene"]
-[ext_resource type="PackedScene" uid="uid://time_debug_ui_xxx" path="res://0000core/ui/time_debug_ui.tscn" id="3_time_ui"]
+[ext_resource type="PackedScene" path="res://00070ui/core_ui/time_debug_ui.tscn" id="3_time_ui"]
 
-[node name="GameRoot" type="Node3D" unique_id=1184932381]
+[node name="GameRoot" type="Node3D" unique_id=766070856]
 script = ExtResource("1_root_script")
 
-[node name="LevelContainer" type="Node3D" parent="." unique_id=379543397]
+[node name="LevelContainer" type="Node3D" parent="." unique_id=1357367760]
 
-[node name="Player" parent="." unique_id=498392587 instance=ExtResource("2_player_scene")]
+[node name="Player" parent="." unique_id=1793345842 instance=ExtResource("2_player_scene")]
 
-[node name="UILayer" type="CanvasLayer" parent="." unique_id=1408775492]
+[node name="UILayer" type="CanvasLayer" parent="." unique_id=546142085]
 
-[node name="TimeDebugUI" parent="UILayer" unique_id=760224278 instance=ExtResource("3_time_ui")]
+[node name="TimeDebugUI" parent="UILayer" unique_id=1911099778 instance=ExtResource("3_time_ui")]

@@ -1,7 +1,7 @@
 extends "res://addons/gut/test.gd"
 
-const FactionData = preload("res://0000core/simulation/factions/faction_data.gd")
-const SectBrainAI = preload("res://0000core/simulation/factions/components/sect_brain_ai.gd")
+const FactionData = preload("res://0000core/000010_simulation/factions/faction_data.gd")
+const SectBrainAI = preload("res://0000core/000010_simulation/factions/components/sect_brain_ai.gd")
 
 func test_poor_sect_issues_gather_task():
 	var faction = FactionData.new()

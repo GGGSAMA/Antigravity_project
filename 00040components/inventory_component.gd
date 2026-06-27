@@ -49,7 +49,7 @@ func _ready() -> void:
 # - 返回剩余未能放下的物品数量（0 代表完全放完，正数代表背包已满剩下放不下的数量）
 func add_item(item_id: String, amount: int = 1, dynamic_data: Dictionary = {}) -> int:
 	var remaining = amount
-	var ItemDatabase = preload("res://0000core/data/item_database.gd")
+	var ItemDatabase = preload("res://0000core/000040_data/item_database.gd")
 	var meta = ItemDatabase.get_item(item_id)
 	var type = meta.type
 
@@ -86,7 +86,7 @@ func set_slot(idx: int, item_id: String, qty: int, dynamic_data: Dictionary = {}
 	if qty <= 0:
 		slots[idx] = null
 	else:
-		var ItemDatabase = preload("res://0000core/data/item_database.gd")
+		var ItemDatabase = preload("res://0000core/000040_data/item_database.gd")
 		var meta = ItemDatabase.get_item(item_id)
 		slots[idx] = ItemStack.new(meta, qty, str(randi()), dynamic_data.get("quality", 0), dynamic_data.get("affixes", {}).duplicate())
 	slots_changed.emit(idx, slots[idx])

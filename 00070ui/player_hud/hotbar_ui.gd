@@ -6,7 +6,7 @@ var hotbar_comp
 var active_index: int = 0
 var manager # 指向 HUDManager
 
-const ItemDatabase = preload("res://0000core/data/item_database.gd")
+const ItemDatabase = preload("res://0000core/000040_data/item_database.gd")
 
 func _ready():
 	var player = get_tree().get_first_node_in_group("player")

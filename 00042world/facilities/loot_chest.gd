@@ -23,7 +23,7 @@ func _ready() -> void:
 	add_child(coll)
 	
 	# 创建一个容器组件
-	var InvScript = load("res://0000core/simulation/components/inventory_component.gd")
+	var InvScript = load("res://0000core/000010_simulation/components/inventory_component.gd")
 	if InvScript:
 		inventory_comp = InvScript.new()
 		inventory_comp.size = 18 # 3x6

@@ -1,4 +1,4 @@
-extends "res://0000core/ui/base_menu_ui.gd"
+extends "res://00070ui/core_ui/base_menu_ui.gd"
 class_name DashboardUI
 
 var tab_container: TabContainer

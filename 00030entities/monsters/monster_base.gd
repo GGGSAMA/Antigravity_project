@@ -44,7 +44,7 @@ func _ready() -> void:
 				model.set_animation_state("idle")
 
 func _init_from_database() -> void:
-	var MonsterDatabase = load("res://0000core/data/monster_database.gd")
+	var MonsterDatabase = load("res://0000core/000040_data/monster_database.gd")
 	if MonsterDatabase:
 		monster_data = MonsterDatabase.get_monster(monster_id)
 		max_health = monster_data.max_health

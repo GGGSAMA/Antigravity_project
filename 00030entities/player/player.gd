@@ -24,7 +24,7 @@ class_name Player
 
 
 const InventoryComponent = preload("res://00040components/inventory_component.gd")
-const ItemDatabase = preload("res://0000core/data/item_database.gd")
+const ItemDatabase = preload("res://0000core/000040_data/item_database.gd")
 const SpellComponent = preload("res://00040components/spell_component.gd")
 
 # ==========================================
@@ -169,7 +169,7 @@ func use_active_hotbar_item() -> void:
 			var ws = get_node_or_null("/root/WorldState")
 			var is_test = ws and ws.get("test_mode")
 			if not is_test:
-				var ItemDatabase = preload("res://0000core/data/item_database.gd")
+				var ItemDatabase = preload("res://0000core/000040_data/item_database.gd")
 				var meta = ItemDatabase.get_item(item.get_item_id())
 				if meta and meta.type in ["potion", "consumable"]:
 					hotbar_comp.remove_item(item.get_item_id(), 1)
@@ -259,12 +259,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		var sect_builder = get_node_or_null("SectBuilderComp")
 		
 		if event.is_action_pressed("sys_interact"):
-			var interacted = false
 			if interact_comp and interact_comp.has_method("try_interact"):
-				interacted = interact_comp.try_interact()
-			if not interacted:
-				if has_node("/root/EventBus"):
-					get_node("/root/EventBus").request_open_ui.emit("action_menu")
+				interact_comp.try_interact()
+		elif event.is_action_pressed("open_functional_menu"):
+			if has_node("/root/EventBus"):
+				get_node("/root/EventBus").request_open_ui.emit("action_menu")
 		elif event.is_action_pressed("ui_inventory"):
 			if has_node("/root/EventBus"):
 				get_node("/root/EventBus").request_open_ui.emit("inventory")

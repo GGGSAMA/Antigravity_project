@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://0000core/game_root.gd" id="1_root_script"]
 [ext_resource type="PackedScene" uid="uid://c1yv4yexs2rgy" path="res://00030entities/player/player.tscn" id="2_player_scene"]
-[ext_resource type="PackedScene" path="res://0000core/ui/time_debug_ui.tscn" id="3_time_ui"]
+[ext_resource type="PackedScene" path="res://00070ui/core_ui/time_debug_ui.tscn" id="3_time_ui"]
 
 [node name="GameRoot" type="Node3D" unique_id=1184932381]
 script = ExtResource("1_root_script")

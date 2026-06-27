@@ -43,8 +43,8 @@
 [ext_resource type="PackedScene" uid="uid://df7w1yexs2rgy" path="res://00030entities/interactables/potion/potion.tscn" id="bottle_scene"]
 [ext_resource type="PackedScene" uid="uid://cx6w7yexs2rgy" path="res://00030entities/npc/npc_base.tscn" id="npc_scene"]
 [ext_resource type="Script" uid="uid://brvnifnhhl4k8" path="res://00030entities/npc/npc_spawner.gd" id="npc_spawner_script"]
-[ext_resource type="Script" uid="uid://vd3apk8gwhj6" path="res://00020systems/world_generation/rog_scatterer.gd" id="rs_script"]
-[ext_resource type="Script" uid="uid://bjbk5yf0qecdi" path="res://00020systems/world_generation/world_generator.gd" id="wg_script"]
+[ext_resource type="Script" uid="uid://vd3apk8gwhj6" path="res://0000core/000020_world_gen/generator/rog_scatterer.gd" id="rs_script"]
+[ext_resource type="Script" uid="uid://bjbk5yf0qecdi" path="res://0000core/000020_world_gen/generator/world_generator.gd" id="wg_script"]
 
 [sub_resource type="Gradient" id="Gradient_vr1m7"]
 offsets = PackedFloat32Array(0.2, 1)

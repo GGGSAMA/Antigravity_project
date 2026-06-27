@@ -10,7 +10,7 @@ var inventory_comp: Node
 var loot_comp: Node
 var manager: Node
 
-const ItemDatabase = preload("res://0000core/data/item_database.gd")
+const ItemDatabase = preload("res://0000core/000040_data/item_database.gd")
 
 func _ready() -> void:
 	color = Color(0, 0, 0, 0.8)

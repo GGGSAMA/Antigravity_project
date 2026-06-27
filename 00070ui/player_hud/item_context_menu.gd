@@ -55,7 +55,7 @@ func setup(p_slot_idx: int, p_item_data, p_manager) -> void:
 	if not item_data:
 		return
 		
-	var ItemDatabase = load("res://0000core/data/item_database.gd")
+	var ItemDatabase = load("res://0000core/000040_data/item_database.gd")
 	var meta = ItemDatabase.get_item(item_data.get_item_id())
 	var type = meta.type
 	

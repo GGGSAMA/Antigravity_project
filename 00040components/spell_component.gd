@@ -8,7 +8,7 @@
 extends Node
 class_name SpellComponent
 
-const SpellDatabase = preload("res://0000core/data/spell_database.gd")
+const SpellDatabase = preload("res://0000core/000040_data/spell_database.gd")
 
 # 左右手法术轮盘装备的法术ID
 var left_spells: Array[String] = [

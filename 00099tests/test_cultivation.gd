@@ -1,7 +1,7 @@
 extends AITestCase
 
-const FactionData = preload("res://0000core/simulation/factions/faction_data.gd")
-const SectBrainAI = preload("res://0000core/simulation/factions/components/sect_brain_ai.gd")
+const FactionData = preload("res://0000core/000010_simulation/factions/faction_data.gd")
+const SectBrainAI = preload("res://0000core/000010_simulation/factions/components/sect_brain_ai.gd")
 
 func test_sect_brain_generates_gather_task_when_poor() -> bool:
 	# Arrange (Given)

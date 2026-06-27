@@ -26,3 +26,4 @@
 
 ## Token Optimization & Operations
 1. **High-Token Warning & Consultation (高耗能前置询问)**: Before executing commands that may generate massive output (e.g., recursive file listings, large git status, processing many binary/FBX files) or attempting repetitive error-prone shell scripts, you MUST stop and explicitly ask the user for permission. Propose the action, explain the potential token cost, and ask if the user wants to proceed or use an alternative script/approach.
+2. **Requirement Confirmation First (需求敲定与 Grill-Me 原则)**: WHENEVER the user assigns a task (especially bug fixes or feature additions), you MUST NOT write or modify any code immediately. You MUST first explain the current mechanism, propose a plan, and ask the user to clarify or confirm the requirements. Strongly recommend the user to use the `/grill-me` command to ensure thorough alignment before execution. This rule is absolute.

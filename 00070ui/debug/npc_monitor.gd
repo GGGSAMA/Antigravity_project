@@ -1,4 +1,4 @@
-extends "res://0000core/ui/base_menu_ui.gd"
+extends "res://00070ui/core_ui/base_menu_ui.gd"
 class_name NPCMonitorUI
 
 var panel: PanelContainer
@@ -31,7 +31,7 @@ func _ready() -> void:
 	
 	# 添加拖拽行为
 	var dragger = Node.new()
-	dragger.set_script(load("res://0000core/ui/draggable_behavior.gd"))
+	dragger.set_script(load("res://00070ui/core_ui/draggable_behavior.gd"))
 	panel.add_child(dragger)
 	
 	var vbox = VBoxContainer.new()
@@ -218,13 +218,13 @@ func refresh_ui() -> void:
 			if typeof(entry) == TYPE_DICTIONARY:
 				# 过滤：非调试模式下，只显示 milestone 或 2星(IMPORTANT) 及以上的事件
 				if not show_all_diary:
-					if entry.type != "milestone" and entry.get("level", 1) < 2:
+					if entry.get("type", "routine") != "milestone" and entry.get("level", 1) < 2:
 						continue
 				
 				var age_str = "[骨龄%d岁]" % entry.get("age", data.age)
 				var text_str = entry.get("text", "")
 				var lvl = entry.get("level", 1)
-				var typ = entry.type
+				var typ = entry.get("type", "routine")
 				
 				if typ == "milestone" or lvl >= 3:
 					t += "[color=red]- %s %s[/color]\n" % [age_str, text_str]

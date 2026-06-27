@@ -325,7 +325,7 @@ func _execute_spell_cast(is_left: bool, spell_data: SpellData) -> void:
 	var is_catalyst = false
 
 	if weapon != null:
-		var ItemDatabase = preload("res://0000core/data/item_database.gd")
+		var ItemDatabase = preload("res://0000core/000040_data/item_database.gd")
 		var meta = ItemDatabase.get_item(weapon.get_item_id())
 		is_catalyst = meta.is_catalyst
 

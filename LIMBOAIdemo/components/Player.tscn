@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://c247wbmdoc3dv" path="res://00030entities/player/components/target_lock_comp.gd" id="TargetLockScript"]
 [ext_resource type="PackedScene" path="res://00083models/Magic Locomotion Pack/arissa.tscn" id="3_fem"]
 [ext_resource type="Script" uid="uid://dg4ex4uqxaf8e" path="res://00030entities/player/components/sect_builder_comp.gd" id="4_sect"]
-[ext_resource type="Script" uid="uid://biix2tjxy54ey" path="res://0000core/simulation/components/cultivation_component.gd" id="5_cult"]
+[ext_resource type="Script" uid="uid://biix2tjxy54ey" path="res://0000core/000010_simulation/components/cultivation_component.gd" id="5_cult"]
 [ext_resource type="Script" uid="uid://c247wbmdoc3dv" path="res://00030entities/player/components/target_lock_comp.gd" id="TargetLockScript"]
 
 

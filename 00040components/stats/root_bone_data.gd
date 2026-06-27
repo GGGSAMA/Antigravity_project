@@ -4,7 +4,7 @@ class_name RootBoneData
 signal multipliers_updated(new_cache: Dictionary)
 signal stats_updated()
 
-const CharacterData = preload("res://0000core/simulation/character_data.gd")
+const CharacterData = preload("res://0000core/000010_simulation/entities/character_data.gd")
 
 # 后台纯数据资源引用
 var character_data: CharacterData
