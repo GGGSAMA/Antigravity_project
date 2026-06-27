@@ -27,6 +27,24 @@ func _ready() -> void:
 	if eb and eb.has_signal("npc_status_changed"):
 		eb.npc_status_changed.connect(_on_npc_status_changed)
 
+	# 监听大岁月闭关跳跃，强制回收所有 NPC 进入数据演化态
+	if Engine.get_main_loop().root.has_node("ChronosScheduler"):
+		var chronos = Engine.get_main_loop().root.get_node("ChronosScheduler")
+		if chronos.has_signal("macro_skip_started"):
+			chronos.macro_skip_started.connect(_on_macro_skip_started)
+		if chronos.has_signal("macro_skip_ended"):
+			chronos.macro_skip_ended.connect(_on_macro_skip_ended)
+
+func _on_macro_skip_started() -> void:
+	# 大规模岁月流逝开始，强制把身边所有 NPC 驱逐回后台
+	var current_actives = active_pool.duplicate()
+	for npc_id in current_actives:
+		demote_to_background(npc_id)
+
+func _on_macro_skip_ended() -> void:
+	# 岁月流逝结束，立即重新扫描玩家周围
+	_on_check_lod()
+
 func _on_npc_status_changed(npc_id: String, tag: String, is_added: bool) -> void:
 	if tag == "secluded" and is_added:
 		# 强制降级并回收 3D 模型

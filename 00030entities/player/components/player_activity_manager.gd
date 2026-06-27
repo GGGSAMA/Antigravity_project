@@ -35,6 +35,25 @@ func clear_activity() -> void:
 
 # 随岁月流逝结算玩家收益
 func _on_time_advanced(hours_skipped: float) -> void:
+	# 扣除寿命
+	var root_gen = get_parent().get_node_or_null("ActorDataTemplate/RootGenAttr")
+	if root_gen:
+		if not root_gen.has_meta("age_accum"): root_gen.set_meta("age_accum", 0.0)
+		var total_skipped_years = hours_skipped / (365.0 * 24.0)
+		var accum = root_gen.get_meta("age_accum") + total_skipped_years
+		if accum >= 1.0:
+			var added_age = int(accum)
+			root_gen.age += added_age
+			root_gen.set_meta("age_accum", accum - added_age)
+			
+			if root_gen.age >= root_gen.max_lifespan:
+				print("[PlayerActivityManager] 玩家大限已至！")
+				var eb = Engine.get_main_loop().root.get_node_or_null("EventBus")
+				if eb and eb.has_signal("show_notification"):
+					eb.show_notification.emit("寿元耗尽，身死道消...")
+		else:
+			root_gen.set_meta("age_accum", accum)
+
 	if current_activity_id == "":
 		return
 

@@ -33,7 +33,7 @@ func get_name() -> String:
 # ------------------ 通用属性读写 ------------------
 func get_stat(stat_name: String) -> Variant:
 	# 特殊处理 CultivationComponent 的变量
-	if stat_name == "is_bottlenecked" or stat_name == "current_qi" or stat_name == "aptitude":
+	if stat_name == "is_bottlenecked" or stat_name == "current_qi" or stat_name == "aptitude" or stat_name == "age" or stat_name == "max_lifespan":
 		if is_player:
 			var cult = _source.get_node_or_null("ActorDataTemplate/RootGenAttr")
 			if cult and stat_name in cult:

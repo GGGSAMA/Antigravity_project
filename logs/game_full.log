@@ -9303,3 +9303,7 @@
 [14:50:42] [SectGenerator] Pillar final global_position: (-764.3171, 0.1, 207.797)
 [14:50:42] [SectGenerator] Created token with teleport: [-759.317077636719, 0.0, 212.796951293945]
 [14:50:42] [WorldSectSeeder] === FINISHED SEEDING ===
+[14:51:40] [SectGenerator] Creating sect at (45.19057, 65.66789, -36.27007)
+[14:51:40] [SectGenerator] Pillar safe_pos.y set from data: 65.7677383422852
+[14:51:40] [SectGenerator] Pillar final global_position: (45.19057, 65.76774, -36.27007)
+[14:51:40] [SectGenerator] Created token with teleport: [50.1905708312988, 65.6678924560547, -31.2700691223145]

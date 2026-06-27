@@ -11,6 +11,12 @@ var max_qi: float = 1000.0
 var is_bottlenecked: bool = false
 var aptitude: int = 50
 
+# ================================
+# 寿命与成长骨龄
+# ================================
+@export var age: int = 16
+@export var max_lifespan: int = 100
+
 # 纯静态、极其低频地更新
 func sync_from_resource(data: CharacterData) -> void:
 	spiritual_roots = data.spiritual_roots.duplicate()
