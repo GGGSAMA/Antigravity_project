@@ -166,7 +166,7 @@ func refresh_ui() -> void:
 	var max_qi = data.cultivation_comp.max_qi_cache if data.cultivation_comp else 100.0
 	t += "[color=purple]境界: %s[/color] (XP: %.1f / %.1f)\n" % [exact_realm, curr_qi, max_qi]
 	t += "综合战力: %d\n" % data.combat_power
-	t += "骨龄: %d / %d 岁\n" % [data.age, data.max_lifespan]
+	t += "寿元: %d / %d\n" % [data.age, data.max_lifespan]
 	t += "财富: %d 灵石\n" % data.money
 	
 	t += "名望(Fame): %d | 业力(Karma): %d\n" % [data.fame, data.karma]
@@ -221,7 +221,7 @@ func refresh_ui() -> void:
 					if entry.get("type", "routine") != "milestone" and entry.get("level", 1) < 2:
 						continue
 				
-				var age_str = "[骨龄%d岁]" % entry.get("age", data.age)
+				var age_str = "[寿元 %d]" % entry.get("age", data.age)
 				var text_str = entry.get("text", "")
 				var lvl = entry.get("level", 1)
 				var typ = entry.get("type", "routine")

@@ -55,4 +55,4 @@ func _print_and_log(npc: CharacterData, text: String, emotion_tag: String):
 	# 如果有宏观事件广播器，将其推送到游戏内 UI 上
 	var ms = Engine.get_main_loop().root.get_node_or_null("MacroSimulator")
 	if ms and ms.has_signal("macro_event_logged"):
-		ms.emit_signal("macro_event_logged", "[骨龄%d岁] %s" % [npc.age, text])
+		ms.emit_signal("macro_event_logged", "[寿元 %d/%d] %s" % [npc.age, npc.max_lifespan, text])

@@ -76,7 +76,7 @@ func has_status_tag(tag: String) -> bool:
 @export var speed: int = 50          # 速度 (移动、闪避、出手速度)
 @export var divine_sense: int = 50   # 神识 (侦查范围、精神抗性)
 @export var state_of_mind: int = 100 # 心境 (情绪稳定度、走火入魔抗性)
-@export var age: int = 16            # 骨龄
+@export var age: int = 16            # 已过寿元
 @export var max_lifespan: int = 100  # 寿命上限
 
 # ================================

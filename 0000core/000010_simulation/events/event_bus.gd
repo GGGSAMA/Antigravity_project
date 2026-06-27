@@ -49,5 +49,5 @@ func _store_history(npc: CharacterData, msg: String, level: int, type: String) -
 	var ms = get_node_or_null("/root/MacroSimulator")
 	if ms and level >= ms.broadcast_level:
 		if ms.has_signal("macro_event_logged"):
-			var entry = "[骨龄%d岁] %s" % [npc.age, msg]
+			var entry = "[寿元 %d/%d] %s" % [npc.age, npc.max_lifespan, msg]
 			ms.macro_event_logged.emit("【%s】 %s" % [npc.npc_name, entry])

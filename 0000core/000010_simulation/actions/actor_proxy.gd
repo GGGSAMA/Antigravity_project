@@ -107,7 +107,9 @@ func add_history_log(msg: String, level: int = 2) -> void:
 			var ms = Engine.get_main_loop().root.get_node_or_null("MacroSimulator")
 			if ms and level >= ms.broadcast_level:
 				if ms.has_signal("macro_event_logged"):
-					var entry = "[骨龄%d岁] %s" % [age, msg]
+					var max_lifespan = get_stat("max_lifespan")
+					if max_lifespan == null: max_lifespan = 100
+					var entry = "[寿元 %d/%d] %s" % [age, max_lifespan, msg]
 					var npc_name = _source.npc_name if "npc_name" in _source else "未知"
 					ms.macro_event_logged.emit("【%s】 %s" % [npc_name, entry])
 
