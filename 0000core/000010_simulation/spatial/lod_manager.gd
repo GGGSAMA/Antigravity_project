@@ -87,10 +87,8 @@ func promote_to_active(npc_id: String) -> void:
 				npc_instance.global_position = data.world_position
 				
 				# 同步数据绑定
-				if npc_instance.has_method("init_data"):
-					npc_instance.init_data(data)
-				elif npc_instance.has_method("set_data"):
-					npc_instance.set_data(data)
+				if npc_instance.has_method("setup_from_data"):
+					npc_instance.setup_from_data(data)
 					
 				active_nodes[npc_id] = npc_instance
 				print("[LODManager] 🌟 波函数坍缩！NPC (", data.npc_name, ") 实体化于 ", data.world_position)

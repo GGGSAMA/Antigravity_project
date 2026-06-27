@@ -41,6 +41,8 @@ func _instantiate_npc(data: CharacterData, pos: Vector3) -> void:
 	_log_trace("Instantiating NPC " + data.npc_name + " at pos: " + str(pos))
 	var npc_instance = NPC_SCENE.instantiate()
 	npc_instance.data = data
+	if npc_instance.has_method("setup_from_data"):
+		npc_instance.setup_from_data(data)
 
 	# 优先使用真实地形高度 (避开物理碰撞未加载问题)
 	var terrain = null
