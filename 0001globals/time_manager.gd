@@ -120,6 +120,9 @@ func skip_time_async(hours_to_skip: float, description: String = "岁月流逝..
 	print("[TimeManager] 异步岁月跳跃完成！总计跳跃了 %.2f 小时。" % hours_to_skip)
 	_hide_skip_ui()
 	_is_skipping_time = false
+	
+	# 强制触发一次 UI 刷新
+	time_ticked.emit(0.0)
 
 func _show_skip_ui(desc: String) -> void:
 	if not _skip_ui_canvas:

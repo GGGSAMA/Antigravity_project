@@ -24,7 +24,9 @@ func _ready() -> void:
 
 func reset_state() -> void:
 	is_macro_skipping = false
-	_priority_queues = [[], [], [], [], []]
+	# 严重 Bug 修复：禁止在此处清空 _priority_queues！
+	# 因为 Autoload (如 MacroSimulator) 只会在游戏启动时注册一次。
+	# 普通节点会在自己的 _exit_tree() 中主动取消注册，无需手动清空。
 	print("[ChronosScheduler] 状态已重置")
 
 # 注册一个岁月节点

@@ -58,9 +58,10 @@ func _on_time_ticked(_delta_hours: float) -> void:
 		label_time.text = "当前时间: " + TimeManager.get_formatted_time_string()
 	
 	var player = get_tree().get_first_node_in_group("player")
-	if player and player.get("data"):
-		var data = player.data
-		label_lifespan.text = "寿命: %.2f / %.0f 天" % [data.age, data.max_lifespan]
+	if player:
+		var root_gen = player.get_node_or_null("ActorDataTemplate/RootGenAttr")
+		if root_gen:
+			label_lifespan.text = "寿命: %d / %d 岁" % [root_gen.age, root_gen.max_lifespan]
 
 func _on_mana_changed(current_mana: int, max_mana: int) -> void:
 	label_mana.text = "灵力: %d / %d" % [current_mana, max_mana]
