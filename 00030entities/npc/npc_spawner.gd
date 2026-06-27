@@ -6,29 +6,11 @@ const CharacterData = preload("res://0000core/000010_simulation/entities/charact
 
 func _ready() -> void:
 	add_to_group("npc_spawner")
-	print("[NPCSpawner] 开始生成测试修仙者...")
-	spawn_test_npcs()
 
 func spawn_npc_dynamic(data: CharacterData, pos: Vector3) -> void:
 	_instantiate_npc(data, pos)
 
-func spawn_test_npcs() -> void:
-	var spawn_points = [
-		Vector3(510, 0.5, 5), # 李逍遥
-		Vector3(500, 0.5, 5), # 血老怪
-		Vector3(505, 0.5, 2)  # 钱百万
-	]
 
-	var test_ids = ["npc_li_xiaoyao", "npc_xue_laoguai", "npc_qian_baiwan"]
-
-	for i in range(test_ids.size()):
-		var npc_id = test_ids[i]
-		if SocialManager.has_method("get_npc"):
-			var n_data = SocialManager.get_npc(npc_id)
-			if n_data == null or typeof(n_data) == TYPE_DICTIONARY:
-				continue
-
-			_instantiate_npc(n_data, spawn_points[i])
 
 func _log_trace(msg: String) -> void:
 	var f = FileAccess.open("res://logs/game_full.log", FileAccess.READ_WRITE)

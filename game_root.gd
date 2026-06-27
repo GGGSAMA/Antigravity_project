@@ -149,7 +149,8 @@ func _position_player_safely(target_pos: Vector3, target_rot: Vector3, level_pat
 	
 	_spawn_fbx_test_nodes(current_level_node, final_pos)
 	if level_path == "res://main.tscn":
-		_spawn_test_npcs(final_pos)
+		pass
+
 
 	player.velocity = Vector3.ZERO
 	print("[GameRoot] Loaded level: ", current_level_path, " spawned player at: ", player.global_position)
@@ -185,35 +186,7 @@ func _spawn_fbx_test_nodes(level_node: Node, player_pos: Vector3) -> void:
 func switch_level(level_path: String, spawn_pos: Variant = null) -> void:
 	load_level(level_path, spawn_pos)
 
-func _spawn_test_npcs(player_pos: Vector3) -> void:
-	var npc_scene = load("res://00030entities/npc/npc.tscn")
-	if not npc_scene:
-		print("[GameRoot] Error: Failed to load npc.tscn")
-		return
 
-	# Spawn NPC 1: Active Hostile AI (12 meters in front of player spawn)
-	var npc_hostile = npc_scene.instantiate()
-	npc_hostile.name = "Hostile_NPC_Enemy"
-	npc_hostile.is_passive = false
-	current_level_node.add_child(npc_hostile)
-	npc_hostile.global_position = player_pos + Vector3(0.0, 0.0, -12.0)
-	print("[GameRoot] Spawned active hostile NPC at: ", npc_hostile.global_position)
-
-	# Spawn NPC 2: Passive Sandbag Dummy (12 meters to the right of player spawn)
-	var npc_passive = npc_scene.instantiate()
-	npc_passive.name = "Passive_Training_Dummy"
-	npc_passive.is_passive = true
-	current_level_node.add_child(npc_passive)
-	npc_passive.global_position = player_pos + Vector3(12.0, 0.0, 0.0)
-	print("[GameRoot] Spawned passive training dummy at: ", npc_passive.global_position)
-	
-	# Spawn Test Loot Chest
-	var chest_scene = load("res://00042world/facilities/loot_chest.tscn")
-	if chest_scene:
-		var chest = chest_scene.instantiate()
-		current_level_node.add_child(chest)
-		chest.global_position = player_pos + Vector3(2.0, 0.0, -2.0)
-		print("[GameRoot] Spawned test LootChest at: ", chest.global_position)
 
 # ==============================================================================
 # 【随身小秘境/洞天双向传送逻辑】
